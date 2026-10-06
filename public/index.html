@@ -237,28 +237,56 @@
     </section>
 
 
-    <div class="success-modal" id="successModal" aria-hidden="true">
-        <div class="success-backdrop" data-success-close></div>
-        <div class="success-dialog" role="dialog" aria-modal="true" aria-labelledby="successTitle">
-            <button class="success-close" type="button" aria-label="Close" data-success-close>×</button>
-            <div class="success-orbit" aria-hidden="true">
-                <span></span><span></span><span></span><span></span>
-                <div class="success-emoji">✓</div>
-            </div>
-            <div class="success-kicker" data-success-kicker>DEMANDE REÇUE</div>
-            <h2 id="successTitle" data-success-title>إن شاء الله ADMIS !</h2>
-            <p class="success-name" id="successName"></p>
-            <p class="success-message" data-success-message>
-                Ta demande a bien été reçue. Je te contacterai par email pour confirmer les détails et organiser la séance.
-            </p>
-            <div class="success-rule" aria-hidden="true"></div>
-            <p class="success-footer" data-success-footer>À bientôt — FEDI GHANMI (TORBAGA)</p>
-            <button class="btn primary success-return" type="button" data-success-close data-success-return>
-                Retour au site
-            </button>
-        </div>
-    </div>
+    <div class="success-modal" id="successModal" aria-hidden="false">
+    <div class="success-backdrop" data-success-close></div>
 
+    <div class="success-dialog"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="successTitle">
+
+        <button class="success-close"
+                type="button"
+                aria-label="Close"
+                data-success-close>
+            ×
+        </button>
+
+        <!-- Check mark inside the circle -->
+        <div class="success-orbit" aria-hidden="true">
+            <div class="success-emoji">✓</div>
+        </div>
+
+        <div class="success-kicker" data-success-kicker>
+            DEMANDE REÇUE
+        </div>
+
+        <h2 id="successTitle" data-success-title>
+            إن شاء الله ADMIS !
+        </h2>
+
+        <p class="success-name" id="successName"></p>
+
+        <p class="success-message" data-success-message>
+            Ta demande a bien été reçue. Je te contacterai par email pour confirmer les détails et organiser la séance.
+        </p>
+
+        <div class="success-rule" aria-hidden="true"></div>
+
+        <p class="success-footer" data-success-footer>
+            À bientôt — FEDI GHANMI (TORBAGA)
+        </p>
+
+        <button class="btn primary success-return"
+                type="button"
+                data-success-close
+                data-success-return>
+            Retour au site
+        </button>
+
+    </div>
+</div>
+<button id="btnc" type="button">Test</button>
     <footer>
         <div class="footer-inner">
             <div><strong>FEDI GHANMI (TORBAGA)</strong><br><span data-i18n="footerRole">Cours particuliers d'informatique</span></div>
@@ -266,8 +294,8 @@
         </div>
     </footer>
 </div>
-
-<script>
+<!-- //*src="js.js"*// -->
+<script >
 const translations = {
     fr: {
         navCta:"Demander une séance", sfax:"Sfax", eyebrow:"Cours particuliers d'informatique",
