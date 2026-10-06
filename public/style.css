@@ -540,3 +540,287 @@ html[dir="rtl"] @media(max-width:850px){
 .slot-message-success{color:var(--gold);}
 
 .fixed-field{min-height:48px;display:flex;align-items:center;padding:0 15px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:#111;color:#f4f0e8;font-weight:600}
+
+/* Registration section overflow fix */
+.request-section,
+.request-section > *,
+.form-wrap,
+.form-wrap form,
+.form-grid,
+.field {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.form-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+.form-grid > * {
+    min-width: 0;
+}
+
+input, select, textarea, button {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 620px) {
+    .request-section {
+        width: 100%;
+        overflow: hidden;
+    }
+    .form-wrap {
+        padding: 20px;
+    }
+    .form-grid {
+        width: 100%;
+    }
+}
+
+/* Final form containment fix */
+html, body { max-width: 100%; overflow-x: hidden; }
+.site-shell { width: 100%; max-width: 1240px; }
+.request-section { width: 100%; min-width: 0; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+.request-intro, .form-wrap { min-width: 0; width: 100%; }
+.form-wrap { overflow: hidden; }
+.form-wrap form { width: 100%; min-width: 0; }
+.form-grid { width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.field { min-width: 0; width: 100%; }
+.field input, .field select, .field textarea, .fixed-field { width: 100%; min-width: 0; max-width: 100%; }
+.submit-btn { width: 100%; max-width: 100%; }
+
+@media (max-width: 850px) {
+  .request-section { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 620px) {
+  .site-shell { padding-left: 14px; padding-right: 14px; }
+  .request-section, .form-wrap, .form-wrap form, .form-grid { width: 100%; max-width: 100%; }
+  .form-wrap { padding: 18px; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+
+/* FINAL REGISTRATION WIDTH CONTAINMENT */
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+.site-shell {
+    width: min(1240px, 100%);
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.request-section {
+    display: grid;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(28px, 5vw, 70px);
+    overflow: hidden;
+}
+
+.request-intro,
+.form-wrap,
+.form-wrap form,
+.form-step,
+.form-grid,
+.field,
+.field-hint,
+.email-followup {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.request-intro,
+.form-wrap {
+    width: 100%;
+}
+
+.request-intro h2,
+.request-intro p,
+.form-wrap h3,
+.form-wrap label,
+.form-note,
+.success,
+.error,
+.field-hint {
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.form-grid {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.field input,
+.field select,
+.field textarea,
+.fixed-field,
+.submit-btn {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+@media (max-width: 850px) {
+    .request-section {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 45px;
+    }
+}
+
+@media (max-width: 620px) {
+    .site-shell {
+        width: 100%;
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .request-section {
+        width: 100%;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 34px;
+        overflow: hidden;
+    }
+
+    .request-intro h2 {
+        font-size: clamp(42px, 14vw, 64px);
+        line-height: .92;
+    }
+
+    .form-wrap {
+        width: 100%;
+        padding: 20px;
+        overflow: hidden;
+    }
+
+    .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+}
+
+
+/* FINAL FIX — registration layout containment */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.site-shell {
+    width: 100%;
+    max-width: 1240px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 28px;
+    padding-right: 28px;
+}
+
+.request-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+    overflow: visible;
+}
+
+.request-intro,
+.form-wrap {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.request-intro {
+    min-width: 0;
+}
+
+.form-wrap {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.form-wrap form,
+.form-step,
+.form-grid,
+.field {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.form-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.form-grid > *,
+.field > * {
+    min-width: 0;
+    max-width: 100%;
+}
+
+input,
+select,
+textarea,
+.fixed-field,
+.submit-btn {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.request-intro h2,
+.request-intro p,
+.form-wrap h3,
+.form-wrap label,
+.form-note,
+.field-hint,
+.email-followup {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 850px) {
+    .request-section {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 45px;
+    }
+}
+
+@media (max-width: 620px) {
+    .site-shell {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .request-section {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 34px;
+    }
+
+    .form-wrap {
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+}
