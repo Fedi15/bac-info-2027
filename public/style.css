@@ -712,115 +712,296 @@ html, body {
 }
 
 
-/* FINAL FIX — registration layout containment */
-html,
-body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-}
-
-.site-shell {
-    width: 100%;
-    max-width: 1240px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 28px;
-    padding-right: 28px;
-}
-
-.request-section {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
-    gap: clamp(28px, 5vw, 64px);
-    align-items: start;
-    overflow: visible;
-}
-
-.request-intro,
-.form-wrap {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-}
-
-.request-intro {
-    min-width: 0;
-}
-
-.form-wrap {
-    min-width: 0;
+/* =========================================================
+   BOOKING SUCCESS MODAL — premium celebration
+   ========================================================= */
+body.modal-open {
     overflow: hidden;
 }
 
-.form-wrap form,
-.form-step,
-.form-grid,
-.field {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
+.success-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .28s ease, visibility .28s ease;
 }
 
-.form-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+.success-modal.is-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
 }
 
-.form-grid > *,
-.field > * {
-    min-width: 0;
-    max-width: 100%;
+.success-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 7, 7, .78);
+    backdrop-filter: blur(12px);
 }
 
-input,
-select,
-textarea,
-.fixed-field,
-.submit-btn {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-    box-sizing: border-box;
+.success-dialog {
+    --gold: #c9a45a;
+    position: relative;
+    width: min(520px, 100%);
+    max-height: min(720px, calc(100vh - 48px));
+    overflow: auto;
+    padding: 46px 38px 34px;
+    text-align: center;
+    color: #f7f2e8;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(201,164,90,.14), transparent 34%),
+        linear-gradient(145deg, #171717, #0b0b0b);
+    border: 1px solid rgba(201,164,90,.48);
+    box-shadow: 0 34px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.035) inset;
+    transform: translateY(18px) scale(.97);
+    opacity: 0;
+    transition: transform .42s cubic-bezier(.2,.85,.25,1), opacity .32s ease;
 }
 
-.request-intro h2,
-.request-intro p,
-.form-wrap h3,
-.form-wrap label,
-.form-note,
-.field-hint,
-.email-followup {
-    max-width: 100%;
-    overflow-wrap: anywhere;
+.success-modal.is-open .success-dialog {
+    transform: translateY(0) scale(1);
+    opacity: 1;
 }
 
-@media (max-width: 850px) {
-    .request-section {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 45px;
+.success-dialog::before,
+.success-dialog::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.success-dialog::before {
+    inset: 10px;
+    border: 1px solid rgba(201,164,90,.12);
+}
+
+.success-dialog::after {
+    width: 110px;
+    height: 1px;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.success-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 50%;
+    background: rgba(255,255,255,.04);
+    color: #eee;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.success-close:hover {
+    border-color: rgba(201,164,90,.7);
+    color: var(--gold);
+}
+
+.success-orbit {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 18px;
+    border: 1px solid rgba(201,164,90,.48);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 36px rgba(201,164,90,.12);
+}
+
+.success-orbit::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px dashed rgba(201,164,90,.35);
+    border-radius: 50%;
+    animation: successSpin 7s linear infinite;
+}
+
+.success-orbit span {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 12px rgba(201,164,90,.75);
+}
+
+.success-orbit span:nth-child(1) { top: -3px; left: 50%; }
+.success-orbit span:nth-child(2) { right: 2px; top: 50%; }
+.success-orbit span:nth-child(3) { bottom: -3px; left: 50%; }
+.success-orbit span:nth-child(4) { left: 2px; top: 50%; }
+
+.success-emoji {
+    width: 44px;
+    height: 44px;
+    margin: -58px auto 18px;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #111;
+    background: var(--gold);
+    font-size: 23px;
+    font-weight: 800;
+    box-shadow: 0 0 0 7px rgba(201,164,90,.08), 0 8px 28px rgba(0,0,0,.3);
+    animation: successPop .55s cubic-bezier(.2,1.5,.35,1) .12s both;
+}
+
+.success-kicker {
+    position: relative;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .22em;
+    color: var(--gold);
+    margin-bottom: 13px;
+}
+
+.success-dialog h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(31px, 7vw, 48px);
+    line-height: .98;
+    letter-spacing: -.035em;
+    color: #fffaf0;
+    text-shadow: 0 8px 30px rgba(201,164,90,.16);
+}
+
+.success-name {
+    min-height: 1.2em;
+    margin: 12px 0 0;
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.success-message {
+    max-width: 410px;
+    margin: 19px auto 0;
+    color: rgba(247,242,232,.78);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.success-rule {
+    width: 74px;
+    height: 1px;
+    margin: 25px auto 17px;
+    background: var(--gold);
+    opacity: .55;
+}
+
+.success-footer {
+    margin: 0;
+    color: rgba(247,242,232,.52);
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+}
+
+.success-return {
+    margin-top: 25px;
+    min-width: 170px;
+}
+
+.success-confetti {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    left: calc(50% + var(--x));
+    top: 36%;
+    display: block;
+    opacity: 0;
+    animation: successConfetti 1.05s cubic-bezier(.2,.7,.3,1) forwards;
+    animation-delay: calc(var(--i) * 35ms);
+}
+
+.confetti-piece.diamond {
+    width: 7px;
+    height: 7px;
+    background: var(--gold);
+    transform: rotate(45deg);
+}
+
+.confetti-piece.dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #f7f2e8;
+}
+
+.confetti-piece.dash {
+    width: 13px;
+    height: 2px;
+    background: var(--gold);
+}
+
+@keyframes successPop {
+    0% { transform: scale(.2) rotate(-15deg); opacity: 0; }
+    70% { transform: scale(1.12) rotate(3deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes successSpin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes successConfetti {
+    0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.4); }
+    12% { opacity: 1; }
+    100% { opacity: 0; transform: translate(calc(var(--x) * 1.7), 190px) rotate(280deg) scale(1); }
+}
+
+@media (max-width: 560px) {
+    .success-modal {
+        padding: 15px;
+    }
+
+    .success-dialog {
+        padding: 42px 23px 27px;
+    }
+
+    .success-dialog h2 {
+        font-size: 34px;
+    }
+
+    .success-message {
+        font-size: 13px;
     }
 }
 
-@media (max-width: 620px) {
-    .site-shell {
-        padding-left: 18px;
-        padding-right: 18px;
+@media (prefers-reduced-motion: reduce) {
+    .success-modal,
+    .success-dialog,
+    .success-emoji {
+        transition: none;
+        animation: none;
     }
 
-    .request-section {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 34px;
-    }
-
-    .form-wrap {
-        padding: 20px;
-    }
-
-    .form-grid {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 20px;
+    .success-orbit::before,
+    .success-confetti,
+    .confetti-piece {
+        animation: none !important;
     }
 }

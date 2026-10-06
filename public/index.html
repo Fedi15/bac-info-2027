@@ -115,7 +115,7 @@
                 <div class="section-kicker" data-i18n="subjectsKicker">Ce que l'on peut travailler</div>
                 <h2 data-i18n="subjectsTitle">Un programme qui<br><em>s'adapte à ta section.</em></h2>
             </div>
-            <p data-i18n="subjectsLead">Je regroupe les sections qui suivent le même programme : Économie & Gestion d'un côté, puis Mathématiques, Technique et Sciences Expérimentales ensemble.</p>
+            <p data-i18n="subjectsLead">La matière Informatique n'est pas la même pour chaque section. Je me concentre sur les notions réellement utiles à ton programme.</p>
         </div>
 
         <div class="bac-track-grid">
@@ -132,7 +132,7 @@
             <article class="bac-track shared-program">
                 <div class="track-top">
                     <span>02</span>
-                    <strong data-i18n="sharedLabel">BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES EXPÉRIMENTALES</strong>
+                    <strong data-i18n="sharedLabel">BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES</strong>
                 </div>
                 <h3 data-i18n="sharedTitle">Python &amp; algorithmique</h3>
                 <p data-i18n="sharedText">Un même programme de travail pour les trois sections : Python et algorithmique.</p>
@@ -235,6 +235,29 @@
             </form>
         </div>
     </section>
+
+
+    <div class="success-modal" id="successModal" aria-hidden="true">
+        <div class="success-backdrop" data-success-close></div>
+        <div class="success-dialog" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+            <button class="success-close" type="button" aria-label="Close" data-success-close>×</button>
+            <div class="success-orbit" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div class="success-kicker" data-success-kicker>DEMANDE REÇUE</div>
+            <div class="success-emoji" aria-hidden="true">✓</div>
+            <h2 id="successTitle" data-success-title>إن شاء الله ADMIS !</h2>
+            <p class="success-name" id="successName"></p>
+            <p class="success-message" data-success-message>
+                Ta demande a bien été reçue. Je te contacterai par email pour confirmer les détails et organiser la séance.
+            </p>
+            <div class="success-rule" aria-hidden="true"></div>
+            <p class="success-footer" data-success-footer>À bientôt — FEDI GHANMI (TORBAGA)</p>
+            <button class="btn primary success-return" type="button" data-success-close data-success-return>
+                Retour au site
+            </button>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-inner">
@@ -356,6 +379,89 @@ const optionLabels = {
     }
 };
 
+
+function updateSuccessModal(lang, name){
+    const modal = document.getElementById("successModal");
+    const title = modal.querySelector("[data-success-title]");
+    const kicker = modal.querySelector("[data-success-kicker]");
+    const message = modal.querySelector("[data-success-message]");
+    const footer = modal.querySelector("[data-success-footer]");
+    const returnBtn = modal.querySelector("[data-success-return]");
+    const nameEl = document.getElementById("successName");
+
+    const copy = {
+        fr: {
+            kicker:"DEMANDE REÇUE",
+            title:"إن شاء الله ADMIS !",
+            message:"Ta demande a bien été reçue. Je te contacterai par email pour confirmer les détails et organiser la séance.",
+            footer:"À bientôt — FEDI GHANMI (TORBAGA)",
+            returnBtn:"Retour au site"
+        },
+        en: {
+            kicker:"REQUEST RECEIVED",
+            title:"إن شاء الله ADMIS !",
+            message:"Your request has been received. I’ll contact you by email to confirm the details and arrange the lesson.",
+            footer:"See you soon — FEDI GHANMI (TORBAGA)",
+            returnBtn:"Back to the site"
+        },
+        ar: {
+            kicker:"تم استلام الطلب",
+            title:"إن شاء الله ناجح !",
+            message:"تم استلام طلبك بنجاح. سأتواصل معك عبر البريد الإلكتروني لتأكيد التفاصيل وتنظيم الحصة.",
+            footer:"إلى اللقاء — FEDI GHANMI (TORBAGA)",
+            returnBtn:"العودة إلى الموقع"
+        }
+    }[lang] || null;
+
+    if(!copy) return;
+    kicker.textContent = copy.kicker;
+    title.textContent = copy.title;
+    message.textContent = copy.message;
+    footer.textContent = copy.footer;
+    returnBtn.textContent = copy.returnBtn;
+    nameEl.textContent = name ? (lang === "ar" ? `برافو ${name}` : `Bravo ${name}.`) : "";
+}
+
+function launchSuccessConfetti(){
+    const modal = document.getElementById("successModal");
+    const old = modal.querySelector(".success-confetti");
+    if(old) old.remove();
+
+    const layer = document.createElement("div");
+    layer.className = "success-confetti";
+    const shapes = ["diamond","dot","dash","diamond","dot","dash","dot","diamond"];
+    shapes.forEach((shape, i)=>{
+        const piece = document.createElement("span");
+        piece.className = `confetti-piece ${shape}`;
+        piece.style.setProperty("--i", i);
+        piece.style.setProperty("--x", `${(i - 3.5) * 22}px`);
+        layer.appendChild(piece);
+    });
+    modal.appendChild(layer);
+}
+
+function openSuccessModal(name){
+    const modal = document.getElementById("successModal");
+    const lang = document.documentElement.lang || "fr";
+    updateSuccessModal(lang, name);
+    launchSuccessConfetti();
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+
+    requestAnimationFrame(()=>{
+        const closeBtn = modal.querySelector(".success-close");
+        closeBtn.focus();
+    });
+}
+
+function closeSuccessModal(){
+    const modal = document.getElementById("successModal");
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+}
+
 function translateOptions(lang){
     const labels = optionLabels[lang] || optionLabels.fr;
     Object.entries(labels).forEach(([id, values])=>{
@@ -380,6 +486,10 @@ function setLanguage(lang){
     });
 
     translateOptions(selected);
+    const modal = document.getElementById("successModal");
+    if(modal){
+        updateSuccessModal(selected, document.getElementById("successName")?.textContent || "");
+    }
     localStorage.setItem("bacInfoLang", selected);
 }
 
@@ -394,6 +504,17 @@ setLanguage(
         : (localStorage.getItem("bacInfoLang") || "fr")
 );
 const form = document.getElementById("leadForm");
+
+
+document.querySelectorAll("[data-success-close]").forEach(el=>{
+    el.addEventListener("click", closeSuccessModal);
+});
+
+document.addEventListener("keydown", event=>{
+    if(event.key === "Escape" && document.getElementById("successModal")?.classList.contains("is-open")){
+        closeSuccessModal();
+    }
+});
 
 form.addEventListener("submit", async event=>{
     event.preventDefault();
@@ -420,10 +541,11 @@ form.addEventListener("submit", async event=>{
 
         if(!response.ok) throw new Error("request");
 
+        const submittedName = String(data.full_name || "").trim();
         form.reset();
         translateOptions(lang);
-        success.style.display = "block";
-        success.scrollIntoView({behavior:"smooth",block:"center"});
+        success.style.display = "none";
+        openSuccessModal(submittedName);
     }catch(e){
         error.style.display = "block";
     }finally{
