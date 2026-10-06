@@ -214,13 +214,18 @@
                             <label for="email" data-i18n="emailLabel">Adresse e-mail *</label>
                             <input id="email" name="email" type="email" required maxlength="160" autocomplete="email">
                         </div>
-                        <div class="field">
-                            <label for="level" data-i18n="levelLabel">Niveau *</label>
+                        <div class="field full">
+                            <label for="level" data-i18n="levelLabel">Niveau / section *</label>
                             <select id="level" name="level" required>
                                 <option value>Choisir</option>
                                 <option>3ème année secondaire</option>
-                                <option>Bac</option>
+                                <option>Bac Économie & Gestion</option>
+                                <option>Bac Mathématiques</option>
+                                <option>Bac Technique</option>
+                                <option>Bac Sciences Expérimentales</option>
+                                <option>Bac Lettres</option>
                             </select>
+                            <div class="field-hint" data-i18n="levelHint">Choisis directement ton niveau ou ta section. Le Bac Informatique n'est pas proposé.</div>
                         </div>
                         <div class="field">
                             <label for="school" data-i18n="schoolLabel">Lycée / établissement</label>
@@ -233,19 +238,6 @@
                     <span class="step-label">02</span>
                     <h3 data-i18n="needTitle">Ta séance</h3>
                     <div class="form-grid">
-                        <div class="field">
-                            <label for="interest" data-i18n="interestLabel">Section *</label>
-                            <select id="interest" name="interest" required>
-                                <option value>Choisir</option>
-                                <option>Bac Économie & Gestion</option>
-                                <option>Bac Mathématiques</option>
-                                <option>Bac Technique</option>
-                                <option>Bac Sciences Expérimentales</option>
-                                <option>Bac Lettres</option>
-                            </select>
-                            <div class="field-hint" id="interestHint" data-i18n="interestHint">Économie : Access, Pandas et Python. Mathématiques, Technique et Sciences : Python et algorithmique. Bac Informatique et Bac Lettres : non proposés.</div>
-                        </div>
-
                         <div class="field">
                             <label for="lesson_location" data-i18n="locationLabel">Lieu de la séance *</label>
                             <select id="lesson_location" name="lesson_location" required>
@@ -336,10 +328,9 @@ const translations = {
         formKicker:"Première séance",formTitle:"Dis-moi ce<br><em>qui te bloque.</em>",
         formLead:"Quelques informations suffisent. Je te recontacte ensuite pour comprendre ton besoin et organiser la séance.",
         personalTitle:"Tes coordonnées",needTitle:"Ta séance",
-        nameLabel:"Nom et prénom *",phoneLabel:"Numéro de téléphone *",emailLabel:"Adresse e-mail *",levelLabel:"Niveau *",schoolLabel:"Lycée / établissement",
-        interestLabel:"Section *",interestHint:"Économie : Access, Pandas et Python. Mathématiques, Technique et Sciences : Python et algorithmique. Bac Informatique et Bac Lettres : non proposés.",
+        nameLabel:"Nom et prénom *",phoneLabel:"Numéro de téléphone *",emailLabel:"Adresse e-mail *",levelLabel:"Niveau / section *",levelHint:"Choisis directement ton niveau ou ta section. Le Bac Informatique n'est pas proposé.",schoolLabel:"Lycée / établissement",
         locationLabel:"Lieu de la séance *",mapLink:"Voir mon lieu sur Google Maps →",cityLabel:"Ville",
-        availabilityLabel:"Tes disponibilités *",monday:"Lun",tuesday:"Mar",wednesday:"Mer",thursday:"Jeu",friday:"Ven",saturday:"Sam",sunday:"Dim",fromLabel:"De",toLabel:"À",addSlot:"Ajouter ce créneau",availabilityHint:"Indique tes disponibilités si tu les connais déjà. Ce n’est pas obligatoire : tu peux aussi fixer l’heure plus tard.",selectedSlotsTitle:"Créneaux ajoutés",
+        availabilityLabel:"Tes disponibilités",monday:"Lun",tuesday:"Mar",wednesday:"Mer",thursday:"Jeu",friday:"Ven",saturday:"Sam",sunday:"Dim",fromLabel:"De",toLabel:"À",addSlot:"Ajouter ce créneau",availabilityHint:"Indique tes disponibilités si tu les connais déjà. Ce n’est pas obligatoire : tu peux aussi fixer l’heure plus tard.",selectedSlotsTitle:"Créneaux ajoutés",
         submit:"Demander ma séance",formNote:"Après ta demande, tu recevras un e-mail avec les informations utiles pour la suite de la séance. Vérifie aussi tes courriers indésirables.",
         success:"Demande envoyée. Merci. Ta demande a bien été reçue. Tu recevras un e-mail avec les prochaines informations.",error:"Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants.",
         footerRole:"Cours particuliers d'informatique",footerLine:"Chez moi · Chez toi · Sur rendez-vous"
@@ -371,10 +362,9 @@ const translations = {
         formKicker:"First lesson",formTitle:"Tell me what<br><em>you're struggling with.</em>",
         formLead:"A few details are enough. I will contact you to understand your needs and arrange the lesson.",
         personalTitle:"Your details",needTitle:"Your lesson",
-        nameLabel:"Full name *",phoneLabel:"Phone number *",levelLabel:"Level *",schoolLabel:"School / institution",
-        interestLabel:"Section *",interestHint:"Economics: Access, Pandas and Python. Mathematics, Technical and Experimental Sciences: Python and algorithms. Computer Science and Literature are not offered.",
+        nameLabel:"Full name *",phoneLabel:"Phone number *",emailLabel:"Email address *",levelLabel:"Level / section *",levelHint:"Choose your level or section directly. Bac Computer Science is not offered.",schoolLabel:"School / institution",
         locationLabel:"Lesson location *",mapLink:"View my teaching location on Google Maps →",cityLabel:"City",
-        availabilityLabel:"Your availability *",monday:"Mon",tuesday:"Tue",wednesday:"Wed",thursday:"Thu",friday:"Fri",saturday:"Sat",sunday:"Sun",fromLabel:"From",toLabel:"To",addSlot:"Add this time slot",availabilityHint:"Choose one or more days, set a time range, then add the slot. You can add several.",selectedSlotsTitle:"Added time slots",
+        availabilityLabel:"Your availability",monday:"Mon",tuesday:"Tue",wednesday:"Wed",thursday:"Thu",friday:"Fri",saturday:"Sat",sunday:"Sun",fromLabel:"From",toLabel:"To",addSlot:"Add this time slot",availabilityHint:"Choose one or more days, set a time range, then add the slot. You can add several.",selectedSlotsTitle:"Added time slots",
         submit:"Request my lesson",formNote:"After your request, you will receive an email with the next information. Please also check your spam folder.",
         success:"Request received. Thank you. You will receive an email with the next information.",error:"Unable to send the request right now. Please try again.",
         footerRole:"Private computer science lessons",footerLine:"At my place · At yours · By appointment"
@@ -406,10 +396,9 @@ const translations = {
         formKicker:"الحصة الأولى",formTitle:"قل لي ما الذي<br><em>يصعب عليك.</em>",
         formLead:"بعض المعلومات تكفي. سأتواصل معك لفهم حاجتك وتنظيم الحصة.",
         personalTitle:"معلوماتك",needTitle:"الحصة",
-        nameLabel:"الاسم واللقب *",phoneLabel:"رقم الهاتف *",emailLabel:"البريد الإلكتروني *",levelLabel:"المستوى *",schoolLabel:"المعهد / الثانوية",
-        interestLabel:"الشعبة *",interestHint:"اقتصاد وتصرف: Access وPandas وPython. رياضيات وتقنية وعلوم تجريبية: Python والخوارزميات. شعبة الإعلامية والآداب غير متوفرتين.",
+        nameLabel:"الاسم واللقب *",phoneLabel:"رقم الهاتف *",emailLabel:"البريد الإلكتروني *",levelLabel:"المستوى / الشعبة *",levelHint:"اختر مستواك أو شعبتك مباشرة. شعبة الإعلامية غير متوفرة.",schoolLabel:"المعهد / الثانوية",
         locationLabel:"مكان الحصة *",mapLink:"شاهد مكان التدريس على Google Maps →",cityLabel:"المدينة",
-        availabilityLabel:"الأوقات المناسبة *",monday:"الاثنين",tuesday:"الثلاثاء",wednesday:"الأربعاء",thursday:"الخميس",friday:"الجمعة",saturday:"السبت",sunday:"الأحد",fromLabel:"من",toLabel:"إلى",addSlot:"أضف هذا الوقت",availabilityHint:"اختر يوماً أو أكثر، حدد الفترة الزمنية، ثم أضف الموعد. يمكنك إضافة أكثر من فترة.",selectedSlotsTitle:"الأوقات المضافة",
+        availabilityLabel:"الأوقات المناسبة",monday:"الاثنين",tuesday:"الثلاثاء",wednesday:"الأربعاء",thursday:"الخميس",friday:"الجمعة",saturday:"السبت",sunday:"الأحد",fromLabel:"من",toLabel:"إلى",addSlot:"أضف هذا الوقت",availabilityHint:"اختر يوماً أو أكثر، حدد الفترة الزمنية، ثم أضف الموعد. يمكنك إضافة أكثر من فترة.",selectedSlotsTitle:"الأوقات المضافة",
         submit:"اطلب حصتي",formNote:"بعد إرسال الطلب، ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة. تحقق أيضاً من الرسائل غير المرغوب فيها.",
         success:"تم استلام طلبك. شكراً لك. ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة.",error:"تعذر إرسال الطلب حالياً. حاول مرة أخرى.",
         footerRole:"دروس خصوصية في الإعلامية",footerLine:"عندي · عندك · حسب الموعد"
@@ -418,18 +407,15 @@ const translations = {
 
 const optionLabels = {
     fr:{
-        level:["Choisir","3ème année secondaire","Bac"],
-        interest:["Choisir","Bac Économie & Gestion","Bac Mathématiques","Bac Technique","Bac Sciences Expérimentales","Bac Lettres"],
+        level:["Choisir","3ème année secondaire","Bac Économie & Gestion","Bac Mathématiques","Bac Technique","Bac Sciences Expérimentales","Bac Lettres"],
         location:["Choisir","Chez moi","Chez l'élève"]
     },
     en:{
-        level:["Choose","3rd year of secondary school","Bac"],
-        interest:["Choose","Bac Economics & Management","Bac Mathematics","Bac Technical","Bac Experimental Sciences","Bac Literature"],
+        level:["Choose","3rd year of secondary school","Bac Economics & Management","Bac Mathematics","Bac Technical","Bac Experimental Sciences","Bac Literature"],
         location:["Choose","At my place","At the student's place"]
     },
     ar:{
-        level:["اختر","السنة الثالثة ثانوي","باكالوريا"],
-        interest:["اختر","باكالوريا اقتصاد وتصرف","باكالوريا رياضيات","باكالوريا تقنية","باكالوريا علوم تجريبية","باكالوريا آداب"],
+        level:["اختر","السنة الثالثة ثانوي","باكالوريا اقتصاد وتصرف","باكالوريا رياضيات","باكالوريا تقنية","باكالوريا علوم تجريبية","باكالوريا آداب"],
         location:["اختر","عندي","عند التلميذ"]
     }
 };
@@ -474,17 +460,6 @@ setLanguage(
         : (localStorage.getItem("bacInfoLang") || "fr")
 );
 
-const interestSelect = document.getElementById("interest");
-const interestHint = document.getElementById("interestHint");
-
-function updateInterestState(){
-    const value = interestSelect.value;
-    const unsupported = value.includes("Lettres") || value.includes("Literature") || value.includes("آداب") || value.includes("Informatique") || value.includes("Computer Science") || value.includes("إعلامية");
-    interestHint.classList.toggle("warning", unsupported);
-}
-
-interestSelect.addEventListener("change", updateInterestState);
-updateInterestState();
 
 const slotLabels = {fr:{days:["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],remove:"Supprimer"},en:{days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],remove:"Remove"},ar:{days:["الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت","الأحد"],remove:"حذف"}};
 let availabilitySlots = [];
@@ -583,7 +558,6 @@ form.addEventListener("submit", async event=>{
         availabilitySlots = [];
         renderAvailabilitySlots();
         translateOptions(lang);
-        updateInterestState();
         success.style.display = "block";
         success.scrollIntoView({behavior:"smooth",block:"center"});
     }catch(e){

@@ -1,72 +1,111 @@
-# Bac Info 2027 — Private Tutoring
+# Bac Info 2027 — Private Tutoring — Cloudflare D1
 
-Website for Fedi Ghanmi (Torbaga)'s private computer science tutoring service.
+Website for **Fedi Ghanmi (Torbaga)**'s private Informatique tutoring service.
 
-## Positioning
+## Cloudflare architecture
 
-- One-to-one computer science lessons
-- Student can come to Fedi's home (`Chez moi`)
-- Fedi can travel to the student's home (`Chez l'élève`)
-- Target levels: 3ème année secondaire and Bac
-- FR / EN / AR
+- Cloudflare Workers — backend/API
+- Cloudflare D1 — SQLite database
+- Workers Static Assets — `public/`
+- `src/worker.js` — Worker entry point
+- `api/register.js` — public registration handler
+- `api/leads.js` — protected admin leads handler
+- `public/admin.html` — simple admin viewer
 
-## Bac sections and programmes
+The project no longer uses Hatchable or PostgreSQL. D1 is SQLite-based and the Worker uses the native `env.DB.prepare(...).bind(...).run()` API.
 
-The site presents the five relevant Bac sections:
+## Form structure
 
-- **Bac Économie & Gestion** — Access, Pandas and Python
-- **Bac Mathématiques** — Python and algorithmique
-- **Bac Technique** — Python and algorithmique
-- **Bac Sciences Expérimentales** — same Informatique programme as Mathématiques and Technique
-- **Bac Lettres** — Informatique not offered
+The student chooses **one combined Level / Section** field:
 
-**Bac Informatique is explicitly not taught** and is not available as a request-form option.
+- 3ème année secondaire
+- Bac Économie & Gestion
+- Bac Mathématiques
+- Bac Technique
+- Bac Sciences Expérimentales
+- Bac Lettres
 
-## Availability
+Bac Informatique is not offered.
 
-Availability is no longer a simple morning/afternoon/evening checklist. The student can:
+Programmes:
 
-1. Select one or more days.
-2. Choose a start and end time.
-3. Add the time slot.
-4. Add multiple different slots if needed.
+- **Économie & Gestion:** Access, Pandas, Python
+- **Mathématiques + Technique + Sciences Expérimentales:** Python, algorithmique
+- **Lettres:** Informatique not offered
 
-The resulting weekly availability is stored in the existing `availability` text column.
+City is fixed to **Sfax** and is not editable.
 
-## Form and email
+Availability is optional. A student can add multiple day/time slots, remove individual slots, or leave availability empty and arrange the time later.
 
-The request form collects:
+## Create the D1 database
 
-- Full name
-- Phone
-- Email
-- Level
-- School / institution
-- Bac section
-- Lesson location
-- City / area
-- Multiple availability slots
+Install/authenticate Wrangler if needed, then create the database:
 
-The form displays a post-request note explaining that the student will receive an email with the next information. The project currently **collects the email address and stores it in the database**; an external email provider / sending workflow is still required if the site should automatically send that email after submission.
+```powershell
+npx wrangler login
+npx wrangler d1 create bac-info-2027
+```
 
-## Structure
+Cloudflare will return a `database_id`. Put that ID into `wrangler.toml`:
 
-- `public/index.html` — main landing page and request form
-- `public/lang.html` — language selection page
-- `public/style.css` — shared main-site styles
-- `api/register.js` — public lead registration endpoint
-- `api/leads.js` — admin lead endpoint
-- `pages/admin.js` — admin dashboard
-- `migrations/002_private_lesson_location.sql` — lesson location
-- `migrations/003_private_tutoring_updates.sql` — availability/location indexes
-- `migrations/004_email.sql` — email address column and index
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "bac-info-2027"
+database_id = "YOUR_REAL_D1_DATABASE_ID"
+```
+
+Do not commit a real secret token to Git.
+
+## Create the schema
+
+For the remote/production database:
+
+```powershell
+npx wrangler d1 execute bac-info-2027 --remote --file=migrations/001_d1_schema.sql
+```
+
+For local development:
+
+```powershell
+npx wrangler d1 execute bac-info-2027 --local --file=migrations/001_d1_schema.sql
+```
+
+## Admin token
+
+Create the admin token as a Worker secret:
+
+```powershell
+npx wrangler secret put ADMIN_TOKEN
+```
+
+Then open `/admin.html` and enter the same token. The API will reject requests without the correct Bearer token.
+
+## Local development
+
+```powershell
+npx wrangler dev
+```
+
+Then open the local URL shown by Wrangler.
+
+## Deploy
+
+```powershell
+npx wrangler deploy
+```
+
+The Worker serves the static site from `public/` and handles:
+
+- `POST /api/register`
+- `GET /api/leads`
+
+## Email note
+
+The form collects the student's email and the site explains that follow-up information will be sent by email. Cloudflare D1 stores the request; it does **not** itself send email. If you want an automatic email immediately after a request, connect an email provider such as Resend through a Worker secret/API integration.
 
 ## Google Maps
 
-The public site links to the teaching location:
+Teaching location:
 
 https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7
-
-## Database
-
-Run migrations `002`, `003`, and `004` on an existing deployment before using the new fields.
