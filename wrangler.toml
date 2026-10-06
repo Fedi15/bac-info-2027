@@ -1,4 +1,4 @@
-name = "bac-info-2027"
+name = "etude-bac"
 main = "src/worker.js"
 compatibility_date = "2026-10-06"
 
