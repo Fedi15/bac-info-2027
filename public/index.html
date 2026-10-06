@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bac Informatique 2027 — Fedi Ghanmi</title>
+<meta name="description" content="Préparation Bac Informatique : cours, exercices, sujets corrigés et accompagnement.">
+<style>
+:root{--bg:#e9e5dc;--ink:#11110f;--paper:#f5f2ea;--acid:#d7ff3f;--red:#ff4b2b;--muted:#6c6a63;--line:#1b1b18;--soft:#d5d0c5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.35}
+a{color:inherit;text-decoration:none}.wrap{max-width:1180px;margin:auto;padding:0 28px}
+nav{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--ink)}
+.logo{font-weight:950;letter-spacing:-.06em;font-size:20px}.logo span{background:var(--ink);color:var(--acid);padding:3px 7px;margin-left:3px}.nav-cta{border:2px solid var(--ink);padding:10px 15px;font-weight:900;text-transform:uppercase;font-size:12px;box-shadow:4px 4px 0 var(--ink)}
+.hero{padding:42px 0 76px;display:grid;grid-template-columns:1.25fr .75fr;gap:42px;align-items:stretch}
+.eyebrow{font-size:12px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;border-left:5px solid var(--red);padding-left:10px}
+h1{font-size:clamp(64px,10vw,138px);line-height:.78;margin:22px 0 28px;letter-spacing:-.09em;text-transform:uppercase}
+h1 span{display:inline-block;background:var(--ink);color:var(--acid);padding:5px 13px 12px;transform:rotate(-2deg)}
+.lead{font-size:19px;max-width:620px;color:#3e3d38}.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}.btn{border:2px solid var(--ink);padding:15px 20px;font-weight:950;cursor:pointer;font-size:13px;text-transform:uppercase;letter-spacing:.02em}.primary{background:var(--ink);color:var(--acid);box-shadow:5px 5px 0 var(--red)}.secondary{background:var(--paper);box-shadow:5px 5px 0 var(--ink)}
+.hero-card{background:var(--ink);color:white;border:2px solid var(--ink);padding:22px;position:relative;box-shadow:12px 12px 0 var(--red);overflow:hidden}
+.hero-card:before{content:"BAC / 27";position:absolute;right:-25px;top:18px;font-size:72px;font-weight:950;letter-spacing:-.08em;color:#252521;transform:rotate(90deg)}
+.code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:14px;line-height:1.8;border:1px solid #55554d;padding:18px;margin-top:55px;background:#171714}.blue{color:var(--acid)}.green{color:#fff}.muted{color:#85847c}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:22px;border-top:1px solid #55554d}.stat{padding:14px 10px;border-right:1px solid #55554d}.stat:last-child{border:0}.stat b{display:block;font-size:18px}.stat small{color:#aaa89f}
+section{padding:80px 0}.section-title{font-size:52px;letter-spacing:-.065em;line-height:.9;margin:0 0 14px;text-transform:uppercase}.section-sub{color:var(--muted);margin:0 0 32px;max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:2px solid var(--ink);border-left:2px solid var(--ink)}.feature{background:var(--paper);border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:28px;min-height:180px;position:relative}.feature:nth-child(3n){background:var(--acid)}.feature:nth-child(2n){background:#d9d5cb}.icon{font-family:ui-monospace;font-size:13px;font-weight:950;border:2px solid var(--ink);display:inline-block;padding:4px 7px}.feature h3{font-size:25px;letter-spacing:-.04em;margin:28px 0 8px}.feature p{color:#55534d;margin:0;font-size:14px;max-width:390px}
+.kit{background:var(--red);color:white;border:2px solid var(--ink);padding:34px;display:flex;align-items:center;justify-content:space-between;gap:25px;box-shadow:10px 10px 0 var(--ink);position:relative;overflow:hidden}.kit:after{content:"FREE / KIT / 2027";position:absolute;font-size:65px;font-weight:950;right:-15px;bottom:-12px;opacity:.12;transform:rotate(-8deg)}.kit h2{font-size:42px;letter-spacing:-.06em;margin:0 0 8px}.kit p{margin:0;max-width:580px}.kit .btn{background:var(--acid);color:var(--ink);position:relative;z-index:1}
+#inscription{scroll-margin-top:25px}.form-wrap{max-width:820px;background:var(--paper);border:2px solid var(--ink);padding:34px;margin:auto;box-shadow:10px 10px 0 var(--ink)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.08em}input,select{width:100%;background:transparent;color:var(--ink);border:0;border-bottom:2px solid var(--ink);border-radius:0;padding:13px 2px;font:inherit}input:focus,select:focus{outline:0;border-bottom-color:var(--red)}.form-note{font-size:12px;color:var(--muted);margin-top:12px}.success{display:none;background:var(--acid);border:2px solid var(--ink);padding:18px;margin-top:18px;font-weight:800}.error{display:none;background:#ffd5ce;border:2px solid var(--red);padding:18px;margin-top:18px;color:#8e2415}
+footer{border-top:2px solid var(--ink);padding:30px 0;color:#55534d;font-size:12px;text-transform:uppercase;font-weight:800}
+@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:38px}.hero-card{display:none}.grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.kit{flex-direction:column;align-items:flex-start}.nav-cta{padding:9px 11px}h1{font-size:67px}.section-title{font-size:42px}}
+/* PREMIUM REFINED SYSTEM */
+:root{--bg:#0b0b0c;--ink:#f4f0e8;--paper:#121214;--acid:#d8b56a;--red:#b88b45;--muted:#a6a19a;--line:#2a2927;--soft:#1b1a19}
+body{background:radial-gradient(circle at 78% 0%,rgba(216,181,106,.12),transparent 34rem),#0b0b0c;color:var(--ink);font-family:Inter,Arial,sans-serif}
+.wrap{max-width:1240px}nav{height:88px;border-bottom:1px solid rgba(216,181,106,.22)}
+.logo{font-size:17px;letter-spacing:.12em;text-transform:uppercase}.logo span{background:none;color:var(--acid);padding:0;border:0}
+.nav-cta{border:1px solid rgba(216,181,106,.5);border-radius:999px;padding:11px 18px;box-shadow:none;color:var(--ink);letter-spacing:.08em}
+.hero{padding:88px 0 105px;grid-template-columns:1.15fr .85fr;gap:70px}.eyebrow{color:var(--acid);border-left:0;padding-left:0;letter-spacing:.2em}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:clamp(65px,9vw,125px);line-height:.82;letter-spacing:-.075em;text-transform:none}
+h1 span{background:none;color:var(--acid);padding:0;transform:none;font-style:italic}.lead{color:#bdb8b0;font-size:18px;max-width:560px}.actions{margin-top:38px}.btn{border-radius:999px;border:1px solid rgba(216,181,106,.45);padding:14px 22px;text-transform:none;letter-spacing:.03em;font-weight:700}.primary{background:var(--acid);color:#111;box-shadow:none;border-color:var(--acid)}.secondary{background:transparent;color:var(--ink);box-shadow:none}
+.hero-card{background:linear-gradient(145deg,#171614,#0e0e0f);border:1px solid rgba(216,181,106,.3);border-radius:2px;padding:28px;box-shadow:0 30px 100px rgba(0,0,0,.45)}.hero-card:before{content:"27";right:18px;top:12px;font-family:Georgia,serif;font-size:100px;font-weight:400;color:rgba(216,181,106,.07);transform:none}
+.code{background:#0a0a0b;border:1px solid #302e2b;border-radius:2px;color:#d8d2c8;direction:ltr;text-align:left;unicode-bidi:plaintext;white-space:normal}.blue{color:var(--acid)}.green{color:#e8e0d3}.muted{color:#6f6b65}
+#langs{display:flex;align-items:center;gap:4px;padding:4px;border:1px solid rgba(216,181,106,.24);border-radius:999px;background:rgba(255,255,255,.025)}
+.lang{appearance:none;background:transparent;color:#77736c;border:1px solid transparent;border-radius:999px;padding:7px 10px;font:inherit;font-size:10px;font-weight:800;letter-spacing:.12em;cursor:pointer;transition:all .2s ease}.lang:hover{color:var(--ink);border-color:rgba(216,181,106,.28)}.lang.active{background:var(--acid);color:#111;border-color:var(--acid)}
+html[dir="rtl"] .code{direction:ltr;text-align:left}.stats{gap:0;border-top:1px solid #34312c}.stat{border-right:1px solid #34312c}.stat b{font-family:Georgia,serif;font-weight:500}
+section{padding:105px 0}.section-title{font-family:Georgia,"Times New Roman",serif;font-size:58px;font-weight:500;letter-spacing:-.055em;text-transform:none}.section-sub{color:#98938c}
+.grid{grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid #2b2926;background:#2b2926}.feature{background:#111112;border:0;border-radius:0;min-height:220px;padding:30px}.feature:nth-child(3n),.feature:nth-child(2n){background:#111112}.feature:hover{background:#181715}.icon{color:var(--acid);border:0;padding:0;font-size:12px;letter-spacing:.12em}.feature h3{font-family:Georgia,serif;font-size:28px;font-weight:500}.feature p{color:#918d86}
+.kit{background:linear-gradient(105deg,#171513,#101011);border:1px solid rgba(216,181,106,.3);border-radius:2px;box-shadow:none;padding:42px}.kit:after{color:var(--acid);opacity:.06}.kit h2{font-family:Georgia,serif;font-size:45px;font-weight:500}.kit p{color:#aaa49c}.kit .btn{background:var(--acid);color:#111}
+.form-wrap{background:#111112;border:1px solid #302e2a;border-radius:2px;box-shadow:0 25px 80px rgba(0,0,0,.3)}label{color:#aaa49b}input,select{color:var(--ink);border-bottom:1px solid #45413a}input:focus,select:focus{outline:0;border-bottom-color:var(--acid)}.success{background:#182018;border:1px solid #4e6448;color:#dce8d8}.error{background:#241615;border:1px solid #71413a;color:#f1d7d2}
+footer{border-top:1px solid rgba(216,181,106,.2);color:#77736c}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><div class="logo">BAC <span>INFO</span> 2027</div><div style="display:flex;align-items:center;gap:16px"><div id="langs" style="display:flex;gap:6px"><button class="lang active" data-lang="fr">FR</button><button class="lang" data-lang="en">EN</button><button class="lang" data-lang="ar">AR</button></div><a class="nav-cta" href="#inscription" data-i18n="nav">S'inscrire</a></div></nav>
+<header class="hero">
+<div>
+<div class="eyebrow" data-i18n="eyebrow">Préparation Bac Informatique 2027</div>
+<h1 data-i18n="heroTitle">Comprendre.<br><span>Pratiquer.</span><br>Réussir.</h1>
+<p class="lead" data-i18n="heroLead">Des séances d'étude en présentiel chez moi pour progresser en informatique et préparer efficacement le Bac.</p>
+<div class="actions"><a class="btn primary" href="#inscription" data-i18n="heroCta">Demander une séance</a><a class="btn secondary" href="#programme" data-i18n="programCta">Voir les séances</a></div>
+</div>
+<div class="hero-card">
+<div class="code"><span class="muted">// objectif</span><br><span class="blue">const</span> objectif = <span class="green">"Bac Informatique"</span>;<br><span class="blue">const</span> methode = [<span class="green">"cours"</span>, <span class="green">"exercices"</span>, <span class="green">"sujets"</span>];<br><br><span class="muted">// progression</span><br><span class="blue">prepare</span>(objectif, methode);</div>
+<div class="stats"><div class="stat"><b>Cours</b><small>clairs & structurés</small></div><div class="stat"><b>Exercices</b><small>progressifs</small></div><div class="stat"><b>Bac</b><small>sujets corrigés</small></div></div>
+</div>
+</header>
+<section id="programme">
+<h2 class="section-title" data-i18n="programTitle">Les séances</h2>
+<p class="section-sub" data-i18n="programLead">Des séances d'étude en présentiel, chez moi, avec un travail adapté au niveau de chaque élève.</p>
+<div class="grid">
+<div class="feature"><div class="icon">01</div><h3 data-i18n="f1t">Cours & explications</h3><p data-i18n="f1p">Comprendre les notions du programme avec des explications claires.</p></div>
+<div class="feature"><div class="icon">02</div><h3 data-i18n="f2t">Exercices</h3><p data-i18n="f2p">Pratiquer pendant la séance et corriger les difficultés.</p></div>
+<div class="feature"><div class="icon">03</div><h3 data-i18n="f3t">Préparation Bac</h3><p data-i18n="f3p">Travailler les méthodes et les sujets utiles pour l'épreuve.</p></div>
+</div>
+</section>
+<section>
+<div class="kit"><div><h2 data-i18n="kitTitle">Une séance commence ici.</h2><p data-i18n="kitText">Laisse tes coordonnées, indique ton niveau et tes disponibilités. Je te contacte pour organiser la séance.</p></div><a class="btn" href="#inscription" data-i18n="kitCta">Choisir mes disponibilités</a></div>
+</section>
+<section id="inscription">
+<div class="form-wrap">
+<div class="eyebrow" data-i18n="formEyebrow">Première étape</div><h2 class="section-title" data-i18n="formTitle">Réserve ta séance d'étude</h2>
+<p class="section-sub" data-i18n="formLead">Laisse tes coordonnées et tes disponibilités. Je te contacte ensuite pour convenir de la séance.</p>
+<form id="leadForm">
+<div class="form-grid">
+<div class="field"><label for="full_name" data-i18n="nameLabel">Nom et prénom *</label><input id="full_name" name="full_name" required maxlength="120"></div>
+<div class="field"><label for="phone" data-i18n="phoneLabel">Numéro de téléphone *</label><input id="phone" name="phone" required maxlength="30" inputmode="tel"></div>
+<div class="field"><label for="level" data-i18n="levelLabel">Niveau *</label><select id="level" name="level" required><option value="">Choisir</option><option>Bac Informatique</option><option>4ème année secondaire</option><option>Autre</option></select></div>
+<div class="field"><label for="school" data-i18n="schoolLabel">Lycée</label><input id="school" name="school" maxlength="150"></div>
+<div class="field"><label for="city" data-i18n="cityLabel">Ville / zone</label><input id="city" name="city" maxlength="100"></div>
+<div class="field"><label for="availability" data-i18n="availabilityLabel">Disponibilité</label><select id="availability" name="availability"><option value="">Choisir</option><option>Matin</option><option>Après-midi</option><option>Soir</option><option>Week-end</option></select></div>
+<div class="field full"><label for="interest" data-i18n="interestLabel">Section à étudier *</label><select id="interest" name="interest" required><option value="">Choisir</option><option>Économique</option><option>Technique</option><option>Mathématiques</option><option>Sciences</option></select></div>
+</div>
+<button class="btn primary" style="width:100%;margin-top:20px" id="submitBtn" data-i18n="submit">Envoyer ma demande</button>
+<div class="form-note" data-i18n="formNote">Tes informations servent uniquement à organiser les séances et à te recontacter.</div>
+<div class="success" id="success" data-i18n="success">Demande envoyée. Merci. Je te recontacterai pour convenir de la séance.</div>
+<div class="error" id="error" data-i18n="error">Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants.</div>
+</form>
+</div>
+</section>
+<footer><div class="wrap" style="padding:0">Fedi Ghanmi — Professeur / Formateur en Informatique · Préparation Bac Informatique</div></footer>
+</div>
+<script>
+const translations={
+fr:{nav:"S'inscrire",eyebrow:"Préparation Bac Informatique 2027",heroTitle:"Comprendre.<br><span>Pratiquer.</span><br>Réussir.",heroLead:"Des séances d'étude en présentiel chez moi pour progresser en informatique et préparer efficacement le Bac.",heroCta:"Demander une séance",programCta:"Voir les séances",programTitle:"Les séances",programLead:"Des séances d'étude en présentiel, chez moi, avec un travail adapté au niveau de chaque élève.",f1t:"Cours & explications",f1p:"Comprendre les notions du programme avec des explications claires.",f2t:"Exercices",f2p:"Pratiquer pendant la séance et corriger les difficultés.",f3t:"Préparation Bac",f3p:"Travailler les méthodes et les sujets utiles pour l'épreuve.",kitTitle:"Une séance commence ici.",kitText:"Laisse tes coordonnées, indique ton niveau et tes disponibilités. Je te contacte pour organiser la séance.",kitCta:"Choisir mes disponibilités",formEyebrow:"Première étape",formTitle:"Réserve ta séance d'étude",formLead:"Laisse tes coordonnées et tes disponibilités. Je te contacte ensuite pour convenir de la séance.",nameLabel:"Nom et prénom *",phoneLabel:"Numéro de téléphone *",levelLabel:"Niveau *",schoolLabel:"Lycée",cityLabel:"Ville / zone",availabilityLabel:"Disponibilité",interestLabel:"Section à étudier *",submit:"Envoyer ma demande",formNote:"Tes informations servent uniquement à organiser les séances et à te recontacter.",success:"Demande envoyée. Merci. Je te recontacterai pour convenir de la séance.",error:"Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants."},
+en:{nav:"Register",eyebrow:"Bac Informatique 2027 Preparation",heroTitle:"Understand.<br><span>Practice.</span><br>Succeed.",heroLead:"In-person study sessions at my home to improve your computer science skills and prepare effectively for the Bac.",heroCta:"Request a session",programCta:"View sessions",programTitle:"The sessions",programLead:"In-person study sessions at my home, adapted to each student's level and needs.",f1t:"Lessons & explanations",f1p:"Understand the program with clear and structured explanations.",f2t:"Exercises",f2p:"Practice during the session and work through difficulties.",f3t:"Bac preparation",f3p:"Work on methods and useful exam subjects.",kitTitle:"Your first session starts here.",kitText:"Leave your details, level and availability. I will contact you to arrange the session.",kitCta:"Choose my availability",formEyebrow:"First step",formTitle:"Request a study session",formLead:"Leave your contact details and availability. I will contact you to arrange the session.",nameLabel:"Full name *",phoneLabel:"Phone number *",levelLabel:"Level *",schoolLabel:"School",cityLabel:"City / area",availabilityLabel:"Availability",interestLabel:"Study section *",submit:"Send my request",formNote:"Your information is only used to arrange sessions and contact you.",success:"Request sent. Thank you. I will contact you to arrange the session.",error:"Unable to send your request right now. Please try again."},
+ar:{nav:"التسجيل",eyebrow:"تحضير باكالوريا الإعلامية 2027",heroTitle:"افهم.<br><span>طبّق.</span><br>وانجح.",heroLead:"حصص دراسة حضورية في منزلي لمساعدتك على تطوير مستواك في الإعلامية والاستعداد للباكالوريا.",heroCta:"اطلب حصة",programCta:"شاهد الحصص",programTitle:"الحصص",programLead:"حصص دراسة حضورية في منزلي، مع برنامج يتناسب مع مستوى كل تلميذ.",f1t:"دروس وشرح",f1p:"فهم دروس البرنامج بطريقة واضحة ومنظمة.",f2t:"تمارين",f2p:"التدرب أثناء الحصة ومعالجة الصعوبات.",f3t:"تحضير الباك",f3p:"العمل على المنهجيات والمواضيع المهمة للامتحان.",kitTitle:"حصتك الأولى تبدأ من هنا.",kitText:"اترك معلوماتك ومستواك والأوقات المناسبة لك، وسأتواصل معك لتحديد الحصة.",kitCta:"اختر أوقاتك",formEyebrow:"الخطوة الأولى",formTitle:"اطلب حصة دراسة",formLead:"اترك معلومات الاتصال والأوقات المناسبة لك، وسأتواصل معك لتحديد الحصة.",nameLabel:"الاسم واللقب *",phoneLabel:"رقم الهاتف *",levelLabel:"المستوى *",schoolLabel:"المعهد / الثانوية",cityLabel:"المدينة / المنطقة",availabilityLabel:"الأوقات المناسبة",interestLabel:"الشعبة التي تريد دراستها *",submit:"إرسال الطلب",formNote:"تُستعمل معلوماتك فقط لتنظيم الحصص والتواصل معك.",success:"تم إرسال طلبك. شكراً لك، سأتواصل معك لتحديد الحصة.",error:"تعذر إرسال الطلب حالياً. حاول مرة أخرى."}};
+function setLanguage(lang){
+ const t=translations[lang]||translations.fr;
+ document.documentElement.lang=lang;
+ document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+ document.querySelectorAll('[data-i18n]').forEach(el=>{if(t[el.dataset.i18n])el.innerHTML=t[el.dataset.i18n]});
+ document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+ localStorage.setItem('bacInfoLang',lang);
+}
+document.querySelectorAll('.lang').forEach(b=>b.addEventListener('click',()=>setLanguage(b.dataset.lang)));
+const optionLabels={
+fr:{choose:"Choisir",economic:"Économique",technical:"Technique",math:"Mathématiques",science:"Sciences",bac:"Bac Informatique",fourth:"4ème année secondaire",other:"Autre",morning:"Matin",afternoon:"Après-midi",evening:"Soir",weekend:"Week-end"},
+en:{choose:"Choose",economic:"Economics",technical:"Technical",math:"Mathematics",science:"Science",bac:"Bac Informatique",fourth:"Final year of secondary school",other:"Other",morning:"Morning",afternoon:"Afternoon",evening:"Evening",weekend:"Weekend"},
+ar:{choose:"اختر",economic:"اقتصاد",technical:"تقنية",math:"رياضيات",science:"علوم",bac:"باكالوريا إعلامية",fourth:"السنة الرابعة ثانوي",other:"أخرى",morning:"الصباح",afternoon:"بعد الظهر",evening:"المساء",weekend:"نهاية الأسبوع"}};
+function translateOptions(lang){
+ const o=optionLabels[lang];
+ const maps={level:[o.choose,o.bac,o.fourth,o.other],availability:[o.choose,o.morning,o.afternoon,o.evening,o.weekend],interest:[o.choose,o.economic,o.technical,o.math,o.science]};
+ Object.entries(maps).forEach(([id,labels])=>document.querySelectorAll('#'+id+' option').forEach((el,i)=>el.textContent=labels[i]||el.textContent));
+}
+const originalSetLanguage=setLanguage;
+setLanguage=function(lang){originalSetLanguage(lang);translateOptions(lang)};
+const requestedLang=new URLSearchParams(location.search).get('lang');
+setLanguage(requestedLang&&translations[requestedLang]?requestedLang:(localStorage.getItem('bacInfoLang')||'fr'));
+const form=document.getElementById('leadForm');
+form.addEventListener('submit',async e=>{
+ e.preventDefault();
+ const btn=document.getElementById('submitBtn'), ok=document.getElementById('success'), err=document.getElementById('error');
+ btn.disabled=true; btn.textContent='Envoi...'; ok.style.display='none'; err.style.display='none';
+ const data=Object.fromEntries(new FormData(form).entries());
+ data.source=new URLSearchParams(location.search).get('source')||'qr-poster';
+ try{
+  const r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  if(!r.ok) throw new Error('request');
+  form.reset(); ok.style.display='block'; ok.scrollIntoView({behavior:'smooth',block:'center'});
+ }catch(x){err.style.display='block'}finally{btn.disabled=false;btn.textContent='Envoyer ma demande'}
+});
+</script>
+</body>
+</html>
