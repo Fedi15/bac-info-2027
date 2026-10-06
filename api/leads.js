@@ -28,7 +28,6 @@ export async function listLeads(request, env) {
       school,
       city,
       lesson_location,
-      availability,
       source,
       created_at
     FROM student_leads

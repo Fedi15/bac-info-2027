@@ -31,7 +31,6 @@ export async function registerLead(request, env) {
   const school = clean(body.school, 150);
   const city = "Sfax";
   const lesson_location = clean(body.lesson_location, 120);
-  const availability = clean(body.availability, 2000);
   const source = clean(body.source, 100);
 
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -47,8 +46,8 @@ export async function registerLead(request, env) {
 
   await env.DB.prepare(`
     INSERT INTO student_leads
-      (full_name, phone, email, level, school, city, lesson_location, availability, source)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (full_name, phone, email, level, school, city, lesson_location, source)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).bind(
     full_name,
     phone,
@@ -57,7 +56,6 @@ export async function registerLead(request, env) {
     school,
     city,
     lesson_location,
-    availability,
     source
   ).run();
 

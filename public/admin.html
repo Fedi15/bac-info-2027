@@ -21,7 +21,7 @@
   </div>
   <div id="status" class="status"></div>
   <div class="table-wrap"><table><thead><tr>
-    <th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Level / section</th><th>School</th><th>City</th><th>Location</th><th>Availability</th><th>Source</th>
+    <th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Level / section</th><th>School</th><th>City</th><th>Location</th><th>Source</th>
   </tr></thead><tbody id="rows"></tbody></table></div>
 </div>
 <script>
@@ -33,7 +33,7 @@ load.addEventListener("click",async()=>{
     const r=await fetch("/api/leads",{headers:{Authorization:`Bearer ${token.value}`}});
     const data=await r.json();
     if(!r.ok) throw new Error(data.error||"Request failed");
-    rows.innerHTML=data.leads.map(x=>`<tr><td>${esc(x.created_at)}</td><td>${esc(x.full_name)}</td><td>${esc(x.phone)}</td><td>${esc(x.email)}</td><td>${esc(x.level)}</td><td>${esc(x.school)}</td><td>${esc(x.city)}</td><td>${esc(x.lesson_location)}</td><td>${esc(x.availability)}</td><td>${esc(x.source)}</td></tr>`).join("");
+    rows.innerHTML=data.leads.map(x=>`<tr><td>${esc(x.created_at)}</td><td>${esc(x.full_name)}</td><td>${esc(x.phone)}</td><td>${esc(x.email)}</td><td>${esc(x.level)}</td><td>${esc(x.school)}</td><td>${esc(x.city)}</td><td>${esc(x.lesson_location)}</td><td>${esc(x.source)}</td></tr>`).join("");
     status.textContent=`${data.leads.length} request(s)`;
   }catch(e){status.textContent=e.message||"Unable to load requests.";}
 });

@@ -122,8 +122,33 @@
             <article class="bac-track eco">
                 <div class="track-top">
                     <span>01</span>
-                    <strong data-i18n="ecoLabel">BAC ÉCONOMIE & GESTION</strong>
+                    <strong data-i18n="ecoLabel">BAC ÉCONOMIE &amp; GESTION</strong>
                 </div>
+                <h3 data-i18n="ecoTitle">Access · Pandas · Python</h3>
+                <p data-i18n="ecoText">Travail ciblé sur le programme, notamment Access, Pandas et Python.</p>
+                <div class="track-tags"><span>Access</span><span>Pandas</span><span>Python</span></div>
+            </article>
+
+            <article class="bac-track shared-program">
+                <div class="track-top">
+                    <span>02</span>
+                    <strong data-i18n="sharedLabel">BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES</strong>
+                </div>
+                <h3 data-i18n="sharedTitle">Python &amp; algorithmique</h3>
+                <p data-i18n="sharedText">Un même programme de travail pour les trois sections : Python et algorithmique.</p>
+                <div class="track-tags"><span>Python</span><span>Algorithmique</span></div>
+            </article>
+
+            <article class="bac-track unavailable">
+                <div class="track-top">
+                    <span>03</span>
+                    <strong data-i18n="litLabel">BAC LETTRES</strong>
+                </div>
+                <h3 data-i18n="litTitle">Pas de matière Informatique</h3>
+                <p data-i18n="litText">La matière Informatique n'est pas proposée pour cette section.</p>
+                <div class="track-tags"><span data-i18n="notOffered">Non proposé</span></div>
+            </article>
+        </div>
                 <h3 data-i18n="ecoTitle">Informatique · Éco</h3>
                 <p data-i18n="ecoText">Travail ciblé sur le programme, avec notamment Access, les bases de données et Pandas.</p>
                 <div class="track-tags">
@@ -254,32 +279,7 @@
                             <input type="hidden" id="city" name="city" value="Sfax">
                         </div>
 
-                        <div class="field availability-field">
-                            <label data-i18n="availabilityLabel">Tes disponibilités</label>
-                            <div class="availability-builder" id="availabilityBuilder">
-                                <div class="day-options" id="dayOptions">
-                                    <label class="day-choice"><input type="checkbox" value="Lundi"><span data-i18n="monday">Lun</span></label>
-                                    <label class="day-choice"><input type="checkbox" value="Mardi"><span data-i18n="tuesday">Mar</span></label>
-                                    <label class="day-choice"><input type="checkbox" value="Mercredi"><span data-i18n="wednesday">Mer</span></label>
-                                    <label class="day-choice"><input type="checkbox" value="Jeudi"><span data-i18n="thursday">Jeu</span></label>
-                                    <label class="day-choice"><input type="checkbox" value="Vendredi"><span data-i18n="friday">Ven</span></label>
-                                    <label class="day-choice"><input type="checkbox" value="Samedi"><span data-i18n="saturday">Sam</span></label>
-                                    <label class="day-choice"><input type="checkbox" value="Dimanche"><span data-i18n="sunday">Dim</span></label>
-                                </div>
-                                <div class="time-row">
-                                    <div><span class="mini-label" data-i18n="fromLabel">De</span><input type="time" id="availabilityFrom"></div>
-                                    <div><span class="mini-label" data-i18n="toLabel">À</span><input type="time" id="availabilityTo"></div>
-                                    <button type="button" class="slot-add" id="addSlot" data-i18n="addSlot">Ajouter ce créneau</button>
-                                </div>
-                                <div id="slotMessage" class="slot-message" style="display:none" aria-live="polite"></div>
-                                <div class="selected-slots-wrap" id="selectedSlotsWrap">
-                                    <div class="selected-slots-title" data-i18n="selectedSlotsTitle">Créneaux ajoutés</div>
-                                    <div class="selected-slots" id="selectedSlots" aria-live="polite"></div>
-                                </div>
-                                <input type="hidden" id="availability" name="availability">
-                                <div class="field-hint" data-i18n="availabilityHint">Indique tes disponibilités si tu les connais déjà. Ce n’est pas obligatoire : tu peux aussi fixer l’heure plus tard.</div>
-                            </div>
-                        </div>
+                        <div class="field-hint email-followup" data-i18n="emailFollowup">Après ta demande, je te contacterai par email pour confirmer les informations et convenir de la séance.</div>
                     </div>
                 </div>
 
@@ -320,9 +320,7 @@ const translations = {
         subjectsKicker:"Ce que l'on peut travailler", subjectsTitle:"Un programme qui<br><em>s'adapte à ta section.</em>",
         subjectsLead:"Je regroupe les sections qui suivent le même programme : Économie & Gestion d'un côté, puis Mathématiques, Technique et Sciences Expérimentales ensemble.",
         ecoLabel:"BAC ÉCONOMIE & GESTION",ecoTitle:"Access · Pandas · Python",ecoText:"Travail ciblé sur le programme, notamment Access, Pandas et Python.",
-        mathLabel:"BAC MATHÉMATIQUES",mathTitle:"Python & algorithmique",mathText:"Même programme de travail que Technique et Sciences Expérimentales : Python et algorithmique.",
-        techLabel:"BAC TECHNIQUE",techTitle:"Python & algorithmique",techText:"Même programme de travail que Mathématiques et Sciences Expérimentales : Python et algorithmique.",
-        scienceLabel:"BAC SCIENCES EXPÉRIMENTALES",scienceTitle:"Python & algorithmique",scienceText:"Même matière et même programme de travail que Mathématiques et Technique : Python et algorithmique.",
+        sharedLabel:"BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES EXPÉRIMENTALES",sharedTitle:"Python & algorithmique",sharedText:"Un même programme de travail pour les trois sections : Python et algorithmique.",
         litLabel:"BAC LETTRES",litTitle:"Pas de matière Informatique",litText:"La matière Informatique n'est pas proposée pour cette section.",notOffered:"Non proposé",
         quote:"L'objectif n'est pas que je fasse l'exercice à ta place. L'objectif est que tu puisses le faire seul la prochaine fois.",
         formKicker:"Première séance",formTitle:"Dis-moi ce<br><em>qui te bloque.</em>",
@@ -330,8 +328,7 @@ const translations = {
         personalTitle:"Tes coordonnées",needTitle:"Ta séance",
         nameLabel:"Nom et prénom *",phoneLabel:"Numéro de téléphone *",emailLabel:"Adresse e-mail *",levelLabel:"Niveau / section *",levelHint:"Choisis directement ton niveau ou ta section. Le Bac Informatique n'est pas proposé.",schoolLabel:"Lycée / établissement",
         locationLabel:"Lieu de la séance *",mapLink:"Voir mon lieu sur Google Maps →",cityLabel:"Ville",
-        availabilityLabel:"Tes disponibilités",monday:"Lun",tuesday:"Mar",wednesday:"Mer",thursday:"Jeu",friday:"Ven",saturday:"Sam",sunday:"Dim",fromLabel:"De",toLabel:"À",addSlot:"Ajouter ce créneau",availabilityHint:"Indique tes disponibilités si tu les connais déjà. Ce n’est pas obligatoire : tu peux aussi fixer l’heure plus tard.",selectedSlotsTitle:"Créneaux ajoutés",
-        submit:"Demander ma séance",formNote:"Après ta demande, tu recevras un e-mail avec les informations utiles pour la suite de la séance. Vérifie aussi tes courriers indésirables.",
+        submit:"Demander ma séance",formNote:"Après ta demande, tu recevras un e-mail avec les informations utiles pour la suite de la séance. Vérifie aussi tes courriers indésirables.",emailFollowup:"Après ta demande, je te contacterai par email pour confirmer les informations et convenir de la séance.",
         success:"Demande envoyée. Merci. Ta demande a bien été reçue. Tu recevras un e-mail avec les prochaines informations.",error:"Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants.",
         footerRole:"Cours particuliers d'informatique",footerLine:"Chez moi · Chez toi · Sur rendez-vous"
     },
@@ -354,9 +351,7 @@ const translations = {
         subjectsKicker:"What we can work on", subjectsTitle:"A programme that<br><em>fits your section.</em>",
         subjectsLead:"I group the sections that follow the same programme: Economics & Management separately, then Mathematics, Technical and Experimental Sciences together.",
         ecoLabel:"BAC ECONOMICS & MANAGEMENT",ecoTitle:"Access · Pandas · Python",ecoText:"Focused work on the programme, especially Access, Pandas and Python.",
-        mathLabel:"BAC MATHEMATICS",mathTitle:"Python & algorithms",mathText:"Same programme as Technical and Experimental Sciences: Python and algorithms.",
-        techLabel:"BAC TECHNICAL",techTitle:"Python & algorithms",techText:"Same programme as Mathematics and Experimental Sciences: Python and algorithms.",
-        scienceLabel:"BAC EXPERIMENTAL SCIENCES",scienceTitle:"Python & algorithms",scienceText:"Same subject and programme as Mathematics and Technical: Python and algorithms.",
+        sharedLabel:"BAC MATHEMATICS · TECHNICAL · EXPERIMENTAL SCIENCES",sharedTitle:"Python & algorithms",sharedText:"One shared programme for all three sections: Python and algorithms.",
         litLabel:"BAC LITERATURE",litTitle:"No computer science subject",litText:"Computer science lessons are not offered for this section.",notOffered:"Not offered",
         quote:"The goal is not for me to do the exercise for you. The goal is for you to be able to do it yourself next time.",
         formKicker:"First lesson",formTitle:"Tell me what<br><em>you're struggling with.</em>",
@@ -364,8 +359,7 @@ const translations = {
         personalTitle:"Your details",needTitle:"Your lesson",
         nameLabel:"Full name *",phoneLabel:"Phone number *",emailLabel:"Email address *",levelLabel:"Level / section *",levelHint:"Choose your level or section directly. Bac Computer Science is not offered.",schoolLabel:"School / institution",
         locationLabel:"Lesson location *",mapLink:"View my teaching location on Google Maps →",cityLabel:"City",
-        availabilityLabel:"Your availability",monday:"Mon",tuesday:"Tue",wednesday:"Wed",thursday:"Thu",friday:"Fri",saturday:"Sat",sunday:"Sun",fromLabel:"From",toLabel:"To",addSlot:"Add this time slot",availabilityHint:"Choose one or more days, set a time range, then add the slot. You can add several.",selectedSlotsTitle:"Added time slots",
-        submit:"Request my lesson",formNote:"After your request, you will receive an email with the next information. Please also check your spam folder.",
+        submit:"Request my lesson",formNote:"After your request, you will receive an email with the next information. Please also check your spam folder.",emailFollowup:"After your request, I will contact you by email to confirm the details and arrange the lesson.",
         success:"Request received. Thank you. You will receive an email with the next information.",error:"Unable to send the request right now. Please try again.",
         footerRole:"Private computer science lessons",footerLine:"At my place · At yours · By appointment"
     },
@@ -388,9 +382,7 @@ const translations = {
         subjectsKicker:"ما يمكننا العمل عليه", subjectsTitle:"برنامج يتناسب مع<br><em>شعبتك.</em>",
         subjectsLead:"أجمع الشعب التي تتبع نفس البرنامج: اقتصاد وتصرف بشكل مستقل، ثم رياضيات وتقنية وعلوم تجريبية ضمن نفس المجموعة.",
         ecoLabel:"باكالوريا اقتصاد وتصرف",ecoTitle:"Access · Pandas · Python",ecoText:"العمل على البرنامج، وخاصة Access وPandas وPython.",
-        mathLabel:"باكالوريا رياضيات",mathTitle:"Python والخوارزميات",mathText:"نفس برنامج العمل الخاص بالتقنية والعلوم التجريبية: Python والخوارزميات.",
-        techLabel:"باكالوريا تقنية",techTitle:"Python والخوارزميات",techText:"نفس برنامج العمل الخاص بالرياضيات والعلوم التجريبية: Python والخوارزميات.",
-        scienceLabel:"باكالوريا علوم تجريبية",scienceTitle:"Python والخوارزميات",scienceText:"نفس المادة ونفس برنامج العمل الخاص بالرياضيات والتقنية: Python والخوارزميات.",
+        sharedLabel:"باكالوريا رياضيات · تقنية · علوم تجريبية",sharedTitle:"Python والخوارزميات",sharedText:"نفس برنامج العمل للشعب الثلاث: Python والخوارزميات.",
         litLabel:"باكالوريا آداب",litTitle:"لا توجد مادة إعلامية",litText:"دروس الإعلامية غير متوفرة لهذه الشعبة.",notOffered:"غير متوفر",
         quote:"الهدف ليس أن أقوم بالتمرين بدلاً منك، بل أن تتمكن من القيام به بنفسك في المرة القادمة.",
         formKicker:"الحصة الأولى",formTitle:"قل لي ما الذي<br><em>يصعب عليك.</em>",
@@ -398,7 +390,6 @@ const translations = {
         personalTitle:"معلوماتك",needTitle:"الحصة",
         nameLabel:"الاسم واللقب *",phoneLabel:"رقم الهاتف *",emailLabel:"البريد الإلكتروني *",levelLabel:"المستوى / الشعبة *",levelHint:"اختر مستواك أو شعبتك مباشرة. شعبة الإعلامية غير متوفرة.",schoolLabel:"المعهد / الثانوية",
         locationLabel:"مكان الحصة *",mapLink:"شاهد مكان التدريس على Google Maps →",cityLabel:"المدينة",
-        availabilityLabel:"الأوقات المناسبة",monday:"الاثنين",tuesday:"الثلاثاء",wednesday:"الأربعاء",thursday:"الخميس",friday:"الجمعة",saturday:"السبت",sunday:"الأحد",fromLabel:"من",toLabel:"إلى",addSlot:"أضف هذا الوقت",availabilityHint:"اختر يوماً أو أكثر، حدد الفترة الزمنية، ثم أضف الموعد. يمكنك إضافة أكثر من فترة.",selectedSlotsTitle:"الأوقات المضافة",
         submit:"اطلب حصتي",formNote:"بعد إرسال الطلب، ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة. تحقق أيضاً من الرسائل غير المرغوب فيها.",
         success:"تم استلام طلبك. شكراً لك. ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة.",error:"تعذر إرسال الطلب حالياً. حاول مرة أخرى.",
         footerRole:"دروس خصوصية في الإعلامية",footerLine:"عندي · عندك · حسب الموعد"
@@ -427,8 +418,6 @@ function translateOptions(lang){
             if(values[index]) option.textContent = values[index];
         });
     });
-    const days = {fr:["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"],en:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],ar:["الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت","الأحد"]}[lang] || ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-    document.querySelectorAll("#dayOptions .day-choice span").forEach((span,index)=>{ if(days[index]) span.textContent = days[index]; });
 }
 
 function setLanguage(lang){
@@ -459,73 +448,6 @@ setLanguage(
         ? requestedLang
         : (localStorage.getItem("bacInfoLang") || "fr")
 );
-
-
-const slotLabels = {fr:{days:["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],remove:"Supprimer"},en:{days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],remove:"Remove"},ar:{days:["الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت","الأحد"],remove:"حذف"}};
-let availabilitySlots = [];
-function renderAvailabilitySlots(){
-    const lang = document.documentElement.lang || "fr";
-    const labels = slotLabels[lang] || slotLabels.fr;
-    const container = document.getElementById("selectedSlots");
-    container.innerHTML = availabilitySlots.length
-        ? availabilitySlots.map((slot,index)=>`<div class="slot-chip"><div class="slot-chip-info"><span class="slot-chip-days">${slot.days.map(i=>labels.days[i]).join(", ")}</span><span class="slot-chip-time">${slot.from} – ${slot.to}</span></div><button type="button" class="slot-remove" data-slot="${index}" aria-label="${labels.remove}">×</button></div>`).join("")
-        : `<div class="slots-empty">${lang === "ar" ? "لم تتم إضافة أي وقت بعد." : lang === "en" ? "No time slots added yet." : "Aucun créneau ajouté pour le moment."}</div>`;
-    document.getElementById("availability").value = availabilitySlots.map(slot=>`${slot.days.map(i=>labels.days[i]).join(", ")} ${slot.from}–${slot.to}`).join("; ");
-    container.querySelectorAll("button[data-slot]").forEach(button=>button.addEventListener("click",()=>{availabilitySlots.splice(Number(button.dataset.slot),1);renderAvailabilitySlots();}));
-}
-renderAvailabilitySlots();
-const addSlotButton = document.getElementById("addSlot");
-const slotMessage = document.getElementById("slotMessage");
-
-function showSlotMessage(message, isError = true){
-    if(!slotMessage) return;
-    slotMessage.textContent = message;
-    slotMessage.classList.toggle("slot-message-error", isError);
-    slotMessage.classList.toggle("slot-message-success", !isError);
-    slotMessage.style.display = "block";
-}
-
-addSlotButton.addEventListener("click", function(){
-    const inputs = Array.from(document.querySelectorAll("#dayOptions input:checked"));
-    const all = Array.from(document.querySelectorAll("#dayOptions input"));
-    const fromInput = document.getElementById("availabilityFrom");
-    const toInput = document.getElementById("availabilityTo");
-    const from = fromInput.value;
-    const to = toInput.value;
-    const lang = document.documentElement.lang || "fr";
-
-    if(!inputs.length){
-        showSlotMessage(lang === "ar" ? "اختر يوماً واحداً على الأقل." : lang === "en" ? "Please select at least one day." : "Sélectionne au moins un jour.");
-        return;
-    }
-    if(!from || !to){
-        showSlotMessage(lang === "ar" ? "حدد وقت البداية والنهاية." : lang === "en" ? "Please select a start and end time." : "Indique une heure de début et de fin.");
-        return;
-    }
-    if(from >= to){
-        showSlotMessage(lang === "ar" ? "يجب أن يكون وقت النهاية بعد وقت البداية." : lang === "en" ? "The end time must be after the start time." : "L'heure de fin doit être après l'heure de début.");
-        return;
-    }
-
-    const slot = {days: inputs.map(input => all.indexOf(input)), from, to};
-    const duplicate = availabilitySlots.some(existing =>
-        existing.from === slot.from && existing.to === slot.to &&
-        existing.days.length === slot.days.length &&
-        existing.days.every(day => slot.days.includes(day))
-    );
-    if(duplicate){
-        showSlotMessage(lang === "ar" ? "هذا الوقت مضاف بالفعل." : lang === "en" ? "This time slot has already been added." : "Ce créneau a déjà été ajouté.");
-        return;
-    }
-
-    availabilitySlots.push(slot);
-    renderAvailabilitySlots();
-    showSlotMessage(lang === "ar" ? "تمت إضافة الوقت." : lang === "en" ? "Time slot added." : "Créneau ajouté.", false);
-    inputs.forEach(input => input.checked = false);
-    fromInput.value = "";
-    toInput.value = "";
-});
-
 const form = document.getElementById("leadForm");
 
 form.addEventListener("submit", async event=>{
@@ -542,7 +464,6 @@ form.addEventListener("submit", async event=>{
     error.style.display = "none";
 
     const data = Object.fromEntries(new FormData(form).entries());
-    data.availability = document.getElementById("availability").value;
     data.source = new URLSearchParams(location.search).get("source") || "qr-poster";
 
     try{
@@ -555,8 +476,6 @@ form.addEventListener("submit", async event=>{
         if(!response.ok) throw new Error("request");
 
         form.reset();
-        availabilitySlots = [];
-        renderAvailabilitySlots();
         translateOptions(lang);
         success.style.display = "block";
         success.scrollIntoView({behavior:"smooth",block:"center"});

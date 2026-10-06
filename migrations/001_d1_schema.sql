@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS student_leads (
   school TEXT,
   city TEXT NOT NULL DEFAULT 'Sfax',
   lesson_location TEXT NOT NULL,
-  availability TEXT,
   source TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

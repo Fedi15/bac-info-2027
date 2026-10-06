@@ -35,7 +35,7 @@ Programmes:
 
 City is fixed to **Sfax** and is not editable.
 
-Availability is optional. A student can add multiple day/time slots, remove individual slots, or leave availability empty and arrange the time later.
+Students do not choose an availability time on the form. After submitting their details, they are contacted by email to confirm the information and arrange the lesson.
 
 ## Create the D1 database
 
