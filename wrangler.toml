@@ -9,7 +9,7 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "bac-info-2027"
-database_id = "533ce25d-e466-4ccd-ba57-951fc9c916d8"
+database_id = "b0966ad6-c723-489a-8156-38db60f138e8"
 
 [vars]
 # Set ADMIN_TOKEN as a secret instead of committing it:
