@@ -6,37 +6,206 @@
   <title>Private Tutoring — Leads</title>
   <style>
     body{font-family:Arial,sans-serif;background:#0b0b0c;color:#eee;margin:0;padding:30px}
-    .wrap{max-width:1200px;margin:auto}.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    input,button{padding:11px 13px;border:1px solid #444;background:#151516;color:#eee;border-radius:7px}
-    button{cursor:pointer;border-color:#c7a66a}.status{margin:16px 0;color:#aaa}.table-wrap{overflow:auto;border:1px solid #333}
-    table{border-collapse:collapse;width:100%;min-width:1000px}th,td{padding:10px;border-bottom:1px solid #29292a;text-align:left;font-size:13px;vertical-align:top}th{color:#c7a66a}
+    .wrap{max-width:1200px;margin:auto}
+    .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .language{margin-left:auto;display:flex;gap:6px}
+    input,button,select{padding:11px 13px;border:1px solid #444;background:#151516;color:#eee;border-radius:7px}
+    button{cursor:pointer;border-color:#c7a66a}
+    .language button{border-color:#444}
+    .language button.active{border-color:#c7a66a;color:#c7a66a}
+    .status{margin:16px 0;color:#aaa}
+    .table-wrap{overflow:auto;border:1px solid #333}
+    table{border-collapse:collapse;width:100%;min-width:1000px}
+    th,td{padding:10px;border-bottom:1px solid #29292a;text-align:left;font-size:13px;vertical-align:top}
+    th{color:#c7a66a}
+    html[dir="rtl"] body{text-align:right}
+    html[dir="rtl"] .top{flex-direction:row-reverse}
+    html[dir="rtl"] .language{margin-left:0;margin-right:auto}
+    html[dir="rtl"] th,html[dir="rtl"] td{text-align:right}
   </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Student requests</h1>
+  <div class="top">
+    <h1 id="pageTitle">Student requests</h1>
+
+    <div class="language" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="fr">FR</button>
+      <button type="button" data-lang="ar">AR</button>
+    </div>
+  </div>
+
   <div class="top">
     <input id="token" type="password" placeholder="ADMIN_TOKEN">
     <button id="load" type="button">Load requests</button>
   </div>
+
   <div id="status" class="status"></div>
-  <div class="table-wrap"><table><thead><tr>
-    <th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Level / section</th><th>School</th><th>City</th><th>Location</th><th>Source</th>
-  </tr></thead><tbody id="rows"></tbody></table></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th id="hDate">Date</th>
+          <th id="hName">Name</th>
+          <th id="hPhone">Phone</th>
+          <th id="hEmail">Email</th>
+          <th id="hLevel">Level / section</th>
+          <th id="hSchool">School</th>
+          <th id="hCity">City</th>
+          <th id="hLocation">Location</th>
+          <th id="hSource">Source</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
 </div>
+
 <script>
-const token=document.getElementById("token"),load=document.getElementById("load"),status=document.getElementById("status"),rows=document.getElementById("rows");
-const esc=value=>String(value??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
-load.addEventListener("click",async()=>{
-  status.textContent="Loading…"; rows.innerHTML="";
-  try{
-    const r=await fetch("/api/leads",{headers:{Authorization:`Bearer ${token.value}`}});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error||"Request failed");
-    rows.innerHTML=data.leads.map(x=>`<tr><td>${esc(x.created_at)}</td><td>${esc(x.full_name)}</td><td>${esc(x.phone)}</td><td>${esc(x.email)}</td><td>${esc(x.level)}</td><td>${esc(x.school)}</td><td>${esc(x.city)}</td><td>${esc(x.lesson_location)}</td><td>${esc(x.source)}</td></tr>`).join("");
-    status.textContent=`${data.leads.length} request(s)`;
-  }catch(e){status.textContent=e.message||"Unable to load requests.";}
+const token = document.getElementById("token");
+const load = document.getElementById("load");
+const status = document.getElementById("status");
+const rows = document.getElementById("rows");
+
+const translations = {
+  en: {
+    dir: "ltr",
+    title: "Student requests",
+    load: "Load requests",
+    loading: "Loading…",
+    date: "Date",
+    name: "Name",
+    phone: "Phone",
+    email: "Email",
+    level: "Level / section",
+    school: "School",
+    city: "City",
+    location: "Location",
+    source: "Source",
+    requests: n => `${n} request(s)`,
+    unable: "Unable to load requests.",
+    requestFailed: "Request failed"
+  },
+  fr: {
+    dir: "ltr",
+    title: "Demandes des élèves",
+    load: "Charger les demandes",
+    loading: "Chargement…",
+    date: "Date",
+    name: "Nom",
+    phone: "Téléphone",
+    email: "Email",
+    level: "Niveau / section",
+    school: "Établissement",
+    city: "Ville",
+    location: "Lieu",
+    source: "Source",
+    requests: n => `${n} demande(s)`,
+    unable: "Impossible de charger les demandes.",
+    requestFailed: "Échec de la requête"
+  },
+  ar: {
+    dir: "rtl",
+    title: "طلبات التلاميذ",
+    load: "تحميل الطلبات",
+    loading: "جارٍ التحميل…",
+    date: "التاريخ",
+    name: "الاسم",
+    phone: "الهاتف",
+    email: "البريد الإلكتروني",
+    level: "المستوى / الشعبة",
+    school: "المؤسسة",
+    city: "المدينة",
+    location: "مكان الدرس",
+    source: "المصدر",
+    requests: n => `${n} طلب`,
+    unable: "تعذر تحميل الطلبات.",
+    requestFailed: "فشل الطلب"
+  }
+};
+
+const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  "'":"&#39;",
+  '"':"&quot;"
+}[c]));
+
+let currentLang = localStorage.getItem("adminLanguage") || "en";
+
+function applyLanguage(lang) {
+  currentLang = translations[lang] ? lang : "en";
+  localStorage.setItem("adminLanguage", currentLang);
+
+  const t = translations[currentLang];
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = t.dir;
+
+  document.getElementById("pageTitle").textContent = t.title;
+  load.textContent = t.load;
+
+  document.getElementById("hDate").textContent = t.date;
+  document.getElementById("hName").textContent = t.name;
+  document.getElementById("hPhone").textContent = t.phone;
+  document.getElementById("hEmail").textContent = t.email;
+  document.getElementById("hLevel").textContent = t.level;
+  document.getElementById("hSchool").textContent = t.school;
+  document.getElementById("hCity").textContent = t.city;
+  document.getElementById("hLocation").textContent = t.location;
+  document.getElementById("hSource").textContent = t.source;
+
+  document.querySelectorAll("[data-lang]").forEach(button => {
+    button.classList.toggle("active", button.dataset.lang === currentLang);
+  });
+}
+
+document.querySelectorAll("[data-lang]").forEach(button => {
+  button.addEventListener("click", () => applyLanguage(button.dataset.lang));
 });
+
+load.addEventListener("click", async () => {
+  const t = translations[currentLang];
+
+  status.textContent = t.loading;
+  rows.innerHTML = "";
+
+  try {
+    const r = await fetch("/api/leads", {
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    });
+
+    const data = await r.json();
+
+    if (!r.ok) {
+      throw new Error(data.error || t.requestFailed);
+    }
+
+    rows.innerHTML = data.leads.map(x => `
+      <tr>
+        <td>${esc(x.created_at)}</td>
+        <td>${esc(x.full_name)}</td>
+        <td>${esc(x.phone)}</td>
+        <td>${esc(x.email)}</td>
+        <td>${esc(x.level)}</td>
+        <td>${esc(x.school)}</td>
+        <td>${esc(x.city)}</td>
+        <td>${esc(x.lesson_location)}</td>
+        <td>${esc(x.source)}</td>
+      </tr>
+    `).join("");
+
+    status.textContent = t.requests(data.leads.length);
+  } catch (e) {
+    status.textContent = e.message || t.unable;
+  }
+});
+
+applyLanguage(currentLang);
 </script>
 </body>
 </html>
