@@ -1,661 +1,303 @@
 <!doctype html>
-
 <html lang="fr">
-
 <head>
-
-    <meta charset="utf-8">
-
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-
-    <title>Fedi Ghanmi (Torbaga) — Cours particuliers d'informatique</title>
-
-    <meta name="description" content="Cours particuliers d'informatique avec Fedi Ghanmi (Torbaga). Séances individuelles chez moi ou directement chez l'élève, adaptées au niveau et aux objectifs.">
-
-    <link rel="stylesheet" href="style.css">
-
-<style>
-
-.site-stats-section{padding:72px 0 20px;border-top:1px solid rgba(216,181,106,.16)}
-
-.site-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
-
-.site-stat-card{background:var(--surface);padding:28px 30px;min-height:165px;display:flex;flex-direction:column;justify-content:space-between}
-
-.site-stat-label{font-size:10px;letter-spacing:.18em;color:var(--gold);font-weight:800}
-
-.site-stat-card strong{font-family:Georgia,"Times New Roman",serif;font-size:56px;line-height:1;font-weight:500;letter-spacing:-.04em;color:var(--ink)}
-
-.site-stat-note{font-size:11px;color:var(--muted)}
-
-html[dir="rtl"] .site-stat-card{text-align:right}
-
-@media(max-width:620px){.site-stats-section{padding:58px 0 10px}.site-stats-grid{grid-template-columns:1fr}.site-stat-card{min-height:135px;padding:24px}.site-stat-card strong{font-size:48px}}
-
-</style>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fedi Ghanmi (Torbaga) — Cours particuliers d'informatique</title>
+    <meta name="description" content="Cours particuliers d'informatique avec Fedi Ghanmi (Torbaga). Séances individuelles chez moi ou directement chez l'élève, adaptées au niveau et aux objectifs.">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
 <div class="site-shell">
-
-    <nav class="nav">
-
-        <a class="brand" href="/" aria-label="Fedi Ghanmi (Torbaga)">
-
-            <span>FEDI</span> GHANMI
-
-        </a>
-
-        <div class="nav-right">
-
-            <div id="langs" class="language-switcher" aria-label="Language">
-
-                <button class="lang active" data-lang="fr">FR</button>
-
-                <button class="lang" data-lang="en">EN</button>
-
-                <button class="lang" data-lang="ar">AR</button>
-
-            </div>
-
-            <a class="nav-cta" href="#inscription" data-i18n="navCta">Demander une séance</a>
-
-        </div>
-
-    </nav>
-
-
-
-    <header class="hero">
-
-        <div class="hero-copy">
-
-            <div class="eyebrow" data-i18n="eyebrow">Cours particuliers d'informatique</div>
-
-            <h1 data-i18n="heroTitle">L'informatique,<br><em>en privé.</em></h1>
-
-            <p class="hero-lead" data-i18n="heroLead">
-
-                Un accompagnement individuel adapté à ton niveau, à tes difficultés et à tes objectifs.
-
-            </p>
-
-
-
-            <div class="hero-actions">
-
-                <a class="btn primary" href="#inscription" data-i18n="heroCta">Demander une séance</a>
-
-                <a class="text-link" href="#format" data-i18n="heroSecondary">Voir comment ça fonctionne</a>
-
-            </div>
-
-
-
-            <div class="location-line">
-
-                <span data-i18n="locationLine">Chez moi ou chez toi.</span>
-
-                <span class="dot">•</span>
-
-                <span data-i18n="locationSub">Tu choisis le lieu.</span>
-
-            </div>
-
-            <a class="map-link hero-map-link" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" target="_blank" rel="noopener" data-i18n="mapLink">Voir mon lieu sur Google Maps →</a>
-
-        </div>
-
-
-
-        <div class="hero-visual">
-
-            <div class="visual-label" data-i18n="visualLabel">PRIVATE LESSON / 01</div>
-
-            <div class="visual-main">
-
-                <span class="visual-word">1:1</span>
-
-                <span class="visual-caption" data-i18n="visualCaption">Une séance construite autour de toi.</span>
-
-            </div>
-
-            <div class="visual-footer">
-
-                <span>FEDI GHANMI <small>(TORBAGA)</small></span>
-
-                <span>BAC INFO 2027</span>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-
-    <section class="intro-section" id="format">
-
-        <div class="section-kicker" data-i18n="formatKicker">Deux façons d'apprendre</div>
-
-        <div class="section-heading">
-
-            <h2 data-i18n="formatTitle">Chez moi.<br><em>Ou chez toi.</em></h2>
-
-            <p data-i18n="formatLead">
-
-                Pas de salle de classe impersonnelle. Une vraie séance individuelle, dans le lieu qui te convient le mieux.
-
-            </p>
-
-        </div>
-
-
-
-        <div class="location-grid">
-
-            <article class="location-card">
-
-                <div class="card-number">01</div>
-
-                <h3 data-i18n="homeTitle">Chez moi</h3>
-
-                <p data-i18n="homeText">Tu viens travailler dans un espace calme et dédié à la séance. On prend le temps de comprendre, pratiquer et corriger.</p>
-
-                <span class="card-note" data-i18n="homeNote">ESPACE DÉDIÉ AU TRAVAIL</span>
-
-            </article>
-
-
-
-            <article class="location-card featured">
-
-                <div class="card-number">02</div>
-
-                <h3 data-i18n="studentTitle">Chez toi</h3>
-
-                <p data-i18n="studentText">Je me déplace chez toi pour une séance individuelle, directement dans ton environnement de travail.</p>
-
-                <span class="card-note" data-i18n="studentNote">JE ME DÉPLACE CHEZ L'ÉLÈVE</span>
-
-            </article>
-
-        </div>
-
-    </section>
-
-
-
-    <section class="method-section">
-
-        <div class="section-kicker" data-i18n="methodKicker">Une séance, quatre étapes</div>
-
-        <div class="method-grid">
-
-            <article class="method-item">
-
-                <span>01</span>
-
-                <h3 data-i18n="m1t">Comprendre</h3>
-
-                <p data-i18n="m1p">On identifie ce qui bloque et on reprend la notion avec des explications adaptées.</p>
-
-            </article>
-
-            <article class="method-item">
-
-                <span>02</span>
-
-                <h3 data-i18n="m2t">Pratiquer</h3>
-
-                <p data-i18n="m2p">On passe rapidement aux exercices pour transformer la compréhension en compétence.</p>
-
-            </article>
-
-            <article class="method-item">
-
-                <span>03</span>
-
-                <h3 data-i18n="m3t">Corriger</h3>
-
-                <p data-i18n="m3p">On analyse les erreurs et les méthodes, pas seulement la réponse finale.</p>
-
-            </article>
-
-            <article class="method-item">
-
-                <span>04</span>
-
-                <h3 data-i18n="m4t">Progresser</h3>
-
-                <p data-i18n="m4p">Chaque séance te rapproche de l'autonomie et de tes objectifs scolaires.</p>
-
-            </article>
-
-        </div>
-
-    </section>
-
-
-
-    <section class="subjects-section">
-
-        <div class="section-heading compact">
-
-            <div>
-
-                <div class="section-kicker" data-i18n="subjectsKicker">Ce que l'on peut travailler</div>
-
-                <h2 data-i18n="subjectsTitle">Un programme qui<br><em>s'adapte à ta section.</em></h2>
-
-            </div>
-
-            <p data-i18n="subjectsLead">La matière Informatique n'est pas la même pour chaque section. Je me concentre sur les notions réellement utiles à ton programme.</p>
-
-        </div>
-
-
-
-        <div class="bac-track-grid">
-
-            <article class="bac-track eco">
-
-                <div class="track-top">
-
-                    <span>01</span>
-
-                    <strong data-i18n="ecoLabel">BAC ÉCONOMIE &amp; GESTION</strong>
-
-                </div>
-
-                <h3 data-i18n="ecoTitle">Access · Pandas · Python</h3>
-
-                <p data-i18n="ecoText">Travail ciblé sur le programme, notamment Access, Pandas et Python.</p>
-
-                <div class="track-tags"><span>Access</span><span>Pandas</span><span>Python</span></div>
-
-            </article>
-
-
-
-            <article class="bac-track shared-program">
-
-                <div class="track-top">
-
-                    <span>02</span>
-
-                    <strong data-i18n="sharedLabel">BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES</strong>
-
-                </div>
-
-                <h3 data-i18n="sharedTitle">Python &amp; algorithmique</h3>
-
-                <p data-i18n="sharedText">Un même programme de travail pour les trois sections : Python et algorithmique.</p>
-
-                <div class="track-tags"><span>Python</span><span>Algorithmique</span></div>
-
-            </article>
-
-
-
-            <article class="bac-track unavailable">
-
-                <div class="track-top">
-
-                    <span>03</span>
-
-                    <strong data-i18n="litLabel">BAC LETTRES</strong>
-
-                </div>
-
-                <h3 data-i18n="litTitle">Pas de matière Informatique</h3>
-
-                <p data-i18n="litText">La matière Informatique n'est pas proposée pour cette section.</p>
-
-                <div class="track-tags"><span data-i18n="notOffered">Non proposé</span></div>
-
-            </article>
-
-        </div>
-
-    </section>
-
-
-
-    <section class="site-stats-section" aria-label="Site statistics">
-
-        <div class="section-kicker" data-i18n="statsKicker">LE SITE EN CHIFFRES</div>
-
-        <div class="site-stats-grid">
-
-            <article class="site-stat-card">
-
-                <span class="site-stat-label" data-i18n="statsVisitors">VISITEURS</span>
-
-                <strong id="statVisitors">—</strong>
-
-                <span class="site-stat-note" data-i18n="statsVisitorsNote">Visiteurs uniques</span>
-
-            </article>
-
-            <article class="site-stat-card">
-
-                <span class="site-stat-label" data-i18n="statsToday">AUJOURD'HUI</span>
-
-                <strong id="statToday">—</strong>
-
-                <span class="site-stat-note" data-i18n="statsTodayNote">Visiteurs aujourd'hui</span>
-
-            </article>
-
-            <article class="site-stat-card">
-
-                <span class="site-stat-label" data-i18n="statsRequests">DEMANDES</span>
-
-                <strong id="statRequests">—</strong>
-
-                <span class="site-stat-note" data-i18n="statsRequestsNote">Demandes de séances</span>
-
-            </article>
-
-        </div>
-
-    </section>
-
-
-
-    <section class="quote-section">
-
-        <div class="quote-mark">“</div>
-
-        <blockquote data-i18n="quote">
-
-            L'objectif n'est pas que je fasse l'exercice à ta place. L'objectif est que tu puisses le faire seul la prochaine fois.
-
-        </blockquote>
-
-        <div class="quote-author">— FEDI GHANMI (TORBAGA)</div>
-
-    </section>
-
-
-
-    <section id="inscription" class="request-section">
-
-        <div class="request-intro">
-
-            <div class="section-kicker" data-i18n="formKicker">Première séance</div>
-
-            <h2 data-i18n="formTitle">Dis-moi ce<br><em>qui te bloque.</em></h2>
-
-            <p data-i18n="formLead">Quelques informations suffisent. Je te recontacte ensuite pour comprendre ton besoin et organiser la séance.</p>
-
-        </div>
-
-
-
-        <div class="form-wrap">
-
-            <form id="leadForm">
-
-                <div class="form-step">
-
-                    <span class="step-label">01</span>
-
-                    <h3 data-i18n="personalTitle">Tes coordonnées</h3>
-
-                    <div class="form-grid">
-
-                        <div class="field">
-
-                            <label for="full_name" data-i18n="nameLabel">Nom et prénom *</label>
-
-                            <input id="full_name" name="full_name" required maxlength="120">
-
-                        </div>
-
-                        <div class="field">
-
-                            <label for="phone" data-i18n="phoneLabel">Numéro de téléphone *</label>
-
-                            <input id="phone" name="phone" required maxlength="30" inputmode="tel">
-
-                        </div>
-
-                        <div class="field">
-
-                            <label for="email" data-i18n="emailLabel">Adresse e-mail *</label>
-
-                            <input id="email" name="email" type="email" required maxlength="160" autocomplete="email">
-
-                        </div>
-
-                        <div class="field full">
-
-                            <label for="level" data-i18n="levelLabel">Niveau / section *</label>
-
-                            <select id="level" name="level" required>
-
-                                <option value>Choisir</option>
-
-                                <option>3ème année secondaire</option>
-
-                                <option>Bac Économie & Gestion</option>
-
-                                <option>Bac Mathématiques</option>
-
-                                <option>Bac Technique</option>
-
-                                <option>Bac Sciences Expérimentales</option>
-
-                                <option>Bac Lettres</option>
-
-                            </select>
-
-                            <div class="field-hint" data-i18n="levelHint">Choisis directement ton niveau ou ta section. Le Bac Informatique n'est pas proposé.</div>
-
-                        </div>
-
-                        <div class="field">
-
-                            <label for="school" data-i18n="schoolLabel">Lycée / établissement</label>
-
-                            <input id="school" name="school" maxlength="150">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="form-step">
-
-                    <span class="step-label">02</span>
-
-                    <h3 data-i18n="needTitle">Ta séance</h3>
-
-                    <div class="form-grid">
-
-                        <div class="field">
-
-                            <label for="lesson_location" data-i18n="locationLabel">Lieu de la séance *</label>
-
-                            <select id="lesson_location" name="lesson_location" required>
-
-                                <option value>Choisir</option>
-
-                                <option value="Chez moi">Chez moi</option>
-
-                                <option value="Chez l'élève">Chez l'élève</option>
-
-                            </select>
-
-                            <a class="map-link" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" target="_blank" rel="noopener" data-i18n="mapLink">Voir mon lieu sur Google Maps →</a>
-
-                        </div>
-
-
-
-                        <div class="field">
-
-                            <label data-i18n="cityLabel">Ville</label>
-
-                            <div class="fixed-field" data-i18n="sfax">Sfax</div>
-
-                            <input type="hidden" id="city" name="city" value="Sfax">
-
-                        </div>
-
-
-
-                        <div class="field-hint email-followup" data-i18n="emailFollowup">Après ta demande, je te contacterai par email pour confirmer les informations et convenir de la séance.</div>
-
-                    </div>
-
-                </div>
-
-
-
-                <button class="btn primary submit-btn" type="submit" id="submitBtn" data-i18n="submit">Demander ma séance</button>
-
-                <div class="form-note" data-i18n="formNote">Après ta demande, tu recevras un e-mail avec les informations utiles pour la suite de la séance. Vérifie aussi tes courriers indésirables.</div>
-
-                <div class="success" id="success" data-i18n="success">Demande envoyée. Merci. Ta demande a bien été reçue. Tu recevras un e-mail avec les prochaines informations.</div>
-
-                <div class="error" id="error" data-i18n="error">Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants.</div>
-
-            </form>
-
-        </div>
-
-    </section>
-
-
-
-
-
-    <div class="success-modal" id="successModal" aria-hidden="false">
-
-    <div class="success-backdrop" data-success-close></div>
-
-
-
-    <div class="success-dialog"
-
-         role="dialog"
-
-         aria-modal="true"
-
-         aria-labelledby="successTitle">
-
-
-
-        <button class="success-close"
-
-                type="button"
-
-                aria-label="Close"
-
-                data-success-close>
-
-            ×
-
-        </button>
-
-
-
-        <!-- Check mark inside the circle -->
-
-        <div class="success-orbit" aria-hidden="true">
-
-            <div class="success-emoji">✓</div>
-
-        </div>
-
-
-
-        <div class="success-kicker" data-success-kicker>
-
-            DEMANDE REÇUE
-
-        </div>
-
-
-
-        <h2 id="successTitle" data-success-title>
-
-            إن شاء الله ADMIS !
-
-        </h2>
-
-
-
-        <p class="success-name" id="successName"></p>
-
-
-
-        <p class="success-message" data-success-message>
-
-            Ta demande a bien été reçue. Je te contacterai par email pour confirmer les détails et organiser la séance.
-
-        </p>
-
-
-
-        <div class="success-rule" aria-hidden="true"></div>
-
-
-
-        <p class="success-footer" data-success-footer>
-
-            À bientôt — FEDI GHANMI (TORBAGA)
-
-        </p>
-
-
-
-        <button class="btn primary success-return"
-
-                type="button"
-
-                data-success-close
-
-                data-success-return>
-
-            Retour au site
-
-        </button>
-
-
-
-    </div>
-
+    <nav class="nav">
+        <a class="brand" href="/" aria-label="Fedi Ghanmi (Torbaga)">
+            <span>FEDI</span> GHANMI
+        </a>
+        <div class="nav-right">
+            <div id="langs" class="language-switcher" aria-label="Language">
+                <button class="lang active" data-lang="fr">FR</button>
+                <button class="lang" data-lang="en">EN</button>
+                <button class="lang" data-lang="ar">AR</button>
+            </div>
+            <a class="nav-cta" href="#inscription" data-i18n="navCta">Demander une séance</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-copy">
+            <div class="eyebrow" data-i18n="eyebrow">Cours particuliers d'informatique</div>
+            <h1 data-i18n="heroTitle">L'informatique,<br><em>en privé.</em></h1>
+            <p class="hero-lead" data-i18n="heroLead">
+                Un accompagnement individuel adapté à ton niveau, à tes difficultés et à tes objectifs.
+            </p>
+
+            <div class="hero-actions">
+                <a class="btn primary" href="#inscription" data-i18n="heroCta">Demander une séance</a>
+                <a class="text-link" href="#format" data-i18n="heroSecondary">Voir comment ça fonctionne</a>
+            </div>
+
+            <div class="location-line">
+                <span data-i18n="locationLine">Chez moi ou chez toi.</span>
+                <span class="dot">•</span>
+                <span data-i18n="locationSub">Tu choisis le lieu.</span>
+            </div>
+            <a class="map-link hero-map-link" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" target="_blank" rel="noopener" data-i18n="mapLink">Voir mon lieu sur Google Maps →</a>
+        </div>
+
+        <div class="hero-visual">
+            <div class="visual-label" data-i18n="visualLabel">PRIVATE LESSON / 01</div>
+            <div class="visual-main">
+                <span class="visual-word">1:1</span>
+                <span class="visual-caption" data-i18n="visualCaption">Une séance construite autour de toi.</span>
+            </div>
+            <div class="visual-footer">
+                <span>FEDI GHANMI <small>(TORBAGA)</small></span>
+                <span>BAC INFO 2027</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="intro-section" id="format">
+        <div class="section-kicker" data-i18n="formatKicker">Deux façons d'apprendre</div>
+        <div class="section-heading">
+            <h2 data-i18n="formatTitle">Chez moi.<br><em>Ou chez toi.</em></h2>
+            <p data-i18n="formatLead">
+                Pas de salle de classe impersonnelle. Une vraie séance individuelle, dans le lieu qui te convient le mieux.
+            </p>
+        </div>
+
+        <div class="location-grid">
+            <article class="location-card">
+                <div class="card-number">01</div>
+                <h3 data-i18n="homeTitle">Chez moi</h3>
+                <p data-i18n="homeText">Tu viens travailler dans un espace calme et dédié à la séance. On prend le temps de comprendre, pratiquer et corriger.</p>
+                <span class="card-note" data-i18n="homeNote">ESPACE DÉDIÉ AU TRAVAIL</span>
+            </article>
+
+            <article class="location-card featured">
+                <div class="card-number">02</div>
+                <h3 data-i18n="studentTitle">Chez toi</h3>
+                <p data-i18n="studentText">Je me déplace chez toi pour une séance individuelle, directement dans ton environnement de travail.</p>
+                <span class="card-note" data-i18n="studentNote">JE ME DÉPLACE CHEZ L'ÉLÈVE</span>
+            </article>
+        </div>
+    </section>
+
+    <section class="method-section">
+        <div class="section-kicker" data-i18n="methodKicker">Une séance, quatre étapes</div>
+        <div class="method-grid">
+            <article class="method-item">
+                <span>01</span>
+                <h3 data-i18n="m1t">Comprendre</h3>
+                <p data-i18n="m1p">On identifie ce qui bloque et on reprend la notion avec des explications adaptées.</p>
+            </article>
+            <article class="method-item">
+                <span>02</span>
+                <h3 data-i18n="m2t">Pratiquer</h3>
+                <p data-i18n="m2p">On passe rapidement aux exercices pour transformer la compréhension en compétence.</p>
+            </article>
+            <article class="method-item">
+                <span>03</span>
+                <h3 data-i18n="m3t">Corriger</h3>
+                <p data-i18n="m3p">On analyse les erreurs et les méthodes, pas seulement la réponse finale.</p>
+            </article>
+            <article class="method-item">
+                <span>04</span>
+                <h3 data-i18n="m4t">Progresser</h3>
+                <p data-i18n="m4p">Chaque séance te rapproche de l'autonomie et de tes objectifs scolaires.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="subjects-section">
+        <div class="section-heading compact">
+            <div>
+                <div class="section-kicker" data-i18n="subjectsKicker">Ce que l'on peut travailler</div>
+                <h2 data-i18n="subjectsTitle">Un programme qui<br><em>s'adapte à ta section.</em></h2>
+            </div>
+            <p data-i18n="subjectsLead">La matière Informatique n'est pas la même pour chaque section. Je me concentre sur les notions réellement utiles à ton programme.</p>
+        </div>
+
+        <div class="bac-track-grid">
+            <article class="bac-track eco">
+                <div class="track-top">
+                    <span>01</span>
+                    <strong data-i18n="ecoLabel">BAC ÉCONOMIE &amp; GESTION</strong>
+                </div>
+                <h3 data-i18n="ecoTitle">Access · Pandas · Python</h3>
+                <p data-i18n="ecoText">Travail ciblé sur le programme, notamment Access, Pandas et Python.</p>
+                <div class="track-tags"><span>Access</span><span>Pandas</span><span>Python</span></div>
+            </article>
+
+            <article class="bac-track shared-program">
+                <div class="track-top">
+                    <span>02</span>
+                    <strong data-i18n="sharedLabel">BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES</strong>
+                </div>
+                <h3 data-i18n="sharedTitle">Python &amp; algorithmique</h3>
+                <p data-i18n="sharedText">Un même programme de travail pour les trois sections : Python et algorithmique.</p>
+                <div class="track-tags"><span>Python</span><span>Algorithmique</span></div>
+            </article>
+
+            <article class="bac-track unavailable">
+                <div class="track-top">
+                    <span>03</span>
+                    <strong data-i18n="litLabel">BAC LETTRES</strong>
+                </div>
+                <h3 data-i18n="litTitle">Pas de matière Informatique</h3>
+                <p data-i18n="litText">La matière Informatique n'est pas proposée pour cette section.</p>
+                <div class="track-tags"><span data-i18n="notOffered">Non proposé</span></div>
+            </article>
+        </div>
+    </section>
+
+    <section class="quote-section">
+        <div class="quote-mark">“</div>
+        <blockquote data-i18n="quote">
+            L'objectif n'est pas que je fasse l'exercice à ta place. L'objectif est que tu puisses le faire seul la prochaine fois.
+        </blockquote>
+        <div class="quote-author">— FEDI GHANMI (TORBAGA)</div>
+    </section>
+
+    <section id="inscription" class="request-section">
+        <div class="request-intro">
+            <div class="section-kicker" data-i18n="formKicker">Première séance</div>
+            <h2 data-i18n="formTitle">Dis-moi ce<br><em>qui te bloque.</em></h2>
+            <p data-i18n="formLead">Quelques informations suffisent. Je te recontacte ensuite pour comprendre ton besoin et organiser la séance.</p>
+        </div>
+
+        <div class="form-wrap">
+            <form id="leadForm">
+                <div class="form-step">
+                    <span class="step-label">01</span>
+                    <h3 data-i18n="personalTitle">Tes coordonnées</h3>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="full_name" data-i18n="nameLabel">Nom et prénom *</label>
+                            <input id="full_name" name="full_name" required maxlength="120">
+                        </div>
+                        <div class="field">
+                            <label for="phone" data-i18n="phoneLabel">Numéro de téléphone *</label>
+                            <input id="phone" name="phone" required maxlength="30" inputmode="tel">
+                        </div>
+                        <div class="field">
+                            <label for="email" data-i18n="emailLabel">Adresse e-mail *</label>
+                            <input id="email" name="email" type="email" required maxlength="160" autocomplete="email">
+                        </div>
+                        <div class="field full">
+                            <label for="level" data-i18n="levelLabel">Niveau / section *</label>
+                            <select id="level" name="level" required>
+                                <option value>Choisir</option>
+                                <option>3ème année secondaire</option>
+                                <option>Bac Économie & Gestion</option>
+                                <option>Bac Mathématiques</option>
+                                <option>Bac Technique</option>
+                                <option>Bac Sciences Expérimentales</option>
+                                <option>Bac Lettres</option>
+                            </select>
+                            <div class="field-hint" data-i18n="levelHint">Choisis directement ton niveau ou ta section. Le Bac Informatique n'est pas proposé.</div>
+                        </div>
+                        <div class="field">
+                            <label for="school" data-i18n="schoolLabel">Lycée / établissement</label>
+                            <input id="school" name="school" maxlength="150">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-step">
+                    <span class="step-label">02</span>
+                    <h3 data-i18n="needTitle">Ta séance</h3>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="lesson_location" data-i18n="locationLabel">Lieu de la séance *</label>
+                            <select id="lesson_location" name="lesson_location" required>
+                                <option value>Choisir</option>
+                                <option value="Chez moi">Chez moi</option>
+                                <option value="Chez l'élève">Chez l'élève</option>
+                            </select>
+                            <a class="map-link" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" target="_blank" rel="noopener" data-i18n="mapLink">Voir mon lieu sur Google Maps →</a>
+                        </div>
+
+                        <div class="field">
+                            <label data-i18n="cityLabel">Ville</label>
+                            <div class="fixed-field" data-i18n="sfax">Sfax</div>
+                            <input type="hidden" id="city" name="city" value="Sfax">
+                        </div>
+
+                        <div class="field-hint email-followup" data-i18n="emailFollowup">Après ta demande, je te contacterai par email pour confirmer les informations et convenir de la séance.</div>
+                    </div>
+                </div>
+
+                <button class="btn primary submit-btn" type="submit" id="submitBtn" data-i18n="submit">Demander ma séance</button>
+                <div class="form-note" data-i18n="formNote">Après ta demande, tu recevras un e-mail avec les informations utiles pour la suite de la séance. Vérifie aussi tes courriers indésirables.</div>
+                <div class="success" id="success" data-i18n="success">Demande envoyée. Merci. Ta demande a bien été reçue. Tu recevras un e-mail avec les prochaines informations.</div>
+                <div class="error" id="error" data-i18n="error">Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants.</div>
+            </form>
+        </div>
+    </section>
+
+
+    <div class="success-modal" id="successModal" aria-hidden="false">
+    <div class="success-backdrop" data-success-close></div>
+
+    <div class="success-dialog"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="successTitle">
+
+        <button class="success-close"
+                type="button"
+                aria-label="Close"
+                data-success-close>
+            ×
+        </button>
+
+        <!-- Check mark inside the circle -->
+        <div class="success-orbit" aria-hidden="true">
+            <div class="success-emoji">✓</div>
+        </div>
+
+        <div class="success-kicker" data-success-kicker>
+            DEMANDE REÇUE
+        </div>
+
+        <h2 id="successTitle" data-success-title>
+            إن شاء الله ADMIS !
+        </h2>
+
+        <p class="success-name" id="successName"></p>
+
+        <p class="success-message" data-success-message>
+            Ta demande a bien été reçue. Je te contacterai par email pour confirmer les détails et organiser la séance.
+        </p>
+
+        <div class="success-rule" aria-hidden="true"></div>
+
+        <p class="success-footer" data-success-footer>
+            À bientôt — FEDI GHANMI (TORBAGA)
+        </p>
+
+        <button class="btn primary success-return"
+                type="button"
+                data-success-close
+                data-success-return>
+            Retour au site
+        </button>
+
+    </div>
 </div>
-
-
-    <footer>
-
-        <div class="footer-inner">
-
-            <div><strong>FEDI GHANMI (TORBAGA)</strong><br><span data-i18n="footerRole">Cours particuliers d'informatique</span></div>
-
-            <div data-i18n="footerLine">Chez moi · Chez toi · Sur rendez-vous</div>
-
-        </div>
-
-    </footer>
-
+<button id="btnc" type="button">Test</button>
+    <footer>
+        <div class="footer-inner">
+            <div><strong>FEDI GHANMI (TORBAGA)</strong><br><span data-i18n="footerRole">Cours particuliers d'informatique</span></div>
+            <div data-i18n="footerLine">Chez moi · Chez toi · Sur rendez-vous</div>
+        </div>
+    </footer>
 </div>
-
 <!-- //*src="js.js"*// -->
+<script src="js.js" >
 
-<script src="js.js"></script>
 
-
+</script>
 </body>
-
 </html>

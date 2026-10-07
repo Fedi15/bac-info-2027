@@ -1,31 +1,3 @@
-/*
-
- * Visitor tracking
-
- * ----------------
-
- * The page explicitly tells the Worker that a real page view happened.
-
- * The Worker handles the unique-visitor cookie and D1 insert.
-
- *
-
- * This is intentionally fire-and-forget so it cannot block or break
-
- * the page, language switcher, form, or success modal.
-
- */
-
-fetch("/api/visit", {
-
-    method: "POST",
-
-    credentials: "same-origin"
-
-}).catch(() => {});
-
-
-
 const translations = {
 
     fr: {
@@ -85,8 +57,6 @@ const translations = {
         submit:"Demander ma séance",formNote:"Après ta demande, tu recevras un e-mail avec les informations utiles pour la suite de la séance. Vérifie aussi tes courriers indésirables.",emailFollowup:"Après ta demande, je te contacterai par email pour confirmer les informations et convenir de la séance.",
 
         success:"Demande envoyée. Merci. Ta demande a bien été reçue. Tu recevras un e-mail avec les prochaines informations.",error:"Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants.",
-
-        statsKicker:"LE SITE EN CHIFFRES",statsVisitors:"VISITEURS",statsVisitorsNote:"Visiteurs uniques",statsToday:"AUJOURD'HUI",statsTodayNote:"Visiteurs aujourd'hui",statsRequests:"DEMANDES",statsRequestsNote:"Demandes de séances",
 
         footerRole:"Cours particuliers d'informatique",footerLine:"Chez moi · Chez toi · Sur rendez-vous"
 
@@ -150,8 +120,6 @@ const translations = {
 
         success:"Request received. Thank you. You will receive an email with the next information.",error:"Unable to send the request right now. Please try again.",
 
-        statsKicker:"THE SITE IN NUMBERS",statsVisitors:"VISITORS",statsVisitorsNote:"Unique visitors",statsToday:"TODAY",statsTodayNote:"Visitors today",statsRequests:"REQUESTS",statsRequestsNote:"Lesson requests",
-
         footerRole:"Private computer science lessons",footerLine:"At my place · At yours · By appointment"
 
     },
@@ -213,8 +181,6 @@ const translations = {
         submit:"اطلب حصتي",formNote:"بعد إرسال الطلب، ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة. تحقق أيضاً من الرسائل غير المرغوب فيها.",
 
         success:"تم استلام طلبك. شكراً لك. ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة.",error:"تعذر إرسال الطلب حالياً. حاول مرة أخرى.",
-
-        statsKicker:"الموقع بالأرقام",statsVisitors:"الزوار",statsVisitorsNote:"الزوار الفريدون",statsToday:"اليوم",statsTodayNote:"زوار اليوم",statsRequests:"الطلبات",statsRequestsNote:"طلبات الحصص",
 
         footerRole:"دروس خصوصية في الإعلامية",footerLine:"عندي · عندك · حسب الموعد"
 
@@ -487,9 +453,6 @@ document.querySelectorAll(".lang").forEach(btn=>{
     btn.addEventListener("click", ()=>setLanguage(btn.dataset.lang));
 
 });
-
-
-
 const requestedLang = new URLSearchParams(location.search).get("lang");
 
 setLanguage(
@@ -501,6 +464,8 @@ setLanguage(
         : (localStorage.getItem("bacInfoLang") || "fr")
 
 );
+
+
 
 async function loadPublicStats() {
     try {
@@ -523,18 +488,9 @@ async function loadPublicStats() {
         const today = document.getElementById("statToday");
         const requests = document.getElementById("statRequests");
 
-        if (visitors) {
-            visitors.textContent = Number(stats.unique_visitors || 0).toLocaleString();
-        }
-
-        if (today) {
-            today.textContent = Number(stats.today_visitors || 0).toLocaleString();
-        }
-
-        if (requests) {
-            requests.textContent = Number(stats.student_requests || 0).toLocaleString();
-        }
-
+        if (visitors) visitors.textContent = Number(stats.unique_visitors || 0).toLocaleString();
+        if (today) today.textContent = Number(stats.today_visitors || 0).toLocaleString();
+        if (requests) requests.textContent = Number(stats.student_requests || 0).toLocaleString();
     } catch (error) {
         console.error("Failed to load public stats:", error);
     }
