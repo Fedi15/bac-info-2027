@@ -1,3 +1,9 @@
+emailjs.init({
+    publicKey: "ZUjic6-9k2GvyJPsu"
+});
+
+
+
 const translations = {
 
     fr: {
@@ -572,7 +578,31 @@ form.addEventListener("submit", async event=>{
 
         if(!response.ok) throw new Error("request");
 
+       try {
+            await emailjs.send(
+                "service_i1zf9ru",
+                "template_vjrqroz",
+                {
+                    full_name: data.full_name || "",
+                    phone: data.phone || "",
+                    email: data.email || "",
+                    level: data.level || "",
+                    school: data.school || "Non renseigné",
+                    lesson_location: data.lesson_location || "",
+                    city: data.city || "Sfax",
+                    source: data.source || "Site web",
+                    created_at: new Date().toLocaleString("fr-FR", {
+                        dateStyle: "full",
+                        timeStyle: "short"
+                    })
+                }
+            );
 
+            console.log("Email notification sent successfully.");
+        } 
+        catch (emailError) {
+            console.error("EmailJS notification failed:", emailError);
+        }
 
         const submittedName = String(data.full_name || "").trim();
 
