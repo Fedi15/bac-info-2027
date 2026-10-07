@@ -13,6 +13,12 @@
     button{cursor:pointer;border-color:#c7a66a}
     .language button{border-color:#444}
     .language button.active{border-color:#c7a66a;color:#c7a66a}
+
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
+    .stat{border:1px solid #333;background:#111214;border-radius:10px;padding:18px}
+    .stat-label{font-size:12px;color:#aaa;margin-bottom:8px}
+    .stat-value{font-size:30px;font-weight:700;color:#c7a66a;line-height:1.1}
+    @media (max-width:700px){.stats{grid-template-columns:1fr}}
     .status{margin:16px 0;color:#aaa}
     .table-wrap{overflow:auto;border:1px solid #333}
     table{border-collapse:collapse;width:100%;min-width:1000px}
@@ -39,6 +45,13 @@
   <div class="top">
     <input id="token" type="password" placeholder="ADMIN_TOKEN">
     <button id="load" type="button">Load requests</button>
+  </div>
+
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label" id="sVisitorsLabel">Unique visitors</div><div class="stat-value" id="visitorCount">—</div></div>
+    <div class="stat"><div class="stat-label" id="sTodayLabel">Today’s visitors</div><div class="stat-value" id="todayVisitorCount">—</div></div>
+    <div class="stat"><div class="stat-label" id="sRequestsLabel">Student requests</div><div class="stat-value" id="requestCount">—</div></div>
   </div>
 
   <div id="status" class="status"></div>
@@ -68,6 +81,9 @@ const token = document.getElementById("token");
 const load = document.getElementById("load");
 const status = document.getElementById("status");
 const rows = document.getElementById("rows");
+const visitorCount = document.getElementById("visitorCount");
+const todayVisitorCount = document.getElementById("todayVisitorCount");
+const requestCount = document.getElementById("requestCount");
 
 const translations = {
   en: {
@@ -86,7 +102,10 @@ const translations = {
     source: "Source",
     requests: n => `${n} request(s)`,
     unable: "Unable to load requests.",
-    requestFailed: "Request failed"
+    requestFailed: "Request failed",
+    visitors: "Unique visitors",
+    todayVisitors: "Today’s visitors",
+    studentRequests: "Student requests"
   },
   fr: {
     dir: "ltr",
@@ -104,7 +123,10 @@ const translations = {
     source: "Source",
     requests: n => `${n} demande(s)`,
     unable: "Impossible de charger les demandes.",
-    requestFailed: "Échec de la requête"
+    requestFailed: "Échec de la requête",
+    visitors: "Visiteurs uniques",
+    todayVisitors: "Visiteurs aujourd’hui",
+    studentRequests: "Demandes des élèves"
   },
   ar: {
     dir: "rtl",
@@ -122,7 +144,10 @@ const translations = {
     source: "المصدر",
     requests: n => `${n} طلب`,
     unable: "تعذر تحميل الطلبات.",
-    requestFailed: "فشل الطلب"
+    requestFailed: "فشل الطلب",
+    visitors: "الزوار الفريدون",
+    todayVisitors: "زوار اليوم",
+    studentRequests: "طلبات التلاميذ"
   }
 };
 
@@ -156,6 +181,9 @@ function applyLanguage(lang) {
   document.getElementById("hCity").textContent = t.city;
   document.getElementById("hLocation").textContent = t.location;
   document.getElementById("hSource").textContent = t.source;
+  document.getElementById("sVisitorsLabel").textContent = t.visitors;
+  document.getElementById("sTodayLabel").textContent = t.todayVisitors;
+  document.getElementById("sRequestsLabel").textContent = t.studentRequests;
 
   document.querySelectorAll("[data-lang]").forEach(button => {
     button.classList.toggle("active", button.dataset.lang === currentLang);
@@ -171,21 +199,32 @@ load.addEventListener("click", async () => {
 
   status.textContent = t.loading;
   rows.innerHTML = "";
+  visitorCount.textContent = "—";
+  todayVisitorCount.textContent = "—";
+  requestCount.textContent = "—";
 
   try {
-    const r = await fetch("/api/leads", {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    });
+    const headers = {
+      Authorization: `Bearer ${token.value}`
+    };
 
-    const data = await r.json();
+    const [leadsResponse, statsResponse] = await Promise.all([
+      fetch("/api/leads", { headers }),
+      fetch("/api/stats", { headers })
+    ]);
 
-    if (!r.ok) {
-      throw new Error(data.error || t.requestFailed);
+    const leadsData = await leadsResponse.json();
+    const statsData = await statsResponse.json();
+
+    if (!leadsResponse.ok) {
+      throw new Error(leadsData.error || t.requestFailed);
     }
 
-    rows.innerHTML = data.leads.map(x => `
+    if (!statsResponse.ok) {
+      throw new Error(statsData.error || t.requestFailed);
+    }
+
+    rows.innerHTML = leadsData.leads.map(x => `
       <tr>
         <td>${esc(x.created_at)}</td>
         <td>${esc(x.full_name)}</td>
@@ -199,7 +238,10 @@ load.addEventListener("click", async () => {
       </tr>
     `).join("");
 
-    status.textContent = t.requests(data.leads.length);
+    visitorCount.textContent = Number(statsData.unique_visitors || 0).toLocaleString();
+    todayVisitorCount.textContent = Number(statsData.today_visitors || 0).toLocaleString();
+    requestCount.textContent = Number(leadsData.leads.length || 0).toLocaleString();
+    status.textContent = t.requests(leadsData.leads.length);
   } catch (e) {
     status.textContent = e.message || t.unable;
   }
