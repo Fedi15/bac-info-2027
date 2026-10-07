@@ -1,6 +1,8 @@
 const translations = {
 
     fr: {
+        statsTitle:"Quelques chiffres.<br><em>Une vraie progression.</em>",
+        statsLead:"Les chiffres du site, mis à jour en temps réel.",
 
         navCta:"Demander une séance", sfax:"Sfax", eyebrow:"Cours particuliers d'informatique",
 
@@ -64,6 +66,9 @@ const translations = {
 
     en: {
 
+        statsTitle:"A few numbers.<br><em>Real progress.</em>",
+        statsLead:"Site figures, updated in real time.",
+
         navCta:"Request a lesson", sfax:"Sfax", eyebrow:"Private computer science lessons",
 
         heroTitle:"Computer science,<br><em>privately.</em>",
@@ -120,12 +125,14 @@ const translations = {
 
         success:"Request received. Thank you. You will receive an email with the next information.",error:"Unable to send the request right now. Please try again.",
 
-        footerRole:"Private computer science lessons",footerLine:"At my place · At yours · By appointment"
+        footerRole:"Private computer science lessons",footerLine:"At my place · At yours · By appointment",statsKicker:"THE SITE IN NUMBERS",statsVisitors:"VISITORS",statsVisitorsNote:"Unique visitors",statsToday:"TODAY",statsTodayNote:"Visitors today",statsRequests:"REQUESTS",statsRequestsNote:"Lesson requests"
 
     },
 
     ar: {
 
+        statsTitle:"بعض الأرقام.<br><em>تقدّم حقيقي.</em>",
+        statsLead:"إحصائيات الموقع يتم تحديثها في الوقت الفعلي.",
         navCta:"اطلب حصة", eyebrow:"دروس خصوصية في الإعلامية",
 
         heroTitle:"الإعلامية،<br><em>بشكل خاص.</em>",
@@ -182,7 +189,7 @@ const translations = {
 
         success:"تم استلام طلبك. شكراً لك. ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة.",error:"تعذر إرسال الطلب حالياً. حاول مرة أخرى.",
 
-        footerRole:"دروس خصوصية في الإعلامية",footerLine:"عندي · عندك · حسب الموعد"
+        footerRole:"دروس خصوصية في الإعلامية",footerLine:"عندي · عندك · حسب الموعد",statsKicker:"الموقع بالأرقام",statsVisitors:"الزوار",statsVisitorsNote:"الزوار الفريدون",statsToday:"اليوم",statsTodayNote:"زوار اليوم",statsRequests:"الطلبات",statsRequestsNote:"طلبات الحصص"
 
     }
 
@@ -473,16 +480,9 @@ async function loadPublicStats() {
             method: "GET",
             cache: "no-store"
         });
-
-        if (!response.ok) {
-            throw new Error(`Stats request failed: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Stats request failed: ${response.status}`);
         const stats = await response.json();
-
-        if (!stats.ok) {
-            throw new Error(stats.error || "Stats API returned an error");
-        }
+        if (!stats.ok) throw new Error(stats.error || "Stats API returned an error");
 
         const visitors = document.getElementById("statVisitors");
         const today = document.getElementById("statToday");

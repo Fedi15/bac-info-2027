@@ -83,31 +83,89 @@
         </div>
     </section>
 
-    <section class="method-section">
-        <div class="section-kicker" data-i18n="methodKicker">Une séance, quatre étapes</div>
-        <div class="method-grid">
-            <article class="method-item">
-                <span>01</span>
-                <h3 data-i18n="m1t">Comprendre</h3>
-                <p data-i18n="m1p">On identifie ce qui bloque et on reprend la notion avec des explications adaptées.</p>
-            </article>
-            <article class="method-item">
-                <span>02</span>
-                <h3 data-i18n="m2t">Pratiquer</h3>
-                <p data-i18n="m2p">On passe rapidement aux exercices pour transformer la compréhension en compétence.</p>
-            </article>
-            <article class="method-item">
-                <span>03</span>
-                <h3 data-i18n="m3t">Corriger</h3>
-                <p data-i18n="m3p">On analyse les erreurs et les méthodes, pas seulement la réponse finale.</p>
-            </article>
-            <article class="method-item">
-                <span>04</span>
-                <h3 data-i18n="m4t">Progresser</h3>
-                <p data-i18n="m4p">Chaque séance te rapproche de l'autonomie et de tes objectifs scolaires.</p>
-            </article>
+<section class="site-stats-section" aria-label="Site statistics">
+    <div class="site-stats-header">
+        <div>
+            <div class="section-kicker" data-i18n="statsKicker">
+                LE SITE EN CHIFFRES
+            </div>
+
+            <h2 data-i18n="statsTitle">
+                Quelques chiffres.<br>
+                <em>Une vraie progression.</em>
+            </h2>
         </div>
-    </section>
+
+        <p data-i18n="statsLead">
+            Les chiffres du site, mis à jour en temps réel.
+        </p>
+    </div>
+
+    <div class="site-stats-grid">
+
+        <article class="site-stat-card">
+            <div class="site-stat-top">
+                <span class="site-stat-index">01</span>
+                <span class="site-stat-label" data-i18n="statsVisitors">
+                    VISITEURS
+                </span>
+            </div>
+
+            <div class="site-stat-value">
+                <strong id="statVisitors">—</strong>
+                <span>+</span>
+            </div>
+
+            <div class="site-stat-bottom">
+                <span class="site-stat-note" data-i18n="statsVisitorsNote">
+                    Visiteurs uniques
+                </span>
+            </div>
+        </article>
+
+
+        <article class="site-stat-card featured">
+            <div class="site-stat-top">
+                <span class="site-stat-index">02</span>
+                <span class="site-stat-label" data-i18n="statsToday">
+                    AUJOURD'HUI
+                </span>
+            </div>
+
+            <div class="site-stat-value">
+                <strong id="statToday">—</strong>
+            </div>
+
+            <div class="site-stat-bottom">
+                <span class="site-stat-note" data-i18n="statsTodayNote">
+                    Visiteurs aujourd'hui
+                </span>
+            </div>
+        </article>
+
+
+        <article class="site-stat-card">
+            <div class="site-stat-top">
+                <span class="site-stat-index">03</span>
+                <span class="site-stat-label" data-i18n="statsRequests">
+                    DEMANDES
+                </span>
+            </div>
+
+            <div class="site-stat-value">
+                <strong id="statRequests">—</strong>
+                <span>+</span>
+            </div>
+
+            <div class="site-stat-bottom">
+                <span class="site-stat-note" data-i18n="statsRequestsNote">
+                    Demandes de cours
+                </span>
+            </div>
+        </article>
+
+    </div>
+</section>
 
     <section class="subjects-section">
         <div class="section-heading compact">
@@ -286,7 +344,6 @@
 
     </div>
 </div>
-<button id="btnc" type="button">Test</button>
     <footer>
         <div class="footer-inner">
             <div><strong>FEDI GHANMI (TORBAGA)</strong><br><span data-i18n="footerRole">Cours particuliers d'informatique</span></div>
@@ -296,6 +353,16 @@
 </div>
 <!-- //*src="js.js"*// -->
 <script src="js.js" >
+
+
+</script>
+</body>
+</html>
+
+
+
+
+
 
 
 </script>
