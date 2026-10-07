@@ -2,483 +2,228 @@ emailjs.init({
     publicKey: "ZUjic6-9k2GvyJPsu"
 });
 
-
-
 const translations = {
-
-    fr: {
-        statsTitle:"Quelques chiffres.<br><em>Une vraie progression.</em>",
-        statsLead:"Les chiffres du site, mis à jour en temps réel.",
-
-        navCta:"Demander une séance", sfax:"Sfax", eyebrow:"Cours particuliers d'informatique",
-
-        heroTitle:"L'informatique,<br><em>en privé.</em>",
-
-        heroLead:"Un accompagnement individuel adapté à ton niveau, à tes difficultés et à tes objectifs.",
-
-        heroCta:"Demander une séance", heroSecondary:"Voir comment ça fonctionne",
-
-        locationLine:"Chez moi ou chez toi.", locationSub:"Tu choisis le lieu.",
-
-        visualLabel:"PRIVATE LESSON / 01", visualCaption:"Une séance construite autour de toi.",
-
-        formatKicker:"Deux façons d'apprendre", formatTitle:"Chez moi.<br><em>Ou chez toi.</em>",
-
-        formatLead:"Pas de salle de classe impersonnelle. Une vraie séance individuelle, dans le lieu qui te convient le mieux.",
-
-        homeTitle:"Chez moi", homeText:"Tu viens travailler dans un espace calme et dédié à la séance. On prend le temps de comprendre, pratiquer et corriger.", homeNote:"ESPACE DÉDIÉ AU TRAVAIL",
-
-        studentTitle:"Chez toi", studentText:"Je me déplace chez toi pour une séance individuelle, directement dans ton environnement de travail.", studentNote:"JE ME DÉPLACE CHEZ L'ÉLÈVE",
-
-        methodKicker:"Une séance, quatre étapes",
-
-        m1t:"Comprendre",m1p:"On identifie ce qui bloque et on reprend la notion avec des explications adaptées.",
-
-        m2t:"Pratiquer",m2p:"On passe rapidement aux exercices pour transformer la compréhension en compétence.",
-
-        m3t:"Corriger",m3p:"On analyse les erreurs et les méthodes, pas seulement la réponse finale.",
-
-        m4t:"Progresser",m4p:"Chaque séance te rapproche de l'autonomie et de tes objectifs scolaires.",
-
-        subjectsKicker:"Ce que l'on peut travailler", subjectsTitle:"Un programme qui<br><em>s'adapte à ta section.</em>",
-
-        subjectsLead:"Je regroupe les sections qui suivent le même programme : Économie & Gestion d'un côté, puis Mathématiques, Technique et Sciences Expérimentales ensemble.",
-
-        ecoLabel:"BAC ÉCONOMIE & GESTION",ecoTitle:"Access · Pandas · Python",ecoText:"Travail ciblé sur le programme, notamment Access, Pandas et Python.",
-
-        sharedLabel:"BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES EXPÉRIMENTALES",sharedTitle:"Python & algorithmique",sharedText:"Un même programme de travail pour les trois sections : Python et algorithmique.",
-
-        litLabel:"BAC LETTRES",litTitle:"Pas de matière Informatique",litText:"La matière Informatique n'est pas proposée pour cette section.",notOffered:"Non proposé",
-
-        quote:"L'objectif n'est pas que je fasse l'exercice à ta place. L'objectif est que tu puisses le faire seul la prochaine fois.",
-
-        formKicker:"Première séance",formTitle:"Dis-moi ce<br><em>qui te bloque.</em>",
-
-        formLead:"Quelques informations suffisent. Je te recontacte ensuite pour comprendre ton besoin et organiser la séance.",
-
-        personalTitle:"Tes coordonnées",needTitle:"Ta séance",
-
-        nameLabel:"Nom et prénom *",phoneLabel:"Numéro de téléphone *",emailLabel:"Adresse e-mail *",levelLabel:"Niveau / section *",levelHint:"Choisis directement ton niveau ou ta section. Le Bac Informatique n'est pas proposé.",schoolLabel:"Lycée / établissement",
-
-        locationLabel:"Lieu de la séance *",mapLink:"Voir mon lieu sur Google Maps →",cityLabel:"Ville",
-
-        submit:"Demander ma séance",formNote:"Après ta demande, tu recevras un e-mail avec les informations utiles pour la suite de la séance. Vérifie aussi tes courriers indésirables.",emailFollowup:"Après ta demande, je te contacterai par email pour confirmer les informations et convenir de la séance.",
-
-        success:"Demande envoyée. Merci. Ta demande a bien été reçue. Tu recevras un e-mail avec les prochaines informations.",error:"Impossible d'envoyer la demande pour le moment. Réessaie dans quelques instants.",
-
-        footerRole:"Cours particuliers d'informatique",footerLine:"Chez moi · Chez toi · Sur rendez-vous"
-
-    },
-
-    en: {
-
-        statsTitle:"A few numbers.<br><em>Real progress.</em>",
-        statsLead:"Site figures, updated in real time.",
-
-        navCta:"Request a lesson", sfax:"Sfax", eyebrow:"Private computer science lessons",
-
-        heroTitle:"Computer science,<br><em>privately.</em>",
-
-        heroLead:"One-to-one tutoring adapted to your level, your difficulties and your goals.",
-
-        heroCta:"Request a lesson", heroSecondary:"See how it works",
-
-        locationLine:"At my place or yours.", locationSub:"You choose the location.",
-
-        visualLabel:"PRIVATE LESSON / 01", visualCaption:"A lesson built around you.",
-
-        formatKicker:"Two ways to learn", formatTitle:"At my place.<br><em>Or yours.</em>",
-
-        formatLead:"No impersonal classroom. A real one-to-one lesson, where it works best for you.",
-
-        homeTitle:"At my place", homeText:"Come work in a calm space dedicated to the lesson. We take the time to understand, practise and correct.", homeNote:"DEDICATED STUDY SPACE",
-
-        studentTitle:"At your place", studentText:"I travel to your home for a private lesson, directly in your own study environment.", studentNote:"I COME TO THE STUDENT",
-
-        methodKicker:"One lesson, four steps",
-
-        m1t:"Understand",m1p:"We identify what is blocking you and rebuild the concept with clear explanations.",
-
-        m2t:"Practise",m2p:"We move quickly to exercises so understanding becomes a real skill.",
-
-        m3t:"Correct",m3p:"We analyse mistakes and methods, not just the final answer.",
-
-        m4t:"Progress",m4p:"Each lesson moves you closer to independence and your academic goals.",
-
-        subjectsKicker:"What we can work on", subjectsTitle:"A programme that<br><em>fits your section.</em>",
-
-        subjectsLead:"I group the sections that follow the same programme: Economics & Management separately, then Mathematics, Technical and Experimental Sciences together.",
-
-        ecoLabel:"BAC ECONOMICS & MANAGEMENT",ecoTitle:"Access · Pandas · Python",ecoText:"Focused work on the programme, especially Access, Pandas and Python.",
-
-        sharedLabel:"BAC MATHEMATICS · TECHNICAL · EXPERIMENTAL SCIENCES",sharedTitle:"Python & algorithms",sharedText:"One shared programme for all three sections: Python and algorithms.",
-
-        litLabel:"BAC LITERATURE",litTitle:"No computer science subject",litText:"Computer science lessons are not offered for this section.",notOffered:"Not offered",
-
-        quote:"The goal is not for me to do the exercise for you. The goal is for you to be able to do it yourself next time.",
-
-        formKicker:"First lesson",formTitle:"Tell me what<br><em>you're struggling with.</em>",
-
-        formLead:"A few details are enough. I will contact you to understand your needs and arrange the lesson.",
-
-        personalTitle:"Your details",needTitle:"Your lesson",
-
-        nameLabel:"Full name *",phoneLabel:"Phone number *",emailLabel:"Email address *",levelLabel:"Level / section *",levelHint:"Choose your level or section directly. Bac Computer Science is not offered.",schoolLabel:"School / institution",
-
-        locationLabel:"Lesson location *",mapLink:"View my teaching location on Google Maps →",cityLabel:"City",
-
-        submit:"Request my lesson",formNote:"After your request, you will receive an email with the next information. Please also check your spam folder.",emailFollowup:"After your request, I will contact you by email to confirm the details and arrange the lesson.",
-
-        success:"Request received. Thank you. You will receive an email with the next information.",error:"Unable to send the request right now. Please try again.",
-
-        footerRole:"Private computer science lessons",footerLine:"At my place · At yours · By appointment",statsKicker:"THE SITE IN NUMBERS",statsVisitors:"VISITORS",statsVisitorsNote:"Unique visitors",statsToday:"TODAY",statsTodayNote:"Visitors today",statsRequests:"REQUESTS",statsRequestsNote:"Lesson requests"
-
-    },
-
-    ar: {
-
-        statsTitle:"بعض الأرقام.<br><em>تقدّم حقيقي.</em>",
-        statsLead:"إحصائيات الموقع يتم تحديثها في الوقت الفعلي.",
-        navCta:"اطلب حصة", eyebrow:"دروس خصوصية في الإعلامية",
-
-        heroTitle:"الإعلامية،<br><em>بشكل خاص.</em>",
-
-        heroLead:"مرافقة فردية تتناسب مع مستواك والصعوبات التي تواجهها والأهداف التي تريد الوصول إليها.",
-
-        heroCta:"اطلب حصة", heroSecondary:"كيف تتم الحصة؟",
-
-        locationLine:"عندي أو عندك.", locationSub:"أنت تختار المكان.",
-
-        visualLabel:"PRIVATE LESSON / 01", visualCaption:"حصة مبنية حول احتياجاتك.",
-
-        formatKicker:"طريقتان للتعلّم", formatTitle:"عندي.<br><em>أو عندك.</em>",
-
-        formatLead:"لا قاعة دراسية عادية. حصة فردية حقيقية في المكان الأنسب لك.",
-
-        homeTitle:"عندي", homeText:"تأتي للعمل في مكان هادئ ومخصص للحصة. نأخذ الوقت الكافي للفهم والتطبيق وتصحيح الأخطاء.", homeNote:"مكان مخصص للدراسة",
-
-        studentTitle:"عندك", studentText:"أتنقل إلى منزلك لتقديم حصة فردية مباشرة في المكان الذي تدرس فيه.", studentNote:"أتنقل إلى منزل التلميذ",
-
-        methodKicker:"حصة واحدة، أربع مراحل",
-
-        m1t:"افهم",m1p:"نحدد ما يصعب عليك ونشرح الفكرة بطريقة تتناسب مع مستواك.",
-
-        m2t:"طبّق",m2p:"ننتقل إلى التمارين حتى تتحول المعلومة إلى مهارة حقيقية.",
-
-        m3t:"صحّح",m3p:"نحلل الأخطاء والطريقة، وليس فقط الإجابة النهائية.",
-
-        m4t:"تقدّم",m4p:"كل حصة تقرّبك من الاستقلالية وتحقيق أهدافك الدراسية.",
-
-        subjectsKicker:"ما يمكننا العمل عليه", subjectsTitle:"برنامج يتناسب مع<br><em>شعبتك.</em>",
-
-        subjectsLead:"أجمع الشعب التي تتبع نفس البرنامج: اقتصاد وتصرف بشكل مستقل، ثم رياضيات وتقنية وعلوم تجريبية ضمن نفس المجموعة.",
-
-        ecoLabel:"باكالوريا اقتصاد وتصرف",ecoTitle:"Access · Pandas · Python",ecoText:"العمل على البرنامج، وخاصة Access وPandas وPython.",
-
-        sharedLabel:"باكالوريا رياضيات · تقنية · علوم تجريبية",sharedTitle:"Python والخوارزميات",sharedText:"نفس برنامج العمل للشعب الثلاث: Python والخوارزميات.",
-
-        litLabel:"باكالوريا آداب",litTitle:"لا توجد مادة إعلامية",litText:"دروس الإعلامية غير متوفرة لهذه الشعبة.",notOffered:"غير متوفر",
-
-        quote:"الهدف ليس أن أقوم بالتمرين بدلاً منك، بل أن تتمكن من القيام به بنفسك في المرة القادمة.",
-
-        formKicker:"الحصة الأولى",formTitle:"قل لي ما الذي<br><em>يصعب عليك.</em>",
-
-        formLead:"بعض المعلومات تكفي. سأتواصل معك لفهم حاجتك وتنظيم الحصة.",
-
-        personalTitle:"معلوماتك",needTitle:"الحصة",
-
-        nameLabel:"الاسم واللقب *",phoneLabel:"رقم الهاتف *",emailLabel:"البريد الإلكتروني *",levelLabel:"المستوى / الشعبة *",levelHint:"اختر مستواك أو شعبتك مباشرة. شعبة الإعلامية غير متوفرة.",schoolLabel:"المعهد / الثانوية",
-
-        locationLabel:"مكان الحصة *",mapLink:"شاهد مكان التدريس على Google Maps →",cityLabel:"المدينة",
-
-        submit:"اطلب حصتي",formNote:"بعد إرسال الطلب، ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة. تحقق أيضاً من الرسائل غير المرغوب فيها.",
-
-        success:"تم استلام طلبك. شكراً لك. ستتلقى بريداً إلكترونياً يحتوي على المعلومات القادمة.",error:"تعذر إرسال الطلب حالياً. حاول مرة أخرى.",
-
-        footerRole:"دروس خصوصية في الإعلامية",footerLine:"عندي · عندك · حسب الموعد",statsKicker:"الموقع بالأرقام",statsVisitors:"الزوار",statsVisitorsNote:"الزوار الفريدون",statsToday:"اليوم",statsTodayNote:"زوار اليوم",statsRequests:"الطلبات",statsRequestsNote:"طلبات الحصص"
-
-    }
-
+    tn: {
+        statsKicker:"الموقع بالأرقام",
+        statsTitle:"شوية أرقام.<br><em>وتقدّم حقيقي.</em>",
+        statsLead:"إحصائيات الموقع تتحدّث في الوقت الحقيقي.",
+
+        navCta:"إطلب séance",
+        sfax:"صفاقس",
+        eyebrow:"séances particulières في informatique",
+        heroTitle:"informatique،<br><em>على كيفك.</em>",
+        heroLead:"مرافقة فردية على قدّ مستواك، الصعوبات متاعك والأهداف اللي تحب توصللها.",
+        heroCta:"إطلب séance",
+        heroSecondary:"شوف كيفاش تخدم",
+        locationLine:"عندي ولا عندك.",
+        locationSub:"إنتي تختار البلاصة.",
+        visualLabel:"SÉANCE PRIVÉE / 01",
+        visualCaption:"séance معمولة على قياسك.",
+
+        formatKicker:"زوز طرق باش تتعلّمي",
+        formatTitle:"عندي.<br><em>ولا عندك.</em>",
+        formatLead:"ما فماش قاعة عادية ولا جوّ متاع groupe. فما séance فردية حقيقية، في البلاصة اللي ترتاح فيها أكثر.",
+        homeTitle:"عندي",
+        homeText:"تجي تخدم في بلاصة هادئة ومخصّصة للـséance. ناخذو وقتنا باش نفهمو، نطبّقو ونصلحو الغلط.",
+        homeNote:"بلاصة مخصّصة للقراية",
+        studentTitle:"عندك",
+        studentText:"نجي لعندك للدار ونعملولك séance فردية مباشرة في البلاصة اللي تقرا فيها.",
+        studentNote:"نجي لعندك",
+
+        methodKicker:"séance وحدة، 4 مراحل",
+        m1t:"نفهمو",m1p:"نحددو شنوّة اللي معطّلك ونعاودو نفسّرو الفكرة بطريقة تناسب مستواك.",
+        m2t:"نطبّقو",m2p:"ندخلو بسرعة للتمارين باش الفهم يتحوّل لمهارة حقيقية.",
+        m3t:"نصلحو",m3p:"نحللو الغلط والطريقة، موش كان الإجابة الأخيرة.",
+        m4t:"نتقدمو",m4p:"كل séance تقرّبك أكثر للاستقلالية ولأهدافك الدراسية.",
+
+        subjectsKicker:"شنوّة ننجمو نخدمو",
+        subjectsTitle:"برنامج يتكيّف<br><em>مع الشعبة متاعك.</em>",
+        subjectsLead:"نجمّعو الشعب اللي عندها نفس البرنامج: Économie & Gestion وحدها، وبعد Mathématiques وTechnique وSciences Expérimentales مع بعضهم.",
+        ecoLabel:"BAC ÉCONOMIE & GESTION",
+        ecoTitle:"Access · Pandas · Python",
+        ecoText:"خدمة مركّزة على البرنامج، خاصة Access وPandas وPython.",
+        sharedLabel:"BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES EXPÉRIMENTALES",
+        sharedTitle:"Python & algorithmique",
+        sharedText:"نفس برنامج الخدمة للشعب الثلاثة: Python وalgorithmique.",
+        litLabel:"BAC LETTRES",
+        litTitle:"ما فماش informatique",
+        litText:"informatique موش متوفرة للشعبة هاذي.",
+        notOffered:"موش متوفّرة",
+
+        quote:"نفهموك الطريقة، نطبّقوها مع بعضنا، وإنتي تولّي تحلّ الدفوارات وحدك.",
+
+        formKicker:"أول séance",
+        formTitle: "عندك صعوبة في informatique؟<br><em>سجل والباقي عليا.</em>",
+        formLead:"شوية معلومات يكفيو. بعد نتواصل معاك باش نفهم شنوّة تحتاج ونرتّبو الـséance.",
+        personalTitle:"معلوماتك",
+        needTitle:"الـséance متاعك",
+        nameLabel:"الإسم واللقب *",
+        phoneLabel:"رقم التليفون *",
+        emailLabel:"الإيميل *",
+        levelLabel:"المستوى / الشعبة *",
+        levelHint:"إختار المستوى ولا الشعبة متاعك. Bac Informatique موش متوفّر.",
+        schoolLabel:"الليسي / المؤسسة",
+        locationLabel:"بلاصة الـséance *",
+        mapLink:"شوف بلاصة التدريس على Google Maps →",
+        cityLabel:"المدينة",
+        submit:"إطلب الـséance متاعك",
+        formNote:"بعد ما تبعث الطلب، يوصلك إيميل فيه المعلومات اللازمة للمرحلة الجاية. شوف زادة في الـspam إذا لزم.",
+        emailFollowup:"بعد طلبك، باش نتواصل معاك بالإيميل باش نأكدو المعلومات ونرتّبو الـséance.",
+        success:"الطلب تبعث بنجاح. شكراً. باش نتواصل معاك بالإيميل بالمعلومات الجاية.",
+        error:"ما نجّمش نبعثو الطلب توّة. عاود جرّب بعد شوية.",
+        footerRole:"séances particulières في informatique",
+        footerLine:"عندي · عندك · بالموعد",
+        statsVisitors:"الزوار",
+        statsVisitorsNote:"زوار مختلفين",
+        statsToday:"اليوم",
+        statsTodayNote:"زوار اليوم",
+        statsRequests:"الطلبات",
+        statsRequestsNote:"طلبات الـséances"
+    }
 };
-
-
 
 const optionLabels = {
-
-    fr:{
-
-        level:["Choisir","3ème année secondaire","Bac Économie & Gestion","Bac Mathématiques","Bac Technique","Bac Sciences Expérimentales","Bac Lettres"],
-
-        location:["Choisir","Chez moi","Chez l'élève"]
-
-    },
-
-    en:{
-
-        level:["Choose","3rd year of secondary school","Bac Economics & Management","Bac Mathematics","Bac Technical","Bac Experimental Sciences","Bac Literature"],
-
-        location:["Choose","At my place","At the student's place"]
-
-    },
-
-    ar:{
-
-        level:["اختر","السنة الثالثة ثانوي","باكالوريا اقتصاد وتصرف","باكالوريا رياضيات","باكالوريا تقنية","باكالوريا علوم تجريبية","باكالوريا آداب"],
-
-        location:["اختر","عندي","عند التلميذ"]
-
-    }
-
+    level:["إختار","3ème année secondaire","Bac Économie & Gestion","Bac Mathématiques","Bac Technique","Bac Sciences Expérimentales","Bac Lettres"],
+    location:["إختار","عندي","عندك"]
 };
 
+function updateSuccessModal(name){
+    const modal = document.getElementById("successModal");
+    if(!modal) return;
+    const kicker = modal.querySelector("[data-success-kicker]");
+    const title = modal.querySelector("[data-success-title]");
+    const message = modal.querySelector("[data-success-message]");
+    const footer = modal.querySelector("[data-success-footer]");
+    const returnBtn = modal.querySelector("[data-success-return]");
+    const nameEl = document.getElementById("successName");
 
-
-
-
-function updateSuccessModal(lang, name){
-
-    const modal = document.getElementById("successModal");
-
-    const title = modal.querySelector("[data-success-title]");
-
-    const kicker = modal.querySelector("[data-success-kicker]");
-
-    const message = modal.querySelector("[data-success-message]");
-
-    const footer = modal.querySelector("[data-success-footer]");
-
-    const returnBtn = modal.querySelector("[data-success-return]");
-
-    const nameEl = document.getElementById("successName");
-
-
-
-    const copy = {
-
-        fr: {
-
-            kicker:"DEMANDE REÇUE",
-
-            title:"إن شاء الله ADMIS !",
-
-            message:"Ta demande a bien été reçue. Je te contacterai par email pour confirmer les détails et organiser la séance.",
-
-            footer:"À bientôt — FEDI GHANMI (TORBAGA)",
-
-            returnBtn:"Retour au site"
-
-        },
-
-        en: {
-
-            kicker:"REQUEST RECEIVED",
-
-            title:"إن شاء الله ADMIS !",
-
-            message:"Your request has been received. I’ll contact you by email to confirm the details and arrange the lesson.",
-
-            footer:"See you soon — FEDI GHANMI (TORBAGA)",
-
-            returnBtn:"Back to the site"
-
-        },
-
-        ar: {
-
-            kicker:"تم استلام الطلب",
-
-            title:"إن شاء الله ناجح !",
-
-            message:"تم استلام طلبك بنجاح. سأتواصل معك عبر البريد الإلكتروني لتأكيد التفاصيل وتنظيم الحصة.",
-
-            footer:"إلى اللقاء — FEDI GHANMI (TORBAGA)",
-
-            returnBtn:"العودة إلى الموقع"
-
-        }
-
-    }[lang] || null;
-
-
-
-    if(!copy) return;
-
-    kicker.textContent = copy.kicker;
-
-    title.textContent = copy.title;
-
-    message.textContent = copy.message;
-
-    footer.textContent = copy.footer;
-
-    returnBtn.textContent = copy.returnBtn;
-
-    nameEl.textContent = name ? (lang === "ar" ? `برافو ${name}` : `Bravo ${name}.`) : "";
-
+    kicker.textContent = "الطلب وصل";
+    title.textContent = "إن شاء الله ادمين !";
+    message.textContent = "طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.";
+    footer.textContent = "نستناوك — FEDI GHANMI (TORBAGA)";
+    returnBtn.textContent = "إرجع للموقع";
+    nameEl.textContent = name ? `برافو ${name}` : "";
 }
-
-
 
 function launchSuccessConfetti(){
+    const modal = document.getElementById("successModal");
+    const old = modal.querySelector(".success-confetti");
+    if(old) old.remove();
 
-    const modal = document.getElementById("successModal");
-
-    const old = modal.querySelector(".success-confetti");
-
-    if(old) old.remove();
-
-
-
-    const layer = document.createElement("div");
-
-    layer.className = "success-confetti";
-
-    const shapes = ["diamond","dot","dash","diamond","dot","dash","dot","diamond"];
-
-    shapes.forEach((shape, i)=>{
-
-        const piece = document.createElement("span");
-
-        piece.className = `confetti-piece ${shape}`;
-
-        piece.style.setProperty("--i", i);
-
-        piece.style.setProperty("--x", `${(i - 3.5) * 22}px`);
-
-        layer.appendChild(piece);
-
-    });
-
-    modal.appendChild(layer);
-
+    const layer = document.createElement("div");
+    layer.className = "success-confetti";
+    const shapes = ["diamond","dot","dash","diamond","dot","dash","dot","diamond"];
+    shapes.forEach((shape, i)=>{
+        const piece = document.createElement("span");
+        piece.className = `confetti-piece ${shape}`;
+        piece.style.setProperty("--i", i);
+        piece.style.setProperty("--x", `${(i - 3.5) * 22}px`);
+        layer.appendChild(piece);
+    });
+    modal.appendChild(layer);
 }
-
-
 
 function openSuccessModal(name){
-
-    const modal = document.getElementById("successModal");
-
-    const lang = document.documentElement.lang || "fr";
-
-    updateSuccessModal(lang, name);
-
-    launchSuccessConfetti();
-
-    modal.classList.add("is-open");
-
-    modal.setAttribute("aria-hidden", "false");
-
-    document.body.classList.add("modal-open");
-
-
-
-    requestAnimationFrame(()=>{
-
-        const closeBtn = modal.querySelector(".success-close");
-
-        closeBtn.focus();
-
-    });
-
+    const modal = document.getElementById("successModal");
+    updateSuccessModal(name);
+    launchSuccessConfetti();
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+    requestAnimationFrame(()=> modal.querySelector(".success-close")?.focus());
 }
-
-
 
 function closeSuccessModal(){
-
-    const modal = document.getElementById("successModal");
-
-    modal.classList.remove("is-open");
-
-    modal.setAttribute("aria-hidden", "true");
-
-    document.body.classList.remove("modal-open");
-
+    const modal = document.getElementById("successModal");
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
 }
 
+function applyTunisian(){
+    const t = translations.tn;
+    document.documentElement.lang = "ar-TN";
+    document.documentElement.dir = "rtl";
 
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+        if(t[el.dataset.i18n]) el.innerHTML = t[el.dataset.i18n];
+    });
 
-function translateOptions(lang){
+    Object.entries(optionLabels).forEach(([id, values])=>{
+        document.querySelectorAll(`#${id} option`).forEach((option,index)=>{
+            if(values[index]) option.textContent = values[index];
+        });
+    });
 
-    const labels = optionLabels[lang] || optionLabels.fr;
-
-    Object.entries(labels).forEach(([id, values])=>{
-
-        document.querySelectorAll(`#${id} option`).forEach((option,index)=>{
-
-            if(values[index]) option.textContent = values[index];
-
-        });
-
-    });
-
+    updateSuccessModal("");
 }
 
+applyTunisian();
 
+// Light / dark theme toggle. Dark remains the default for existing visitors.
+const themeToggle = document.getElementById("themeToggle");
+const savedTheme = localStorage.getItem("site-theme");
+if(savedTheme === "light") document.documentElement.classList.add("light-mode");
 
-function setLanguage(lang){
-
-    const selected = translations[lang] ? lang : "fr";
-
-    const t = translations[selected];
-
-    document.documentElement.lang = selected;
-
-    document.documentElement.dir = selected === "ar" ? "rtl" : "ltr";
-
-
-
-    document.querySelectorAll("[data-i18n]").forEach(el=>{
-
-        if(t[el.dataset.i18n]) el.innerHTML = t[el.dataset.i18n];
-
-    });
-
-
-
-    document.querySelectorAll(".lang").forEach(btn=>{
-
-        btn.classList.toggle("active", btn.dataset.lang === selected);
-
-    });
-
-
-
-    translateOptions(selected);
-
-    const modal = document.getElementById("successModal");
-
-    if(modal){
-
-        updateSuccessModal(selected, document.getElementById("successName")?.textContent || "");
-
-    }
-
-    localStorage.setItem("bacInfoLang", selected);
-
+function updateThemeToggle(){
+    if(!themeToggle) return;
+    const light = document.documentElement.classList.contains("light-mode");
+    themeToggle.setAttribute("aria-label", light ? "الوضع الغامق" : "الوضع الفاتح");
+    themeToggle.setAttribute("title", light ? "الوضع الغامق" : "الوضع الفاتح");
+    themeToggle.querySelector(".theme-icon").textContent = light ? "☾" : "☼";
+    themeToggle.querySelector(".theme-label").textContent = light ? "غامق" : "فاتح";
 }
 
-
-
-document.querySelectorAll(".lang").forEach(btn=>{
-
-    btn.addEventListener("click", ()=>setLanguage(btn.dataset.lang));
-
+themeToggle?.addEventListener("click", ()=>{
+    const light = document.documentElement.classList.toggle("light-mode");
+    localStorage.setItem("site-theme", light ? "light" : "dark");
+    updateThemeToggle();
 });
-const requestedLang = new URLSearchParams(location.search).get("lang");
 
-setLanguage(
+updateThemeToggle();
 
-    requestedLang && translations[requestedLang]
+// Smooth, eased navigation to the inscription section.
+// This is intentionally slower than native scroll-behavior so the transition
+// feels deliberate instead of snapping to the form.
+function smoothScrollToSection(sectionId, extraOffset = 105) {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
 
-        ? requestedLang
+    const nav = document.querySelector(".site-nav, nav");
+    const offset = (nav?.getBoundingClientRect().height || 0) + extraOffset;
+    const start = window.scrollY;
+    const destination = Math.max(0, target.getBoundingClientRect().top + start - offset);
+    const distance = destination - start;
+    const duration = Math.min(1700, Math.max(1150, Math.abs(distance) * 0.85));
+    const startTime = performance.now();
 
-        : (localStorage.getItem("bacInfoLang") || "fr")
+    const easeInOutCubic = t =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-);
+    const step = now => {
+        const progress = Math.min(1, (now - startTime) / duration);
+        window.scrollTo(0, start + distance * easeInOutCubic(progress));
+        if (progress < 1) requestAnimationFrame(step);
+    };
 
+    requestAnimationFrame(step);
+}
 
+function smoothScrollToInscription() {
+    smoothScrollToSection("inscription", 105);
+}
+
+// Keep internal navigation smooth instead of allowing browser anchor jumps.
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener("click", event => {
+        const id = link.getAttribute("href")?.slice(1);
+        if (!id || !document.getElementById(id)) return;
+
+        event.preventDefault();
+        smoothScrollToSection(id, id === "inscription" ? 105 : 70);
+        history.replaceState(null, "", `#${id}`);
+    });
+});
 
 async function loadPublicStats() {
     try {
@@ -542,13 +287,13 @@ form.addEventListener("submit", async event=>{
 
     const error = document.getElementById("error");
 
-    const lang = document.documentElement.lang || "fr";
+    const lang = "tn";
 
 
 
     btn.disabled = true;
 
-    btn.textContent = lang === "ar" ? "جارٍ الإرسال..." : lang === "en" ? "Sending..." : "Envoi...";
+    btn.textContent = "جاري الإرسال...";
 
     success.style.display = "none";
 
@@ -591,7 +336,7 @@ form.addEventListener("submit", async event=>{
                     lesson_location: data.lesson_location || "",
                     city: data.city || "Sfax",
                     source: data.source || "Site web",
-                    created_at: new Date().toLocaleString("fr-FR", {
+                    created_at: new Date().toLocaleString("ar-TN", {
                         dateStyle: "full",
                         timeStyle: "short"
                     })
@@ -608,7 +353,7 @@ form.addEventListener("submit", async event=>{
 
         form.reset();
 
-        translateOptions(lang);
+        applyTunisian();
 
         success.style.display = "none";
 
@@ -622,7 +367,7 @@ form.addEventListener("submit", async event=>{
 
         btn.disabled = false;
 
-        btn.textContent = translations[lang]?.submit || translations.fr.submit;
+        btn.textContent = translations.tn.submit;
 
     }
 

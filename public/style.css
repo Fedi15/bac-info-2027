@@ -13,7 +13,7 @@
 
 *{box-sizing:border-box}
 
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:105px}
 
 body{
     margin:0;
@@ -48,7 +48,16 @@ button{cursor:pointer}
     letter-spacing:.16em;
 }
 
-.brand span{color:var(--gold)}
+ .brand span{color:var(--gold)}
+
+.brand-nick{
+    color:#8f887d;
+    font-size:10px;
+    letter-spacing:.12em;
+    font-weight:700;
+    margin-inline-start:7px;
+    opacity:.9;
+}
 
 .nav-right{display:flex;align-items:center;gap:16px}
 
@@ -1811,12 +1820,14 @@ select:focus{
     transition: transform .25s ease;
 }
 
-.form-wrap .field::before {
+.form-wrap .field::before { display:none; }
+
+.form-wrap .field::after {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: -1px;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     transform: scaleX(0);
@@ -1824,15 +1835,15 @@ select:focus{
     opacity: 0;
     transition: transform .3s ease, opacity .3s ease;
     pointer-events: none;
-    z-index: 2;
+    z-index: 4;
 }
 
 .form-wrap .field:hover {
     transform: translateY(-2px);
 }
 
-.form-wrap .field:hover::before,
-.form-wrap .field:focus-within::before {
+.form-wrap .field:hover::after,
+.form-wrap .field:focus-within::after {
     transform: scaleX(1);
     opacity: .8;
 }
@@ -1955,4 +1966,214 @@ select:focus{
     .form-wrap .submit-btn::after {
         transition: none !important;
     }
+}
+
+/* Premium séance CTA */
+.nav-cta,
+.hero-actions .btn.primary,
+.submit-btn {
+    background:linear-gradient(135deg, #e0bd72 0%, #cfa657 100%);
+    color:#111;
+    border-color:#e5c77f;
+    box-shadow:0 8px 28px rgba(216,181,106,.16), inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+.nav-cta:hover,
+.hero-actions .btn.primary:hover,
+.submit-btn:hover {
+    background:linear-gradient(135deg, #f0d28b 0%, #d9b461 100%);
+    border-color:#f0d28b;
+    box-shadow:0 14px 38px rgba(216,181,106,.25), 0 0 0 1px rgba(216,181,106,.18);
+}
+
+.submit-btn {
+    min-height:56px;
+    font-size:14px;
+    letter-spacing:.03em;
+}
+
+@media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+}
+
+
+/* =========================================================
+   LIGHT MODE
+   ========================================================= */
+html.light-mode{
+    --bg:#f7f4ed;
+    --surface:#fffdf8;
+    --surface-2:#f1ede4;
+    --ink:#171513;
+    --muted:#69645c;
+    --gold:#b58a3b;
+    --line:#ded7ca;
+    --soft:#ebe5da;
+    --success:#edf5ed;
+    --error:#faeeee;
+}
+
+html.light-mode body{
+    background:
+        radial-gradient(circle at 76% 0%,rgba(181,138,59,.13),transparent 34rem),
+        var(--bg);
+    color:var(--ink);
+}
+
+html.light-mode .nav{border-bottom-color:rgba(181,138,59,.28)}
+html.light-mode .brand-nick{color:#776f63}
+html.light-mode .nav-cta,
+html.light-mode .btn{border-color:rgba(181,138,59,.52)}
+html.light-mode .theme-toggle{
+    color:#4d483f;
+    background:rgba(255,255,255,.72);
+    border-color:rgba(181,138,59,.34);
+}
+html.light-mode .theme-toggle:hover{
+    color:#171513;
+    background:#fffaf0;
+    border-color:var(--gold);
+    box-shadow:0 8px 24px rgba(181,138,59,.13);
+}
+html.light-mode .hero-lead,
+html.light-mode .text-link,
+html.light-mode .section-heading p,
+html.light-mode .request-intro p{color:#69645c}
+html.light-mode .text-link{border-bottom-color:#bdb5a8}
+html.light-mode .location-line{color:#777066}
+html.light-mode .hero-visual{
+    background:linear-gradient(145deg,#fffdf8,#eee8dc);
+    border-color:rgba(181,138,59,.35);
+    box-shadow:0 30px 80px rgba(60,49,32,.12);
+}
+html.light-mode .visual-label{color:#777066}
+html.light-mode .intro-section,
+html.light-mode .method-section,
+html.light-mode .subjects-section,
+html.light-mode .quote-section{border-color:var(--line)}
+html.light-mode .location-card,
+html.light-mode .method-card,
+html.light-mode .subject-card,
+html.light-mode .bac-track{
+    background:var(--surface);
+    border-color:var(--line);
+}
+html.light-mode .location-card.featured,
+html.light-mode .bac-track.eco{
+    background:linear-gradient(145deg,#f3ecde,#fffdf8);
+}
+html.light-mode .subject-list span,
+html.light-mode .quote-author,
+html.light-mode .form-note,
+html.light-mode .field-hint,
+html.light-mode .mini-label,
+html.light-mode .track-top{color:#777066}
+html.light-mode .quote-section{background:rgba(181,138,59,.035)}
+html.light-mode .quote-section:hover blockquote{color:var(--gold)}
+html.light-mode .request-section{background:transparent}
+html.light-mode .form-wrap{
+    background:var(--surface);
+    border-color:var(--line);
+    box-shadow:0 24px 70px rgba(60,49,32,.08);
+}
+html.light-mode input,
+html.light-mode select,
+html.light-mode textarea,
+html.light-mode .fixed-field{
+    color:var(--ink);
+    background:#fffdf9;
+    border-color:#d8d0c2;
+}
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder{color:#989083}
+html.light-mode input:hover,
+html.light-mode select:hover,
+html.light-mode textarea:hover{border-color:rgba(181,138,59,.62)}
+html.light-mode input:focus,
+html.light-mode select:focus,
+html.light-mode textarea:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(181,138,59,.10);
+}
+html.light-mode select option{background:#fffdf9;color:#171513}
+html.light-mode select option:checked,
+html.light-mode select option:hover{background:var(--gold);color:#fff}
+html.light-mode .selected-slots-wrap{border-top-color:var(--line)}
+html.light-mode .slot-chip{border-color:#d8d0c2;background:#fffdf9;color:#4e493f}
+html.light-mode .slots-empty{border-color:#d8d0c2;background:#f6f1e8;color:#777066}
+html.light-mode .fixed-field{color:#3e3932}
+html.light-mode .primary{color:#fff;background:#b58a3b;border-color:#b58a3b}
+html.light-mode .primary:hover{background:#c09749;border-color:#c09749}
+html.light-mode .site-stats-section{background:transparent}
+html.light-mode .site-stat-card{background:var(--surface);border-color:var(--line)}
+html.light-mode .site-stat-card:hover{border-color:rgba(181,138,59,.55)}
+html.light-mode .success-modal .success-card{background:#fffdf8;color:var(--ink)}
+html.light-mode .success-modal .success-message{color:#69645c}
+html.light-mode .success-modal .success-close{color:#5f594f}
+html.light-mode .success-modal .success-footer{color:#777066}
+
+.theme-toggle{
+    appearance:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    min-height:38px;
+    padding:8px 12px;
+    border:1px solid rgba(216,181,106,.28);
+    border-radius:999px;
+    background:rgba(255,255,255,.025);
+    color:#bdb8b0;
+    cursor:pointer;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.08em;
+    transition:color .25s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease,transform .25s ease;
+}
+.theme-toggle:hover{color:var(--ink);border-color:rgba(216,181,106,.55);background:rgba(216,181,106,.07);transform:translateY(-1px)}
+.theme-icon{font-size:15px;line-height:1}
+.theme-label{line-height:1}
+
+@media (max-width:640px){
+    .theme-toggle{padding:8px 10px;min-width:38px}
+    .theme-label{display:none}
+}
+
+/* LIGHT MODE — registration controls */
+html.light-mode .form-wrap .field input:hover,
+html.light-mode .form-wrap .field select:hover,
+html.light-mode .form-wrap .field textarea:hover,
+html.light-mode .form-wrap .field input:focus,
+html.light-mode .form-wrap .field select:focus,
+html.light-mode .form-wrap .field textarea:focus {
+    color: #171513;
+    background: #fffdf9;
+    border-color: rgba(181,138,59,.72);
+    box-shadow: 0 8px 24px rgba(60,49,32,.07), 0 0 0 3px rgba(181,138,59,.10);
+}
+
+html.light-mode .form-wrap .field input::placeholder,
+html.light-mode .form-wrap .field textarea::placeholder {
+    color: #8b8377;
+}
+
+html.light-mode .form-wrap .field select {
+    color: #171513;
+    background: #fffdf9;
+}
+
+html.light-mode .form-wrap .field select option,
+html.light-mode .form-wrap .field select option:checked,
+html.light-mode .form-wrap .field select option:hover {
+    color: #171513;
+    background: #fffdf9;
+}
+
+html.light-mode .form-wrap .field select option:checked {
+    background: #efe5d1;
+    color: #171513;
+}
+
+html.light-mode .form-wrap .field:hover {
+    transform: translateY(-2px);
 }

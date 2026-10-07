@@ -8,7 +8,7 @@ The project currently uses Hatchable's "hatchable" runtime and database bindings
 
 Main routes:
 - /              Public landing page
-- /lang.html     Language selection page
+- /lang.html     Redirects to the Tunisian-only public site
 - /admin         Owner/admin lead dashboard
 - POST /api/register
 - GET /api/leads

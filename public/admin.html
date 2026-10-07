@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar-TN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -34,12 +34,6 @@
 <div class="wrap">
   <div class="top">
     <h1 id="pageTitle">Student requests</h1>
-
-    <div class="language" aria-label="Language">
-      <button type="button" data-lang="en">EN</button>
-      <button type="button" data-lang="fr">FR</button>
-      <button type="button" data-lang="ar">AR</button>
-    </div>
   </div>
 
   <div class="top">
@@ -86,68 +80,26 @@ const todayVisitorCount = document.getElementById("todayVisitorCount");
 const requestCount = document.getElementById("requestCount");
 
 const translations = {
-  en: {
-    dir: "ltr",
-    title: "Student requests",
-    load: "Load requests",
-    loading: "Loading…",
-    date: "Date",
-    name: "Name",
-    phone: "Phone",
-    email: "Email",
-    level: "Level / section",
-    school: "School",
-    city: "City",
-    location: "Location",
-    source: "Source",
-    requests: n => `${n} request(s)`,
-    unable: "Unable to load requests.",
-    requestFailed: "Request failed",
-    visitors: "Unique visitors",
-    todayVisitors: "Today’s visitors",
-    studentRequests: "Student requests"
-  },
-  fr: {
-    dir: "ltr",
-    title: "Demandes des élèves",
-    load: "Charger les demandes",
-    loading: "Chargement…",
-    date: "Date",
-    name: "Nom",
-    phone: "Téléphone",
-    email: "Email",
-    level: "Niveau / section",
-    school: "Établissement",
-    city: "Ville",
-    location: "Lieu",
-    source: "Source",
-    requests: n => `${n} demande(s)`,
-    unable: "Impossible de charger les demandes.",
-    requestFailed: "Échec de la requête",
-    visitors: "Visiteurs uniques",
-    todayVisitors: "Visiteurs aujourd’hui",
-    studentRequests: "Demandes des élèves"
-  },
-  ar: {
+  tn: {
     dir: "rtl",
-    title: "طلبات التلاميذ",
-    load: "تحميل الطلبات",
-    loading: "جارٍ التحميل…",
+    title: "طلبات التلامذة",
+    load: "حمّل الطلبات",
+    loading: "جاري التحميل…",
     date: "التاريخ",
-    name: "الاسم",
-    phone: "الهاتف",
-    email: "البريد الإلكتروني",
+    name: "الإسم",
+    phone: "التليفون",
+    email: "الإيميل",
     level: "المستوى / الشعبة",
-    school: "المؤسسة",
+    school: "الليسي / المؤسسة",
     city: "المدينة",
-    location: "مكان الدرس",
+    location: "بلاصة الـséance",
     source: "المصدر",
     requests: n => `${n} طلب`,
-    unable: "تعذر تحميل الطلبات.",
-    requestFailed: "فشل الطلب",
-    visitors: "الزوار الفريدون",
+    unable: "ما نجّمش نحمّلو الطلبات.",
+    requestFailed: "الطلب فشل",
+    visitors: "الزوار المختلفين",
     todayVisitors: "زوار اليوم",
-    studentRequests: "طلبات التلاميذ"
+    studentRequests: "طلبات التلامذة"
   }
 };
 
@@ -159,19 +111,16 @@ const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({
   '"':"&quot;"
 }[c]));
 
-let currentLang = localStorage.getItem("adminLanguage") || "en";
+let currentLang = "tn";
 
-function applyLanguage(lang) {
-  currentLang = translations[lang] ? lang : "en";
-  localStorage.setItem("adminLanguage", currentLang);
-
-  const t = translations[currentLang];
-  document.documentElement.lang = currentLang;
+function applyLanguage() {
+  currentLang = "tn";
+  const t = translations.tn;
+  document.documentElement.lang = "ar-TN";
   document.documentElement.dir = t.dir;
 
   document.getElementById("pageTitle").textContent = t.title;
   load.textContent = t.load;
-
   document.getElementById("hDate").textContent = t.date;
   document.getElementById("hName").textContent = t.name;
   document.getElementById("hPhone").textContent = t.phone;
@@ -184,18 +133,10 @@ function applyLanguage(lang) {
   document.getElementById("sVisitorsLabel").textContent = t.visitors;
   document.getElementById("sTodayLabel").textContent = t.todayVisitors;
   document.getElementById("sRequestsLabel").textContent = t.studentRequests;
-
-  document.querySelectorAll("[data-lang]").forEach(button => {
-    button.classList.toggle("active", button.dataset.lang === currentLang);
-  });
 }
 
-document.querySelectorAll("[data-lang]").forEach(button => {
-  button.addEventListener("click", () => applyLanguage(button.dataset.lang));
-});
-
 load.addEventListener("click", async () => {
-  const t = translations[currentLang];
+  const t = translations.tn;
 
   status.textContent = t.loading;
   rows.innerHTML = "";
