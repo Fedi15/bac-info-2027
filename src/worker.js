@@ -71,17 +71,15 @@ export default {
        * Don't count admin pages, API calls, files/assets,
        * images, CSS, JS, etc.
        */
-      const isPageRequest =
-        request.method === "GET" &&
-        !url.pathname.startsWith("/api/") &&
-        !url.pathname.startsWith("/admin") &&
-        !url.pathname.includes(".");
-
+      const isVisitorRequest =
+  request.method === "GET" &&
+  !url.pathname.startsWith("/api/") &&
+  !url.pathname.startsWith("/admin");
       let visitorId = null;
 
-      if (isPageRequest) {
-        visitorId = await trackVisitor(request, env);
-      }
+if (isVisitorRequest) {
+  visitorId = await trackVisitor(request, env);
+}
 
       const response = await env.ASSETS.fetch(request);
 
