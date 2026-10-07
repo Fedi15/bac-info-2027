@@ -336,10 +336,7 @@ html[dir="rtl"] .site-stat-card{text-align:right}
  * This is intentionally fire-and-forget so it cannot block or break
  * the page, language switcher, form, or success modal.
  */
-fetch("/api/visit", {
-    method: "POST",
-    credentials: "same-origin"
-}).catch(() => {});
+
 
 const translations = {
     fr: {
@@ -579,30 +576,47 @@ setLanguage(
         ? requestedLang
         : (localStorage.getItem("bacInfoLang") || "fr")
 );
-async function loadPublicStats(){
-    try{
-        const [statsResponse, leadsResponse] = await Promise.all([
-            fetch("/api/public-stats",{cache:"no-store"})
-        ]);
+async function loadPublicStats() {
+    try {
+        const response = await fetch("/api/public-stats", {
+            method: "GET",
+            cache: "no-store"
+        });
 
-        if(statsResponse.ok){
-            const stats = await statsResponse.json();
-            if(stats.ok){
-                document.getElementById("statVisitors").textContent = Number(stats.unique_visitors || 0).toLocaleString();
-                document.getElementById("statToday").textContent = Number(stats.today_visitors || 0).toLocaleString();
-            }
+        if (!response.ok) {
+            throw new Error(`Stats request failed: ${response.status}`);
         }
 
-        if(statsResponse.ok){
-            const stats = await statsResponse.json();
-            if(stats.ok){
-                document.getElementById("statRequests").textContent = Number(stats.student_requests || 0).toLocaleString();
-            }
+        const data = await response.json();
+
+        console.log("Public stats:", data);
+
+        if (!data.ok) {
+            throw new Error(data.error || "Stats API returned an error");
         }
-    }catch(e){
-        // Statistics are decorative; never allow them to affect the main page.
+
+        const visitors = document.getElementById("publicUniqueVisitors");
+        const today = document.getElementById("publicTodayVisitors");
+        const requests = document.getElementById("publicStudentRequests");
+
+        if (visitors) {
+            visitors.textContent = data.unique_visitors;
+        }
+
+        if (today) {
+            today.textContent = data.today_visitors;
+        }
+
+        if (requests) {
+            requests.textContent = data.student_requests;
+        }
+
+    } catch (error) {
+        console.error("Failed to load public stats:", error);
     }
 }
+
+loadPublicStats();
 
 loadPublicStats();
 
