@@ -112,6 +112,6 @@ https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7
 
 
 ## iPhone Instagram Story fallback
-On iPhone Safari, the Instagram button no longer calls `navigator.share()` first. It downloads the generated `torbaga-story.jpg` and then attempts to open Instagram's `instagram://camera` entry point. The user can select the newest saved image in Instagram. A native bridge, if present, still takes precedence.
+On iPhone Safari, the Instagram button uses the same native iOS share popup as the earlier working version: it generates `torbaga-story.jpg` in memory and passes the image to `navigator.share({ files: [file] })`. It does not download the image or open `instagram://camera`. A native bridge, if present, still takes precedence.
 
 Important: Safari cannot silently write a web-generated image directly into the iOS Photos library. The browser download location/behavior is controlled by iOS.
