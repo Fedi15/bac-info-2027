@@ -624,3 +624,61 @@ form.addEventListener("submit", async event=>{
     // Initialize immediately so the scene has a deterministic state.
     kick();
 })();
+
+/* ============================================================
+   MOBILE STORY SHARE
+   ============================================================ */
+(function initMobileStoryShare(){
+    const topShare=document.getElementById('topShare');
+    const sheet=document.getElementById('shareSheet');
+    const card=document.getElementById('storyCard');
+    const status=document.getElementById('shareStatus');
+    const download=document.getElementById('downloadStory');
+    const buttons=[...document.querySelectorAll('[data-share-app]')];
+    if(!topShare||!sheet||!card) return;
+    const mobile=window.matchMedia('(max-width:600px) and (pointer:coarse)');
+    let file=null,promise=null;
+    const isMobile=()=>mobile.matches;
+    const open=()=>{sheet.classList.add('is-open');sheet.setAttribute('aria-hidden','false');document.body.classList.add('share-lock')};
+    const close=()=>{sheet.classList.remove('is-open');sheet.setAttribute('aria-hidden','true');document.body.classList.remove('share-lock')};
+    document.querySelectorAll('[data-share-close]').forEach(el=>el.addEventListener('click',close));
+    async function build(){
+        if(file) return file;
+        if(promise) return promise;
+        promise=(async()=>{
+            if(!window.html2canvas) throw new Error('html2canvas_missing');
+            const canvas=await html2canvas(card,{width:1080,height:1920,scale:1,backgroundColor:'#f3e8d0',logging:false,useCORS:true});
+            const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('blob_failed')),'image/jpeg',.92));
+            file=new File([blob],'torbaga-story.jpg',{type:'image/jpeg'});
+            return file;
+        })();
+        try{return await promise}finally{promise=null}
+    }
+    async function prepare(){
+        if(!isMobile()) return;
+        open(); buttons.forEach(b=>b.disabled=true); if(status) status.textContent='جاري تحضير الصورة...';
+        try{
+            const f=await build();
+            const can=!!(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]}));
+            buttons.forEach(b=>b.disabled=!can);
+            if(status) status.textContent=can?'إختار المنصّة. الصورة تتحضّر وحدها.':'التليفون ما يدعمش المشاركة المباشرة. إستعمل زر التحميل.';
+        }catch(e){console.error(e);if(status)status.textContent='صار مشكل في تحضير الصورة.'}
+    }
+    async function share(app){
+        try{
+            const f=file||await build();
+            if(!navigator.share||!navigator.canShare||!navigator.canShare({files:[f]})) throw new Error('share_unavailable');
+            close(); await navigator.share({title:'TORBAGA — Prof Informatique',files:[f]});
+        }catch(e){
+            if(e?.name==='AbortError') return;
+            console.error(e);open();if(status)status.textContent='ما نجّمش نبعثها مباشرة لـ'+app+'. جرّب التحميل.';
+        }
+    }
+    topShare.addEventListener('click',prepare);
+    buttons.forEach(b=>b.addEventListener('click',()=>share(b.dataset.shareApp||'app')));
+    download?.addEventListener('click',async()=>{
+        try{
+            const f=file||await build(); const url=URL.createObjectURL(f); const a=document.createElement('a'); a.href=url;a.download='torbaga-story.jpg';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);if(status)status.textContent='الصورة تهبطت للتليفون.';
+        }catch(e){console.error(e);if(status)status.textContent='ما نجّمش نجهّز الصورة.'}
+    });
+})();
