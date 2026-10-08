@@ -23,3 +23,190 @@ function downloadStoryFile(file){return new Promise((resolve)=>{const url=URL.cr
 async function shareStoryToApp(appName){if(!isMobileShareDevice())return;try{const file=storyFile||await buildStoryFile();if(appName==="Instagram"&&hasNativeStoryBridge()){const dataUrl=await fileToDataUrl(file);closeShareSheet();window.TorbagaNative.shareToInstagramStory(dataUrl);console.info("Instagram Story native handoff requested");return}if(!navigator.share||!navigator.canShare||!navigator.canShare({files:[file]}))throw new Error("native_file_share_unavailable");closeShareSheet();if(shareStatus)shareStatus.textContent="إختار Instagram من الـpopup.";await navigator.share({title:"TORBAGA — Prof Informatique",files:[file]});console.info("Story image shared; requested target:",appName)}catch(err){if(err?.name==="AbortError")return;console.error("Story share failed:",err);openShareSheet();if(shareStatus)shareStatus.textContent="ما نجّمش نبعثها مباشرة لـ"+appName+". جرّب التحميل ومن بعد إفتح الـStory."}}
 shareAppButtons.forEach(button=>button.addEventListener("click",()=>shareStoryToApp(button.dataset.shareApp||"app")));
 downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||await buildStoryFile(),url=URL.createObjectURL(file),link=document.createElement("a");link.href=url;link.download="torbaga-story.jpg";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);if(shareStatus)shareStatus.textContent="الصورة تهبطت للتليفون. إفتح Instagram/Facebook/Snapchat وحطّها في الـStory."}catch(err){console.error("Story download failed:",err);if(shareStatus)shareStatus.textContent="ما نجّمش نهبط الصورة توّة. عاود جرّب."}});
+
+/* ============================================================
+   TORBAGA MOTION ENGINE v2
+   Continuous scroll choreography + smooth anchor travel.
+   ============================================================ */
+(function(){
+  const root=document.documentElement;
+  const topbar=document.querySelector('.topbar');
+  const scrollHint=document.querySelector('.scroll-hint');
+  const motionSections=[...document.querySelectorAll('.hero,.mobile-share,.quick-section,.register-section,.bottom-cta')];
+  const motionItems=[...document.querySelectorAll('.hero-copy,.hero-card,.mobile-share-card,.section-head,.bac-card,.location-strip,.register-intro,.form-card,.promise-list>div,.bottom-cta')];
+  const finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let raf=0,lastY=window.scrollY,velocity=0;
+
+  motionItems.forEach((el,i)=>{
+    el.classList.add('motion-reveal');
+    el.dataset.motionDelay=String(Math.min(i%6,5)*45);
+  });
+  motionSections.forEach(el=>el.dataset.motionSection='1');
+
+  function clamp(v,a=0,b=1){return Math.min(b,Math.max(a,v))}
+  function ease(t){return 1-Math.pow(1-t,4)}
+
+  function updateMotion(){
+    raf=0;
+    const y=window.scrollY||window.pageYOffset||0;
+    const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+    const progress=clamp(y/max);
+    velocity=(y-lastY)*.16+velocity*.84;
+    lastY=y;
+    root.style.setProperty('--scroll-p',progress.toFixed(4));
+    root.style.setProperty('--scroll-v',clamp(Math.abs(velocity)/18).toFixed(4));
+    topbar?.classList.toggle('is-scrolled',y>18);
+    scrollHint?.classList.toggle('is-past',y>innerHeight*.28);
+
+    motionSections.forEach(section=>{
+      const r=section.getBoundingClientRect();
+      const center=r.top+r.height/2;
+      const normalized=(center-innerHeight/2)/Math.max(1,innerHeight/2);
+      const shift=clamp(normalized,-1,1)*-18;
+      section.style.setProperty('--section-shift',`${shift.toFixed(2)}px`);
+    });
+
+    motionItems.forEach(el=>{
+      const r=el.getBoundingClientRect();
+      const center=r.top+r.height/2;
+      const distance=clamp(1-Math.abs(center-innerHeight/2)/(innerHeight*.75));
+      el.style.setProperty('--view-energy',distance.toFixed(3));
+      if(!reduceMotion&&el.classList.contains('motion-reveal')){
+        const lift=(1-distance)*8;
+        el.style.setProperty('--scroll-lift',`${lift.toFixed(2)}px`);
+      }
+    });
+  }
+
+  function requestMotion(){if(!raf)raf=requestAnimationFrame(updateMotion)}
+  window.addEventListener('scroll',requestMotion,{passive:true});
+  window.addEventListener('resize',requestMotion,{passive:true});
+
+  /* Cursor light follows the real pointer instead of jumping. */
+  if(finePointer){
+    let px=.5,py=.5,tx=.5,ty=.5,cursorRaf=0;
+    window.addEventListener('pointermove',e=>{tx=e.clientX/innerWidth;ty=e.clientY/innerHeight;if(!cursorRaf)cursorRaf=requestAnimationFrame(cursorTick)},{passive:true});
+    function cursorTick(){cursorRaf=0;px+=(tx-px)*.12;py+=(ty-py)*.12;root.style.setProperty('--pointer-x',`${(px*100).toFixed(2)}%`);root.style.setProperty('--pointer-y',`${(py*100).toFixed(2)}%`);if(Math.abs(tx-px)>.001||Math.abs(ty-py)>.001)cursorRaf=requestAnimationFrame(cursorTick)}
+  }
+
+  /* Smooth anchor travel without taking over normal/manual scrolling. */
+  function smoothTo(target){
+    if(!target)return;
+    const start=window.scrollY;
+    const end=Math.max(0,target.getBoundingClientRect().top+window.scrollY-74);
+    const distance=end-start;
+    if(reduceMotion||Math.abs(distance)<4){window.scrollTo(0,end);return}
+    const duration=Math.min(1050,Math.max(480,Math.abs(distance)*.62));
+    const started=performance.now();
+    function frame(now){
+      const p=clamp((now-started)/duration);
+      window.scrollTo(0,start+distance*ease(p));
+      if(p<1)requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('click',event=>{
+    const id=link.getAttribute('href')?.slice(1),target=id&&document.getElementById(id);
+    if(!target)return;
+    event.preventDefault();
+    smoothTo(target);
+    if(history.replaceState)history.replaceState(null,'',`#${id}`);
+  }));
+
+  /* Scroll chapters: the section closest to the viewport centre becomes active. */
+  const chapters=motionSections.filter(Boolean);
+  function updateChapter(){
+    let active=null,best=Infinity;
+    chapters.forEach(section=>{
+      const r=section.getBoundingClientRect();
+      const d=Math.abs((r.top+r.height/2)-innerHeight/2);
+      if(d<best){best=d;active=section}
+    });
+    chapters.forEach(section=>section.classList.toggle('scroll-chapter-active',section===active));
+  }
+  window.addEventListener('scroll',()=>{requestMotion();updateChapter()},{passive:true});
+
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
+      entry.target.classList.toggle('is-in-view',entry.isIntersecting);
+      if(entry.isIntersecting)entry.target.classList.add('was-seen');
+    }),{threshold:.08,rootMargin:'-8% 0px -10% 0px'});
+    motionItems.forEach(el=>io.observe(el));
+  }else motionItems.forEach(el=>el.classList.add('is-in-view'));
+
+  /* Cards lean toward the cursor. */
+  if(finePointer){
+    document.querySelectorAll('.hero-card,.bac-card,.location-strip,.form-card,.mobile-share-card,.promise-list>div').forEach(card=>{
+      card.addEventListener('pointermove',e=>{
+        const r=card.getBoundingClientRect();
+        const x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
+        card.style.setProperty('--rx',`${clamp(-y/r.height*5,-4,4).toFixed(2)}deg`);
+        card.style.setProperty('--ry',`${clamp(x/r.width*6,-5,5).toFixed(2)}deg`);
+      },{passive:true});
+      card.addEventListener('pointerleave',()=>{card.style.setProperty('--rx','0deg');card.style.setProperty('--ry','0deg')});
+    });
+  }
+
+  /* BAC cards -> select the exact same section and glide to registration. */
+  const bacLevelMap = {
+    science: 'Bac Science',
+    eco: 'Bac Économie & Gestion',
+    math: 'Bac Mathématiques',
+    technique: 'Bac Technique'
+  };
+  const bacCards = [...document.querySelectorAll('.bac-card')];
+  const levelSelect = document.getElementById('level');
+  const inscription = document.getElementById('inscription');
+
+  function selectBacAndScroll(card){
+    if(!card || !levelSelect || !inscription) return;
+    const key = Object.keys(bacLevelMap).find(k => card.classList.contains(k));
+    const value = key ? bacLevelMap[key] : '';
+    if(!value) return;
+
+    levelSelect.value = value;
+    levelSelect.dispatchEvent(new Event('change', {bubbles:true}));
+
+    bacCards.forEach(item => item.classList.remove('is-selected'));
+    card.classList.add('is-selected');
+
+    smoothTo(inscription);
+    if(history.replaceState) history.replaceState(null, '', '#inscription');
+
+    requestAnimationFrame(()=>{
+      levelSelect.focus({preventScroll:true});
+      setTimeout(()=>levelSelect.blur(), 420);
+    });
+  }
+
+  bacCards.forEach(card=>{
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.addEventListener('click',()=>selectBacAndScroll(card));
+    card.addEventListener('keydown',event=>{
+      if(event.key==='Enter' || event.key===' '){
+        event.preventDefault();
+        selectBacAndScroll(card);
+      }
+    });
+  });
+
+  /* Make the BAC choice feel selected in the form too. */
+  levelSelect?.addEventListener('change',()=>{
+    const value=levelSelect.value;
+    bacCards.forEach(card=>{
+      const key=Object.keys(bacLevelMap).find(k=>bacLevelMap[k]===value);
+      card.classList.toggle('is-selected', !!key && card.classList.contains(key));
+    });
+  });
+
+  /* Make every actionable element feel clickable. */
+  document.querySelectorAll('button,a,.choice,.bac-card,.location-strip').forEach(el=>{
+    el.addEventListener('pointerdown',()=>el.classList.add('is-pressing'));
+    ['pointerup','pointercancel','pointerleave'].forEach(type=>el.addEventListener(type,()=>el.classList.remove('is-pressing')));
+  });
+
+  requestMotion();
+  updateChapter();
+})();

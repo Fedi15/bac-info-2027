@@ -15,3 +15,185 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:22px clamp(20
 @media (max-width:600px){.mobile-share{display:block;padding:0 18px 65px}.mobile-share-card{position:relative;overflow:hidden;padding:23px;border-radius:22px;background:var(--navy);color:var(--white);box-shadow:9px 9px 0 var(--blue)}.mobile-share-card:before{content:"";position:absolute;width:170px;height:170px;border:35px solid var(--red);border-radius:50%;right:-82px;top:-95px}.mobile-share-top{position:relative;display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid rgba(243,232,208,.2);font-size:9px;font-weight:900;letter-spacing:.12em;color:#aaa292}.mobile-share-copy{position:relative;padding-top:24px}.mobile-share-copy h2{margin:7px 0 12px;font-size:38px;line-height:.95;letter-spacing:-.04em}.mobile-share-copy h2 em{color:var(--lime);font-style:normal}.mobile-share-copy p:last-child{margin:0;color:#c8c0b1;font-size:12px;line-height:1.6}.share-main-btn{width:100%;height:58px;margin-top:22px;padding:0 18px 0 22px;display:flex;align-items:center;justify-content:space-between;border-radius:12px;background:var(--lime);color:var(--navy);font-size:16px;font-weight:900;box-shadow:6px 6px 0 var(--red)}.share-main-btn b{font-size:24px}.share-mobile-only-note{margin:15px 0 0;text-align:center;color:#7f8797;font-size:9px!important}.share-sheet{position:fixed;inset:0;z-index:140;display:grid;align-items:end;opacity:0;pointer-events:none;transition:.22s}.share-sheet.is-open{opacity:1;pointer-events:auto}.share-sheet-backdrop{position:absolute;inset:0;background:rgba(11,13,22,.76);backdrop-filter:blur(9px)}.share-sheet-panel{position:relative;padding:12px 18px 24px;background:var(--cream);color:var(--ink);border-radius:26px 26px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.2);transform:translateY(30px);transition:.25s}.share-sheet.is-open .share-sheet-panel{transform:none}.share-sheet-handle{width:42px;height:4px;margin:0 auto 20px;border-radius:999px;background:#aaa292}.share-sheet-close{position:absolute;top:13px;right:14px;width:34px;height:34px;border:1px solid var(--ink);border-radius:50%;background:transparent;font-size:21px;line-height:1}.share-sheet-kicker{margin:0;color:#6d665b;font-size:9px;font-weight:900;letter-spacing:.12em}.share-sheet-panel h2{margin:6px 0 7px;font-size:31px;line-height:1}.share-sheet-text{margin:0 0 18px;color:#645e54;font-size:11px;line-height:1.5;max-width:430px}.share-app-grid{display:grid;grid-template-columns:1fr;gap:9px}.share-app{min-height:62px;padding:9px 13px;display:flex;align-items:center;gap:12px;text-align:left;border:1px solid #cfc4ae;border-radius:13px;background:#fffaf0;color:var(--ink)}.share-app:disabled{opacity:.52}.share-app-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:11px;background:var(--navy);color:var(--white);font-size:25px;font-weight:900}.share-app.instagram .share-app-icon{background:#d62976}.share-app.facebook .share-app-icon{background:#1877f2}.share-app.snapchat .share-app-icon{background:#171820}.share-app b,.share-app small{display:block}.share-app b{font-size:13px}.share-app small{margin-top:2px;color:#777064;font-size:10px}.share-sheet-status{margin:13px 0 0;text-align:center;color:#6d665b;font-size:10px;font-weight:800}.share-download{width:100%;margin-top:10px;padding:10px;border:1px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font-size:10px;font-weight:900}}
 @media (min-width:601px){.mobile-share,.share-sheet,.story-render-host{display:none!important}}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ============================================================
+   TORBAGA MOTION / SCROLL EXPERIENCE v2
+   Scroll-driven visuals + richer hover states.
+   Does not change layout, forms, API or share behavior.
+   ============================================================ */
+:root{
+  --scroll-p:0;
+  --scroll-v:0;
+  --pointer-x:50%;
+  --pointer-y:50%;
+  --motion-ease:cubic-bezier(.16,1,.3,1);
+}
+
+html{scroll-behavior:auto!important;scroll-padding-top:82px}
+body{overflow-x:clip}
+
+/* A subtle moving light makes the page feel alive while scrolling. */
+body::after{
+  content:"";
+  position:fixed;
+  inset:-25%;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y),rgba(255,255,255,.045),transparent 18%),
+    radial-gradient(circle at 72% calc(12% + var(--scroll-p) * 55%),rgba(255,56,54,.055),transparent 25%),
+    radial-gradient(circle at 20% calc(80% - var(--scroll-p) * 40%),rgba(50,130,207,.05),transparent 27%);
+  transform:translate3d(0,calc(var(--scroll-p) * -18px),0);
+  transition:opacity .4s ease;
+}
+
+/* Scroll progress becomes a physical top edge. */
+.topbar{position:sticky;top:0;z-index:90;backdrop-filter:blur(12px);background:rgba(11,13,22,.78);transition:box-shadow .35s ease,background .35s ease,transform .35s ease}
+.topbar.is-scrolled{box-shadow:0 12px 35px rgba(0,0,0,.2);background:rgba(11,13,22,.91)}
+.topbar::after{content:"";position:absolute;left:0;bottom:-1px;width:100%;height:2px;transform-origin:left center;transform:scaleX(var(--scroll-p));background:linear-gradient(90deg,var(--red),var(--lime),var(--blue));pointer-events:none}
+
+/* Every major section gets a continuous depth shift from its real position. */
+.quick-section,.register-section,.bottom-cta,.mobile-share{--section-shift:0px;transform:translate3d(0,var(--section-shift),0)}
+[data-motion-section]{will-change:transform,opacity}
+
+/* Reveal is reversible: scrolling back up animates naturally too. */
+.motion-reveal{opacity:.35;transform:translate3d(0,38px,0) scale(.985);filter:blur(2px);transition:opacity .8s var(--motion-ease),transform .9s var(--motion-ease),filter .8s ease}
+.motion-reveal.is-in-view{opacity:1;transform:none;filter:none}
+
+/* Cards get depth even when the cursor is not over them. */
+.hero-card,.bac-card,.location-strip,.form-card,.mobile-share-card,.bottom-cta,.promise-list>div{
+  transform:translate3d(0,var(--card-y,0px),0) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transform-style:preserve-3d;
+  will-change:transform;
+  transition:transform .55s var(--motion-ease),box-shadow .45s ease,border-color .35s ease,background .35s ease;
+}
+
+@media (hover:hover) and (pointer:fine){
+  /* Rich hover language across the whole interface. */
+  a,button,.choice,.bac-card,.location-strip,.form-card,.hero-card,.promise-list>div,.mobile-share-card,.bottom-cta,.scroll-hint{
+    transition:transform .3s var(--motion-ease),box-shadow .3s ease,border-color .3s ease,background .3s ease,color .25s ease,filter .3s ease;
+  }
+  a:hover,button:hover{filter:brightness(1.045)}
+  .top-action:hover,.top-share:hover{transform:translateY(-3px) scale(1.025);box-shadow:0 10px 24px rgba(0,0,0,.18)}
+  .main-cta:hover,.share-main-btn:hover,.submit-btn:hover{transform:translateY(-5px) scale(1.015);box-shadow:9px 9px 0 var(--lime),0 16px 35px rgba(0,0,0,.22)}
+  .main-cta:active,.share-main-btn:active,.submit-btn:active,.top-action:active,.top-share:active{transform:translateY(1px) scale(.985)}
+  .hero-card:hover{--card-y:-7px;box-shadow:18px 20px 0 rgba(255,56,54,.75),0 30px 70px rgba(0,0,0,.28)}
+  .bac-card:hover{--card-y:-7px;box-shadow:8px 9px 0 var(--lime),0 25px 55px rgba(0,0,0,.24);z-index:3}
+  .bac-card:hover h3{transform:translateX(5px);color:var(--red)}
+  .location-strip:hover{--card-y:-5px;box-shadow:8px 8px 0 var(--blue)}
+  .location-strip:hover .location-options span{color:var(--lime);transform:translateY(-2px)}
+  .form-card:hover{--card-y:-5px;box-shadow:12px 14px 0 var(--red),0 30px 70px rgba(0,0,0,.25)}
+  .promise-list>div:hover{--card-y:-4px;box-shadow:6px 6px 0 var(--blue);border-color:var(--blue)}
+  .promise-list>div:hover span{color:var(--red);transform:scale(1.1)}
+  .mobile-share-card:hover{--card-y:-5px;box-shadow:10px 11px 0 var(--blue),0 25px 55px rgba(0,0,0,.25)}
+  .bottom-cta:hover{--card-y:-5px}
+  .bottom-cta a:hover{transform:translateY(-3px);letter-spacing:.06em}
+  .choice:hover span{transform:translateY(-3px);border-color:var(--red);box-shadow:0 8px 18px rgba(0,0,0,.14)}
+  .choice input:checked + span{box-shadow:0 7px 0 var(--red)}
+  .field:hover>span{color:var(--red)}
+  .field input:hover,.field select:hover{transform:translateY(-2px);border-color:var(--blue);box-shadow:0 8px 22px rgba(0,0,0,.12)}
+  .share-app:hover:not(:disabled){transform:translateY(-4px) scale(1.015);border-color:var(--red);box-shadow:0 12px 28px rgba(0,0,0,.15)}
+  .share-download:hover{transform:translateY(-2px);background:var(--ink);color:var(--cream)}
+  .success-close:hover,.modal-return:hover{transform:scale(1.06) rotate(2deg)}
+}
+
+/* Pointer-following highlight inside cards. */
+.hero-card::after,.bac-card::after,.form-card::after,.mobile-share-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at var(--pointer-x) var(--pointer-y),rgba(255,255,255,.10),transparent 24%);
+  transition:opacity .3s ease;
+}
+.hero-card:hover::after,.bac-card:hover::after,.form-card:hover::after,.mobile-share-card:hover::after{opacity:1}
+
+/* Headings subtly track the scroll chapter. */
+.section-head h2,.register-intro h2,.bottom-cta h2{transition:transform .7s var(--motion-ease),letter-spacing .7s var(--motion-ease)}
+.section-head.is-active h2,.register-intro.is-active h2{transform:translate3d(0,-4px,0);letter-spacing:-.045em}
+
+/* Scroll hint responds when the hero has been left. */
+.scroll-hint{transition:opacity .4s ease,transform .5s var(--motion-ease)}
+.scroll-hint.is-past{opacity:0;transform:translateY(14px);pointer-events:none}
+
+/* Touch devices: no fake hover, but tap/scroll still gets motion. */
+@media (hover:none){
+  .motion-reveal{opacity:.45;transform:translateY(22px)}
+  .motion-reveal.is-in-view{opacity:1;transform:none;filter:none}
+  .hero-card:active,.bac-card:active,.location-strip:active,.form-card:active,.mobile-share-card:active,.promise-list>div:active{transform:scale(.985)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  .motion-reveal{opacity:1!important;transform:none!important;filter:none!important}
+  body::after{display:none}
+  .topbar::after{transition:none}
+}
+
+/* BAC selection + text micro-interactions */
+.bac-card{
+  cursor:pointer;
+  transform:translate3d(0,var(--card-y,0),0) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.bac-card:focus-visible{
+  outline:3px solid var(--blue);
+  outline-offset:4px;
+}
+.bac-card.is-selected{
+  background:var(--navy);
+  color:var(--white);
+  box-shadow:8px 9px 0 var(--red),0 25px 55px rgba(0,0,0,.18);
+}
+.bac-card.is-selected p{color:#ddd5c6}
+.bac-card.is-selected h3{color:var(--lime)}
+.bac-card.is-selected .bac-no{color:var(--white)}
+
+/* Text should feel alive without becoming distracting. */
+.section-head h2,
+.section-kicker,
+.section-index,
+.section-intro,
+.bac-card h3,
+.bac-card p,
+.bac-no,
+.location-strip strong,
+.location-strip span,
+.form-card h2,
+.form-card h3,
+.form-card label,
+.form-note,
+.bottom-cta p,
+.bottom-cta h2,
+.bottom-cta a{
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),color .3s ease,letter-spacing .3s ease,text-shadow .3s ease;
+}
+
+@media (hover:hover) and (pointer:fine){
+  .section-head h2:hover,
+  .bottom-cta h2:hover{
+    transform:translateX(5px);
+    text-shadow:0 8px 28px rgba(23,24,32,.14);
+  }
+  .section-kicker:hover,
+  .section-index:hover,
+  .bottom-cta p:hover{
+    color:var(--red);
+    letter-spacing:.14em;
+  }
+  .section-intro:hover,
+  .form-note:hover{
+    color:#332f29;
+    transform:translateY(-2px);
+  }
+  .bac-card:hover h3{transform:translateX(7px) translateZ(8px);letter-spacing:.01em}
+  .bac-card:hover p{transform:translateX(4px);color:#332f29}
+  .bac-card:hover .bac-no{transform:translateY(-3px);color:var(--red)}
+  .location-strip:hover strong{transform:translateX(6px);color:var(--lime)}
+  .location-strip:hover span{transform:translateX(4px);color:#fff}
+  .form-card h2:hover,.form-card h3:hover{transform:translateX(4px);color:var(--red)}
+  .form-card label:hover{color:var(--blue);letter-spacing:.12em}
+  .bottom-cta a:hover{transform:translateY(-3px);letter-spacing:.08em}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .bac-card,.section-head h2,.section-kicker,.section-index,.section-intro,.bac-card h3,.bac-card p,.bac-no,.location-strip strong,.location-strip span,.form-card h2,.form-card h3,.form-card label,.form-note,.bottom-cta p,.bottom-cta h2,.bottom-cta a{transition:none!important;transform:none!important}
+}
