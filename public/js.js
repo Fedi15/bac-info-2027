@@ -1,212 +1,241 @@
-if (window.emailjs && typeof window.emailjs.init === "function") emailjs.init({ publicKey: "ZUjic6-9k2GvyJPsu" });
-const form=document.getElementById("leadForm"),submitBtn=document.getElementById("submitBtn"),success=document.getElementById("success"),error=document.getElementById("error"),modal=document.getElementById("successModal"),successName=document.getElementById("successName");
-function showMessage(el,message){if(!el)return;el.textContent=message;el.style.display="block"}function hideMessage(el){if(el)el.style.display="none"}
-function openSuccessModal(name){if(!modal)return;if(successName)successName.textContent=name?`برافو ${name}`:"";modal.classList.add("is-open");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-open");modal.querySelector(".success-close")?.focus()}
-function closeSuccessModal(){if(!modal)return;modal.classList.remove("is-open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open")}
-document.querySelectorAll("[data-success-close]").forEach(el=>el.addEventListener("click",closeSuccessModal));document.addEventListener("keydown",event=>{if(event.key==="Escape"&&modal?.classList.contains("is-open"))closeSuccessModal()});
-document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener("click",event=>{const id=link.getAttribute("href")?.slice(1),target=id?document.getElementById(id):null;if(!target)return;event.preventDefault();target.scrollIntoView({behavior:"smooth",block:"start"});history.replaceState(null,"",`#${id}`)}));
-document.querySelectorAll(".choice input").forEach(input=>input.addEventListener("change",()=>{document.querySelectorAll(".choice").forEach(choice=>choice.classList.remove("selected"));input.closest(".choice")?.classList.add("selected")}));
-form?.addEventListener("submit",async event=>{event.preventDefault();hideMessage(success);hideMessage(error);if(!form.checkValidity()){form.reportValidity();return}const data=Object.fromEntries(new FormData(form).entries());data.source=new URLSearchParams(location.search).get("source")||data.source||"affiche";data.city="Sfax";submitBtn.disabled=true;submitBtn.querySelector("span").textContent="جاري الإرسال...";try{const response=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}),result=await response.json().catch(()=>({}));if(!response.ok||!result.ok)throw new Error(result.error||"register_failed");try{if(window.emailjs&&typeof window.emailjs.send==="function")await emailjs.send("service_i1zf9ru","template_vjrqroz",{full_name:data.full_name||"",phone:data.phone||"",email:data.email||"",level:data.level||"",school:data.school||"Non renseigné",lesson_location:data.lesson_location||"",city:"Sfax",source:data.source||"affiche",created_at:new Date().toLocaleString("ar-TN",{dateStyle:"full",timeStyle:"short"})})}catch(emailError){console.warn("Teacher notification channel failed; registration was saved.",emailError)}const name=String(data.full_name||"").trim();form.reset();document.querySelectorAll(".choice").forEach(choice=>choice.classList.remove("selected"));openSuccessModal(name)}catch(err){console.error("Registration failed:",err);showMessage(error,"ما نجّمش نبعثو التسجيل توّة. عاود جرّب بعد شوية.")}finally{submitBtn.disabled=false;submitBtn.querySelector("span").textContent="إبعث التسجيل"}});
-const observer="IntersectionObserver"in window?new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add("seen")})},{threshold:.12}):null;document.querySelectorAll(".bac-card,.location-strip,.register-intro,.form-card,.bottom-cta").forEach(el=>{if(observer)observer.observe(el)});
-window.addEventListener("pageshow",()=>{const firstField=document.getElementById("full_name");if(location.hash==="#inscription")firstField?.focus({preventScroll:true})});
-const shareOpen=document.getElementById("openShare"),topShare=document.getElementById("topShare"),shareSheet=document.getElementById("shareSheet"),shareStatus=document.getElementById("shareStatus"),storyCard=document.getElementById("storyCard"),downloadStory=document.getElementById("downloadStory"),shareAppButtons=[...document.querySelectorAll("[data-share-app]")],mobileShareQuery=window.matchMedia("(max-width: 600px) and (pointer: coarse)");let storyFilePromise=null,storyFile=null;
-function isMobileShareDevice(){return mobileShareQuery.matches}function openShareSheet(){if(!shareSheet)return;shareSheet.classList.add("is-open");shareSheet.setAttribute("aria-hidden","false");document.body.classList.add("modal-open")}function closeShareSheet(){if(!shareSheet)return;shareSheet.classList.remove("is-open");shareSheet.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open")}
-document.querySelectorAll("[data-share-close]").forEach(el=>el.addEventListener("click",closeShareSheet));
-async function buildStoryFile(){if(storyFile)return storyFile;if(storyFilePromise)return storyFilePromise;storyFilePromise=(async()=>{if(!window.html2canvas||!storyCard)throw new Error("story_renderer_unavailable");const canvas=await html2canvas(storyCard,{width:1080,height:1920,scale:1,backgroundColor:"#f3e8d0",useCORS:true,logging:false});const blob=await new Promise((resolve,reject)=>{canvas.toBlob(result=>result?resolve(result):reject(new Error("story_blob_failed")),"image/jpeg",.92)});storyFile=new File([blob],"torbaga-story.jpg",{type:"image/jpeg"});return storyFile})();try{return await storyFilePromise}finally{storyFilePromise=null}}
-function hasNativeStoryBridge(){return !!(window.TorbagaNative&&typeof window.TorbagaNative.shareToInstagramStory==="function")}
-function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(reader.error||new Error("file_read_failed"));reader.readAsDataURL(file)})}
-async function prepareStory(){if(!isMobileShareDevice())return;openShareSheet();shareAppButtons.forEach(button=>button.disabled=true);if(shareStatus)shareStatus.textContent="جاري تحضير الصورة...";try{const file=await buildStoryFile(),nativeInstagram=hasNativeStoryBridge(),canFileShare=!!(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]}));shareAppButtons.forEach(button=>{const app=button.dataset.shareApp||"";button.disabled=app==="Instagram"?!nativeInstagram&&!canFileShare:!canFileShare});if(shareStatus)shareStatus.textContent=nativeInstagram?"Instagram جاهز — الصورة تدخل مباشرة للـStory.":canFileShare?"إختار المنصّة. الصورة وحدها باش تتبعث.":"التليفون متاعك ما يدعمش المشاركة المباشرة. حمّل الصورة من الزر لتحت."}catch(err){console.error("Story image preparation failed:",err);if(shareStatus)shareStatus.textContent="ما نجّمش نحضّر الصورة توّة. جرّب التحميل."}}
-shareOpen?.addEventListener("click",prepareStory);topShare?.addEventListener("click",prepareStory);
-function isIOSBrowser(){return /iPad|iPhone|iPod/.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1)}
-function openInstagramCamera(){const schemes=["instagram://camera","instagram://app"];let index=0;const started=Date.now();function tryNext(){if(index>=schemes.length)return;const scheme=schemes[index++];window.location.href=scheme;setTimeout(()=>{if(document.visibilityState==="visible"&&Date.now()-started<1800)tryNext()},650)}tryNext()}
-function downloadStoryFile(file){return new Promise((resolve)=>{const url=URL.createObjectURL(file),link=document.createElement("a");link.href=url;link.download="torbaga-story.jpg";link.rel="noopener";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>{URL.revokeObjectURL(url);resolve()},1200)})}
-async function shareStoryToApp(appName){if(!isMobileShareDevice())return;try{const file=storyFile||await buildStoryFile();if(appName==="Instagram"&&hasNativeStoryBridge()){const dataUrl=await fileToDataUrl(file);closeShareSheet();window.TorbagaNative.shareToInstagramStory(dataUrl);console.info("Instagram Story native handoff requested");return}if(!navigator.share||!navigator.canShare||!navigator.canShare({files:[file]}))throw new Error("native_file_share_unavailable");closeShareSheet();if(shareStatus)shareStatus.textContent="إختار Instagram من الـpopup.";await navigator.share({title:"TORBAGA — Prof Informatique",files:[file]});console.info("Story image shared; requested target:",appName)}catch(err){if(err?.name==="AbortError")return;console.error("Story share failed:",err);openShareSheet();if(shareStatus)shareStatus.textContent="ما نجّمش نبعثها مباشرة لـ"+appName+". جرّب التحميل ومن بعد إفتح الـStory."}}
-shareAppButtons.forEach(button=>button.addEventListener("click",()=>shareStoryToApp(button.dataset.shareApp||"app")));
-downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||await buildStoryFile(),url=URL.createObjectURL(file),link=document.createElement("a");link.href=url;link.download="torbaga-story.jpg";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);if(shareStatus)shareStatus.textContent="الصورة تهبطت للتليفون. إفتح Instagram/Facebook/Snapchat وحطّها في الـStory."}catch(err){console.error("Story download failed:",err);if(shareStatus)shareStatus.textContent="ما نجّمش نهبط الصورة توّة. عاود جرّب."}});
+/* TORBAGA interaction engine — scroll choreography + existing site behavior */
 
-/* ============================================================
-   TORBAGA MOTION ENGINE v2
-   Continuous scroll choreography + smooth anchor travel.
-   ============================================================ */
-(function(){
-  const root=document.documentElement;
-  const topbar=document.querySelector('.topbar');
-  const scrollHint=document.querySelector('.scroll-hint');
-  const motionSections=[...document.querySelectorAll('.hero,.mobile-share,.quick-section,.register-section,.bottom-cta')];
-  const motionItems=[...document.querySelectorAll('.hero-copy,.hero-card,.mobile-share-card,.section-head,.bac-card,.location-strip,.register-intro,.form-card,.promise-list>div,.bottom-cta')];
-  const finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
-  const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let raf=0,lastY=window.scrollY,velocity=0;
-
-  motionItems.forEach((el,i)=>{
-    el.classList.add('motion-reveal');
-    el.dataset.motionDelay=String(Math.min(i%6,5)*45);
-  });
-  motionSections.forEach(el=>el.dataset.motionSection='1');
-
-  function clamp(v,a=0,b=1){return Math.min(b,Math.max(a,v))}
-  function ease(t){return 1-Math.pow(1-t,4)}
-
-  function updateMotion(){
-    raf=0;
-    const y=window.scrollY||window.pageYOffset||0;
-    const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
-    const progress=clamp(y/max);
-    velocity=(y-lastY)*.16+velocity*.84;
-    lastY=y;
-    root.style.setProperty('--scroll-p',progress.toFixed(4));
-    root.style.setProperty('--scroll-v',clamp(Math.abs(velocity)/18).toFixed(4));
-    topbar?.classList.toggle('is-scrolled',y>18);
-    scrollHint?.classList.toggle('is-past',y>innerHeight*.28);
-
-    motionSections.forEach(section=>{
-      const r=section.getBoundingClientRect();
-      const center=r.top+r.height/2;
-      const normalized=(center-innerHeight/2)/Math.max(1,innerHeight/2);
-      const shift=clamp(normalized,-1,1)*-18;
-      section.style.setProperty('--section-shift',`${shift.toFixed(2)}px`);
-    });
-
-    motionItems.forEach(el=>{
-      const r=el.getBoundingClientRect();
-      const center=r.top+r.height/2;
-      const distance=clamp(1-Math.abs(center-innerHeight/2)/(innerHeight*.75));
-      el.style.setProperty('--view-energy',distance.toFixed(3));
-      if(!reduceMotion&&el.classList.contains('motion-reveal')){
-        const lift=(1-distance)*8;
-        el.style.setProperty('--scroll-lift',`${lift.toFixed(2)}px`);
-      }
-    });
-  }
-
-  function requestMotion(){if(!raf)raf=requestAnimationFrame(updateMotion)}
-  window.addEventListener('scroll',requestMotion,{passive:true});
-  window.addEventListener('resize',requestMotion,{passive:true});
-
-  /* Cursor light follows the real pointer instead of jumping. */
-  if(finePointer){
-    let px=.5,py=.5,tx=.5,ty=.5,cursorRaf=0;
-    window.addEventListener('pointermove',e=>{tx=e.clientX/innerWidth;ty=e.clientY/innerHeight;if(!cursorRaf)cursorRaf=requestAnimationFrame(cursorTick)},{passive:true});
-    function cursorTick(){cursorRaf=0;px+=(tx-px)*.12;py+=(ty-py)*.12;root.style.setProperty('--pointer-x',`${(px*100).toFixed(2)}%`);root.style.setProperty('--pointer-y',`${(py*100).toFixed(2)}%`);if(Math.abs(tx-px)>.001||Math.abs(ty-py)>.001)cursorRaf=requestAnimationFrame(cursorTick)}
-  }
-
-  /* Smooth anchor travel without taking over normal/manual scrolling. */
-  function smoothTo(target){
-    if(!target)return;
-    const start=window.scrollY;
-    const end=Math.max(0,target.getBoundingClientRect().top+window.scrollY-74);
-    const distance=end-start;
-    if(reduceMotion||Math.abs(distance)<4){window.scrollTo(0,end);return}
-    const duration=Math.min(1050,Math.max(480,Math.abs(distance)*.62));
-    const started=performance.now();
-    function frame(now){
-      const p=clamp((now-started)/duration);
-      window.scrollTo(0,start+distance*ease(p));
-      if(p<1)requestAnimationFrame(frame);
+const translations = {
+    tn: {
+        statsKicker:"الموقع بالأرقام", statsTitle:"شوية أرقام.<br><em>وتقدّم حقيقي.</em>", statsLead:"إحصائيات الموقع تتحدّث في الوقت الحقيقي.",
+        navCta:"إطلب séance", sfax:"صفاقس", eyebrow:"séances particulières في informatique", heroTitle:"informatique،<br><em>على كيفك.</em>", heroLead:"مرافقة فردية على قدّ مستواك، الصعوبات متاعك والأهداف اللي تحب توصللها.", heroCta:"إطلب séance", heroSecondary:"شوف كيفاش تخدم", locationLine:"عندي ولا عندك.", locationSub:"إنتي تختار البلاصة.", visualLabel:"SÉANCE PRIVÉE / 01", visualCaption:"séance معمولة على قياسك.",
+        formatKicker:"زوز طرق باش تتعلّمي", formatTitle:"عندي.<br><em>ولا عندك.</em>", formatLead:"ما فماش قاعة عادية ولا جوّ متاع groupe. فما séance فردية حقيقية، في البلاصة اللي ترتاح فيها أكثر.", homeTitle:"عندي", homeText:"تجي تخدم في بلاصة هادئة ومخصّصة للـséance. ناخذو وقتنا باش نفهمو، نطبّقو ونصلحو الغلط.", homeNote:"بلاصة مخصّصة للقراية", studentTitle:"عندك", studentText:"نجي لعندك للدار ونعملولك séance فردية مباشرة في البلاصة اللي تقرا فيها.", studentNote:"نجي لعندك",
+        subjectsKicker:"شنوّة ننجمو نخدمو", subjectsTitle:"برنامج يتكيّف<br><em>مع الشعبة متاعك.</em>", subjectsLead:"نجمّعو الشعب اللي عندها نفس البرنامج: Économie & Gestion وحدها، وبعد Mathématiques وTechnique وSciences Expérimentales مع بعضهم.", ecoLabel:"BAC ÉCONOMIE & GESTION", ecoTitle:"Access · Pandas · Python", ecoText:"خدمة مركّزة على البرنامج، خاصة Access وPandas وPython.", sharedLabel:"BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES EXPÉRIMENTALES", sharedTitle:"Python & algorithmique", sharedText:"نفس برنامج الخدمة للشعب الثلاثة: Python وalgorithmique.", litLabel:"BAC LETTRES", litTitle:"ما فماش informatique", litText:"informatique موش متوفرة للشعبة هاذي.", notOffered:"موش متوفّرة",
+        quote:"نفهموك الطريقة، نطبّقوها مع بعضنا، وإنتي تولّي تحلّ الدفوارات وحدك.", formKicker:"أول séance", formTitle:"عندك صعوبة في informatique؟<br><em>سجل والباقي عليا.</em>", formLead:"شوية معلومات يكفيو. بعد نتواصل معاك باش نفهم شنوّة تحتاج ونرتّبو الـséance.", personalTitle:"معلوماتك", needTitle:"الـséance متاعك", nameLabel:"الإسم واللقب *", phoneLabel:"رقم التليفون *", emailLabel:"الإيميل *", levelLabel:"المستوى / الشعبة *", levelHint:"إختار المستوى ولا الشعبة متاعك. Bac Informatique موش متوفّر.", schoolLabel:"الليسي / المؤسسة", locationLabel:"بلاصة الـséance *", mapLink:"شوف بلاصة التدريس على Google Maps →", cityLabel:"المدينة", submit:"إطلب الـséance متاعك", formNote:"بعد ما تبعث الطلب، يوصلك إيميل فيه المعلومات اللازمة للمرحلة الجاية. شوف زادة في الـspam إذا لزم.", emailFollowup:"بعد طلبك، باش نتواصل معاك بالإيميل باش نأكدو المعلومات ونرتّبو الـséance.", success:"الطلب تبعث بنجاح. شكراً. باش نتواصل معاك بالإيميل بالمعلومات الجاية.", error:"ما نجّمش نبعثو الطلب توّة. عاود جرّب بعد شوية.", footerRole:"séances particulières في informatique", footerLine:"عندي · عندك · بالموعد", statsVisitors:"الزوار", statsVisitorsNote:"زوار مختلفين", statsToday:"اليوم", statsTodayNote:"زوار اليوم", statsRequests:"الطلبات", statsRequestsNote:"طلبات الـséances"
     }
-    requestAnimationFrame(frame);
-  }
-  document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('click',event=>{
-    const id=link.getAttribute('href')?.slice(1),target=id&&document.getElementById(id);
-    if(!target)return;
-    event.preventDefault();
-    smoothTo(target);
-    if(history.replaceState)history.replaceState(null,'',`#${id}`);
-  }));
+};
+const optionLabels={level:["إختار","3ème année secondaire","Bac Économie & Gestion","Bac Mathématiques","Bac Technique","Bac Sciences Expérimentales","Bac Lettres"],location:["إختار","عندي","عندك"]};
 
-  /* Scroll chapters: the section closest to the viewport centre becomes active. */
-  const chapters=motionSections.filter(Boolean);
-  function updateChapter(){
-    let active=null,best=Infinity;
-    chapters.forEach(section=>{
-      const r=section.getBoundingClientRect();
-      const d=Math.abs((r.top+r.height/2)-innerHeight/2);
-      if(d<best){best=d;active=section}
-    });
-    chapters.forEach(section=>section.classList.toggle('scroll-chapter-active',section===active));
-  }
-  window.addEventListener('scroll',()=>{requestMotion();updateChapter()},{passive:true});
+function updateSuccessModal(name){const m=document.getElementById("successModal");if(!m)return;m.querySelector("[data-success-kicker]").textContent="الطلب وصل";m.querySelector("[data-success-title]").textContent="إن شاء الله ادمين !";m.querySelector("[data-success-message]").textContent="طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.";m.querySelector("[data-success-footer]").textContent="نستناوك — FEDI GHANMI (TORBAGA)";m.querySelector("[data-success-return]").textContent="إرجع للموقع";const n=document.getElementById("successName");if(n)n.textContent=name?`برافو ${name}`:"";}
+function launchSuccessConfetti(){const m=document.getElementById("successModal");if(!m)return; m.querySelector(".success-confetti")?.remove();const l=document.createElement("div");l.className="success-confetti";["diamond","dot","dash","diamond","dot","dash","dot","diamond"].forEach((s,i)=>{const p=document.createElement("span");p.className=`confetti-piece ${s}`;p.style.setProperty("--i",i);p.style.setProperty("--x",`${(i-3.5)*22}px`);l.appendChild(p)});m.appendChild(l)}
+function openSuccessModal(name){const m=document.getElementById("successModal");updateSuccessModal(name);launchSuccessConfetti();m.classList.add("is-open");m.setAttribute("aria-hidden","false");document.body.classList.add("modal-open");requestAnimationFrame(()=>m.querySelector(".success-close")?.focus())}
+function closeSuccessModal(){const m=document.getElementById("successModal");m?.classList.remove("is-open");m?.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open")}
+function applyTunisian(){const t=translations.tn;document.documentElement.lang="ar-TN";document.documentElement.dir="rtl";document.querySelectorAll("[data-i18n]").forEach(el=>{if(t[el.dataset.i18n])el.innerHTML=t[el.dataset.i18n]});Object.entries(optionLabels).forEach(([id,values])=>document.querySelectorAll(`#${id} option`).forEach((o,i)=>{if(values[i])o.textContent=values[i]}));updateSuccessModal("")}
+applyTunisian();
 
-  if('IntersectionObserver' in window){
-    const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
-      entry.target.classList.toggle('is-in-view',entry.isIntersecting);
-      if(entry.isIntersecting)entry.target.classList.add('was-seen');
-    }),{threshold:.08,rootMargin:'-8% 0px -10% 0px'});
-    motionItems.forEach(el=>io.observe(el));
-  }else motionItems.forEach(el=>el.classList.add('is-in-view'));
+// Theme
+const themeToggle=document.getElementById("themeToggle");const savedTheme=localStorage.getItem("site-theme");if(savedTheme==="light")document.documentElement.classList.add("light-mode");function updateThemeToggle(){if(!themeToggle)return;const light=document.documentElement.classList.contains("light-mode");themeToggle.setAttribute("aria-label",light?"الوضع الغامق":"الوضع الفاتح");themeToggle.setAttribute("title",light?"الوضع الغامق":"الوضع الفاتح");themeToggle.querySelector(".theme-icon").textContent=light?"☾":"☼";themeToggle.querySelector(".theme-label").textContent=light?"غامق":"فاتح"}themeToggle?.addEventListener("click",()=>{document.documentElement.classList.toggle("light-mode");localStorage.setItem("site-theme",document.documentElement.classList.contains("light-mode")?"light":"dark");updateThemeToggle();document.documentElement.classList.add("theme-flash");setTimeout(()=>document.documentElement.classList.remove("theme-flash"),420)});updateThemeToggle();
 
-  /* Cards lean toward the cursor. */
-  if(finePointer){
-    document.querySelectorAll('.hero-card,.bac-card,.location-strip,.form-card,.mobile-share-card,.promise-list>div').forEach(card=>{
-      card.addEventListener('pointermove',e=>{
-        const r=card.getBoundingClientRect();
-        const x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
-        card.style.setProperty('--rx',`${clamp(-y/r.height*5,-4,4).toFixed(2)}deg`);
-        card.style.setProperty('--ry',`${clamp(x/r.width*6,-5,5).toFixed(2)}deg`);
-      },{passive:true});
-      card.addEventListener('pointerleave',()=>{card.style.setProperty('--rx','0deg');card.style.setProperty('--ry','0deg')});
-    });
-  }
+// Lenis: smooth native scrolling, no wheel hijacking. Falls back cleanly if CDN is unavailable.
+let lenis=null;
+if(window.Lenis && !window.matchMedia("(prefers-reduced-motion: reduce)").matches){lenis=new Lenis({autoRaf:true,anchors:false,smoothWheel:true,wheelMultiplier:.9,duration:1.05,lerp:.085,stopInertiaOnNavigate:true,allowNestedScroll:true});}
 
-  /* BAC cards -> select the exact same section and glide to registration. */
-  const bacLevelMap = {
-    science: 'Bac Science',
-    eco: 'Bac Économie & Gestion',
-    math: 'Bac Mathématiques',
-    technique: 'Bac Technique'
+// Scroll choreography
+const world=document.getElementById("scrollWorld");
+const sections=[...document.querySelectorAll(".story-section")];
+const worldChapter=document.getElementById("worldChapter"),worldMode=document.getElementById("worldMode"),worldCode=document.getElementById("worldCode"),worldCaption=document.getElementById("worldCaption"),worldFloatA=document.getElementById("worldFloatA"),worldFloatB=document.getElementById("worldFloatB"),worldFloatC=document.getElementById("worldFloatC"),worldProgress=document.getElementById("worldProgressBar");
+const sceneData={method:["03","METHOD / 4 STEPS","4×","نفهم. نطبّق. نصلحو. نتقدمو.","METHOD","03 / STEPS","1:1"],format:["02","CHOIX / 1:1","عندي · عندك","البلاصة تتبدّل. الخدمة لا.","HOME","02 / 1:1","Sfax"],stats:["03","LIVE / SIGNAL","+ 3","التقدّم يتقاس بالفعل.","LIVE","03 / DATA","REAL"],subjects:["04","BAC / PROGRAMME","PYTHON","نخدمو على البرنامج اللي عندك.","CODE","04 / BAC","ALGO"],quote:["05","METHOD / RESULT","...","نفهم. نطبّق. نحل.","METHOD","05 / IDEA","01:1"],form:["06","NEXT / SESSION","GO","إنتي تعمل الخطوة. أنا نكمل معاك.","START","06 / BOOK","Sfax"]};
+let activeScene="hero";
+function setScene(key){if(!world)return;if(key===activeScene)return;activeScene=key;const d=sceneData[key]||["01","PRIVATE SESSION","1:1","على كيفك.","PRIVATE","01 / 1:1","Sfax"];world.dataset.scene=key||"hero";worldChapter.textContent=d[0];worldMode.textContent=d[1];worldCode.textContent=d[2];worldCaption.textContent=d[3];worldFloatA.textContent=d[4];worldFloatB.textContent=d[5];worldFloatC.textContent=d[6]}
+
+const revealSelectors=[".section-kicker",".section-heading h2",".section-heading>p",".location-card",".method-head>div",".method-head>p",".method-card",".site-stats-header>div",".site-stats-header>p",".site-stat-card",".bac-track",".quote-section blockquote",".quote-author",".request-intro .section-kicker",".request-intro h2",".request-intro>p",".form-step",".submit-btn"];
+sections.forEach(section=>{section.querySelectorAll(revealSelectors.join(",")).forEach((el,i)=>{el.classList.add("scroll-reveal");el.style.setProperty("--reveal-delay",`${Math.min(i*55,330)}ms`)})});
+document.documentElement.classList.add("motion-ready");
+// Reveal what is already on screen before the first paint settles; only below-fold content waits for scroll.
+requestAnimationFrame(()=>document.querySelectorAll(".scroll-reveal").forEach(el=>{const r=el.getBoundingClientRect();if(r.top<innerHeight*.92&&r.bottom>0)el.classList.add("is-visible")}));
+const io=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible")}else if(entry.boundingClientRect.top>window.innerHeight*.65){entry.target.classList.remove("is-visible")}}),{threshold:.12,rootMargin:"-8% 0px -12% 0px"});
+document.querySelectorAll(".scroll-reveal").forEach(el=>io.observe(el));
+
+// Number choreography: counters only animate when the stats chapter is actually seen.
+let statsAnimated=false;
+const statsSection=document.querySelector(".site-stats-section");
+function animateCounter(el){if(!el||el.dataset.animating==="1")return;const target=Number(el.dataset.target||el.textContent.replace(/[^0-9]/g,"")||0);el.dataset.animating="1";const start=performance.now(),duration=950;function tick(now){const p=Math.min(1,(now-start)/duration),e=1-Math.pow(1-p,4);el.textContent=Math.round(target*e).toLocaleString();if(p<1)requestAnimationFrame(tick);else{el.textContent=target.toLocaleString();el.dataset.animating="0"}}requestAnimationFrame(tick)}
+if(statsSection){const statIO=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting&&!statsAnimated){statsAnimated=true;statsSection.querySelectorAll(".site-stat-value strong").forEach(el=>animateCounter(el))}}),{threshold:.35});statIO.observe(statsSection)}
+
+function updateScene(){if(!sections.length)return;const vh=innerHeight;let closest=null,best=Infinity;sections.forEach(s=>{const r=s.getBoundingClientRect();const center=Math.abs(r.top+r.height*.5-vh*.5);if(center<best){best=center;closest=s}});setScene(closest?.dataset.scene||"hero");
+  const y=window.scrollY;const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);const p=Math.min(1,Math.max(0,y/max));if(worldProgress)worldProgress.style.transform=`scaleX(${p})`;
+  const hero=document.querySelector(".hero");if(hero){const r=hero.getBoundingClientRect();const hp=Math.min(1,Math.max(0,-r.top/Math.max(1,r.height*.85)));world?.style.setProperty("--hero-p",hp.toFixed(3));}
+  world?.style.setProperty("--scroll-y",y.toFixed(1));
+}
+(window.__lenisHook=()=>{if(lenis){lenis.on("scroll",updateScene)}})();
+window.addEventListener("scroll",()=>requestAnimationFrame(updateScene),{passive:true});window.addEventListener("resize",updateScene,{passive:true});
+requestAnimationFrame(()=>{updateScene();setScene("hero");document.querySelector(".hero")?.classList.add("hero-ready")});
+
+// Cursor-responsive scene: only desktop/pointer devices.
+let mx=.5,my=.5;window.addEventListener("pointermove",e=>{mx=e.clientX/innerWidth;my=e.clientY/innerHeight;document.documentElement.style.setProperty("--mx",mx.toFixed(3));document.documentElement.style.setProperty("--my",my.toFixed(3))},{passive:true});
+
+// Cards/buttons react without interfering with text.
+document.querySelectorAll(".location-card,.site-stat-card,.bac-track").forEach(card=>{card.addEventListener("pointermove",e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.setProperty("--rx",`${(-y*3.5).toFixed(2)}deg`);card.style.setProperty("--ry",`${(x*4).toFixed(2)}deg`);card.style.setProperty("--px",`${(x*100+50).toFixed(1)}%`);card.style.setProperty("--py",`${(y*100+50).toFixed(1)}%`)});card.addEventListener("pointerleave",()=>{card.style.removeProperty("--rx");card.style.removeProperty("--ry")})});
+
+// Inputs become small interaction scenes: label, border and progress respond to actual typing.
+const form=document.getElementById("leadForm");form?.querySelectorAll("input,select").forEach(input=>{input.addEventListener("input",()=>input.closest(".field")?.classList.toggle("has-value",!!input.value));input.addEventListener("change",()=>input.closest(".field")?.classList.add("has-value"));input.addEventListener("focus",()=>input.closest(".field")?.classList.add("is-active"));input.addEventListener("blur",()=>input.closest(".field")?.classList.remove("is-active"))});
+
+// Internal anchors use Lenis when available, native smooth fallback otherwise.
+document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener("click",e=>{const id=link.getAttribute("href")?.slice(1),target=id&&document.getElementById(id);if(!target)return;e.preventDefault();if(lenis)lenis.scrollTo(target,{offset:-86,duration:1.25,easing:t=>1-Math.pow(1-t,4)});else target.scrollIntoView({behavior:"smooth",block:"start"});history.replaceState(null,"",`#${id}`)}));
+
+async function loadPublicStats(){if(location.protocol==="file:")return;try{const r=await fetch("/api/public-stats",{cache:"no-store"});if(!r.ok)throw new Error(`Stats request failed: ${r.status}`);const s=await r.json();if(!s.ok)throw new Error(s.error||"Stats API error");document.getElementById("statVisitors").dataset.target=Number(s.unique_visitors||0);document.getElementById("statToday").dataset.target=Number(s.today_visitors||0);document.getElementById("statRequests").dataset.target=Number(s.student_requests||0);document.getElementById("statVisitors").textContent="0";document.getElementById("statToday").textContent="0";document.getElementById("statRequests").textContent="0";if(statsAnimated)document.querySelectorAll(".site-stat-value strong").forEach(el=>animateCounter(el))}catch(e){console.warn("Public stats unavailable:",e.message)}}loadPublicStats();
+
+// Modal
+document.querySelectorAll("[data-success-close]").forEach(el=>el.addEventListener("click",closeSuccessModal));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("successModal")?.classList.contains("is-open"))closeSuccessModal()});
+
+// EmailJS is optional for the visual site; registration remains tied to the Worker API.
+if(window.emailjs){try{emailjs.init({publicKey:"ZUjic6-9k2GvyJPsu"})}catch(e){console.warn("EmailJS unavailable",e)}}
+
+form?.addEventListener("submit",async e=>{e.preventDefault();const btn=document.getElementById("submitBtn"),success=document.getElementById("success"),error=document.getElementById("error");btn.disabled=true;btn.textContent="جاري الإرسال...";success.style.display="none";error.style.display="none";const data=Object.fromEntries(new FormData(form).entries());data.source=new URLSearchParams(location.search).get("source")||"qr-poster";try{const response=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});if(!response.ok)throw new Error("request");if(window.emailjs){try{await emailjs.send("service_i1zf9ru","template_vjrqroz",{full_name:data.full_name||"",phone:data.phone||"",email:data.email||"",level:data.level||"",school:data.school||"Non renseigné",lesson_location:data.lesson_location||"",city:data.city||"Sfax",source:data.source||"Site web",created_at:new Date().toLocaleString("ar-TN",{dateStyle:"full",timeStyle:"short"})})}catch(err){console.warn("Email notification failed",err)}}const name=String(data.full_name||"").trim();form.reset();applyTunisian();openSuccessModal(name)}catch(err){error.style.display="block"}finally{btn.disabled=false;btn.textContent=translations.tn.submit}});
+
+/* ================================================================
+   TORBAGA — AFFICHE EDITION INTERACTION LAYER
+   Keeps the existing Worker/API flow and adds tactile navigation.
+   ================================================================ */
+(function posterEdition(){
+  const form = document.getElementById("leadForm");
+  if(!form) return;
+
+  const level = document.getElementById("level");
+  const subjects = document.querySelector(".subjects-section");
+  const tracks = [...document.querySelectorAll(".bac-track")];
+  const submit = document.getElementById("submitBtn");
+
+  const bacValues = {
+    eco:"Bac Économie & Gestion",
+    science:"Bac Sciences Expérimentales",
+    math:"Bac Mathématiques",
+    technique:"Bac Technique"
   };
-  const bacCards = [...document.querySelectorAll('.bac-card')];
-  const levelSelect = document.getElementById('level');
-  const inscription = document.getElementById('inscription');
 
-  function selectBacAndScroll(card){
-    if(!card || !levelSelect || !inscription) return;
-    const key = Object.keys(bacLevelMap).find(k => card.classList.contains(k));
-    const value = key ? bacLevelMap[key] : '';
-    if(!value) return;
+  function smoothToForm(){
+    const target = document.getElementById("inscription");
+    if(!target) return;
+    if(typeof lenis !== "undefined" && lenis){
+      lenis.scrollTo(target,{offset:-78,duration:1.15,easing:t=>1-Math.pow(1-t,4)});
+    }else{
+      target.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  }
 
-    levelSelect.value = value;
-    levelSelect.dispatchEvent(new Event('change', {bubbles:true}));
-
-    bacCards.forEach(item => item.classList.remove('is-selected'));
-    card.classList.add('is-selected');
-
-    smoothTo(inscription);
-    if(history.replaceState) history.replaceState(null, '', '#inscription');
-
+  function setBac(value, sourceCard){
+    if(!level || !value) return;
+    level.value = value;
+    level.dispatchEvent(new Event("change",{bubbles:true}));
+    tracks.forEach(t=>t.classList.remove("is-selected"));
+    sourceCard?.classList.add("is-selected");
+    if(sourceCard){
+      sourceCard.animate?.([
+        {transform:"translateY(0) scale(1)"},
+        {transform:"translateY(-4px) scale(1.012)"},
+        {transform:"translateY(0) scale(1)"}
+      ],{duration:360,easing:"cubic-bezier(.2,.8,.2,1)"});
+    }
     requestAnimationFrame(()=>{
-      levelSelect.focus({preventScroll:true});
-      setTimeout(()=>levelSelect.blur(), 420);
+      level.closest(".field")?.classList.add("has-value");
+      smoothToForm();
+      setTimeout(()=>level.focus({preventScroll:true}),720);
+    });
+    updateFormProgress();
+  }
+
+  // Make the grouped programme card behave like the poster's separate BAC choices.
+  const shared = document.querySelector(".bac-track.shared-program");
+  if(shared && !shared.querySelector(".bac-choice-row")){
+    const row=document.createElement("div");
+    row.className="bac-choice-row";
+    row.setAttribute("aria-label","Choisir la section");
+    [
+      ["science","Bac Science"],
+      ["math","Bac Math"],
+      ["technique","Bac Technique"]
+    ].forEach(([key,label])=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="bac-choice";
+      b.dataset.bac=key;
+      b.textContent=label;
+      b.addEventListener("click",e=>{e.stopPropagation();setBac(bacValues[key],shared);row.querySelectorAll(".bac-choice").forEach(x=>x.classList.toggle("is-active",x===b));});
+      row.appendChild(b);
+    });
+    shared.querySelector(".track-tags")?.before(row);
+  }
+
+  tracks.forEach(card=>{
+    if(card.classList.contains("unavailable")) return;
+    if(card.dataset.posterBound) return;
+    card.dataset.posterBound="1";
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    const text=(card.textContent||"").toLowerCase();
+    const value=text.includes("économie") ? bacValues.eco : bacValues.science;
+    card.addEventListener("click",()=>{
+      if(card.classList.contains("shared-program")) setBac(bacValues.science,card);
+      else setBac(value,card);
+    });
+    card.addEventListener("keydown",e=>{
+      if(e.key==="Enter"||e.key===" "){e.preventDefault();card.click();}
+    });
+  });
+
+  // If the form is entered from another part of the site, reflect the selected BAC card.
+  level?.addEventListener("change",()=>{
+    const value=level.value;
+    tracks.forEach(card=>card.classList.remove("is-selected"));
+    const match=tracks.find(card=>{
+      const t=(card.textContent||"").toLowerCase();
+      return (value.includes("Économie")&&t.includes("économie")) ||
+             (value.includes("Sciences")&&card.classList.contains("shared-program")) ||
+             (value.includes("Mathématiques")&&card.classList.contains("shared-program")) ||
+             (value.includes("Technique")&&card.classList.contains("shared-program"));
+    });
+    match?.classList.add("is-selected");
+    if(match?.classList.contains("shared-program")){
+      match.querySelectorAll(".bac-choice").forEach(b=>b.classList.toggle("is-active",
+        (value.includes("Sciences")&&b.dataset.bac==="science") ||
+        (value.includes("Mathématiques")&&b.dataset.bac==="math") ||
+        (value.includes("Technique")&&b.dataset.bac==="technique")
+      ));
+    }
+    updateFormProgress();
+  });
+
+  // A compact progress rail makes the form feel like a guided poster rather than a generic form.
+  let progress=document.querySelector(".form-progress");
+  if(!progress){
+    progress=document.createElement("div");
+    progress.className="form-progress";
+    progress.innerHTML='<div class="form-progress-label">Progression de l\'inscription <span>0%</span></div>'+
+      '<div class="form-progress-bar"><span></span></div><div class="form-progress-bar"><span></span></div><div class="form-progress-bar"><span></span></div>';
+    form.prepend(progress);
+  }
+
+  function updateFormProgress(){
+    const fields=[...form.querySelectorAll("input[required],select[required]")];
+    const filled=fields.filter(f=>String(f.value||"").trim()).length;
+    const valid=fields.filter(f=>f.checkValidity()).length;
+    const pct=Math.round((valid/Math.max(fields.length,1))*100);
+    progress.querySelector(".form-progress-label span").textContent=`${pct}%`;
+    progress.querySelectorAll(".form-progress-bar span").forEach((bar,i)=>bar.style.width=`${Math.max(0,Math.min(100,(pct-i*33.33)*3))}%`);
+    submit?.classList.toggle("ready",pct===100);
+  }
+
+  form.querySelectorAll("input,select").forEach(field=>{
+    field.addEventListener("input",updateFormProgress);
+    field.addEventListener("change",updateFormProgress);
+  });
+  updateFormProgress();
+
+  // Make primary actions subtly magnetic on pointer devices.
+  if(matchMedia("(hover:hover) and (pointer:fine)").matches){
+    document.querySelectorAll(".nav-cta,.hero-actions .btn.primary,.submit-btn").forEach(button=>{
+      let raf=0;
+      button.addEventListener("pointermove",e=>{
+        const r=button.getBoundingClientRect();
+        const x=(e.clientX-(r.left+r.width/2))/r.width;
+        const y=(e.clientY-(r.top+r.height/2))/r.height;
+        cancelAnimationFrame(raf);
+        raf=requestAnimationFrame(()=>button.style.transform=`translate(${x*4}px,${y*4}px)`);
+      });
+      button.addEventListener("pointerleave",()=>{button.style.transform=""});
     });
   }
 
-  bacCards.forEach(card=>{
-    card.setAttribute('role','button');
-    card.setAttribute('tabindex','0');
-    card.addEventListener('click',()=>selectBacAndScroll(card));
-    card.addEventListener('keydown',event=>{
-      if(event.key==='Enter' || event.key===' '){
-        event.preventDefault();
-        selectBacAndScroll(card);
-      }
+  // Section navigation feedback: active section gets a tiny poster-like state.
+  const sectionObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) entry.target.classList.add("in-focus");
     });
-  });
-
-  /* Make the BAC choice feel selected in the form too. */
-  levelSelect?.addEventListener('change',()=>{
-    const value=levelSelect.value;
-    bacCards.forEach(card=>{
-      const key=Object.keys(bacLevelMap).find(k=>bacLevelMap[k]===value);
-      card.classList.toggle('is-selected', !!key && card.classList.contains(key));
-    });
-  });
-
-  /* Make every actionable element feel clickable. */
-  document.querySelectorAll('button,a,.choice,.bac-card,.location-strip').forEach(el=>{
-    el.addEventListener('pointerdown',()=>el.classList.add('is-pressing'));
-    ['pointerup','pointercancel','pointerleave'].forEach(type=>el.addEventListener(type,()=>el.classList.remove('is-pressing')));
-  });
-
-  requestMotion();
-  updateChapter();
+  },{threshold:.2});
+  [document.querySelector(".hero"),document.querySelector(".intro-section"),document.querySelector(".site-stats-section"),subjects,document.querySelector(".quote-section"),document.getElementById("inscription")].filter(Boolean).forEach(sectionObserver.observe);
 })();
