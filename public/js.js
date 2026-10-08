@@ -1,11 +1,5 @@
-// EmailJS is optional for local preview.
-// If the CDN is unavailable (for example when opening index.html offline),
-// the rest of the site must still initialize: theme toggle, animations,
-// navigation and the rest of the UI should never depend on EmailJS.
-if (typeof window.emailjs !== "undefined") {
-    window.emailjs.init({
-        publicKey: "ZUjic6-9k2GvyJPsu"
-    });
+if (window.emailjs && typeof window.emailjs.init === "function") {
+    emailjs.init({ publicKey: "ZUjic6-9k2GvyJPsu" });
 }
 
 const translations = {
@@ -26,7 +20,7 @@ const translations = {
         visualLabel:"SÉANCE PRIVÉE / 01",
         visualCaption:"séance معمولة على قياسك.",
 
-        formatKicker:"زوز طرق باش تقرا",
+        formatKicker:"زوز طرق باش تتعلّمي",
         formatTitle:"عندي.<br><em>ولا عندك.</em>",
         formatLead:"ما فماش قاعة عادية ولا جوّ متاع groupe. فما séance فردية حقيقية، في البلاصة اللي ترتاح فيها أكثر.",
         homeTitle:"عندي",
@@ -104,7 +98,7 @@ function updateSuccessModal(name){
     const nameEl = document.getElementById("successName");
 
     kicker.textContent = "الطلب وصل";
-    title.textContent = "إن شاء اللّٰه ادمين !";
+    title.textContent = "إن شاء الله ادمين !";
     message.textContent = "طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.";
     footer.textContent = "نستناوك — FEDI GHANMI (TORBAGA)";
     returnBtn.textContent = "إرجع للموقع";
@@ -187,112 +181,6 @@ themeToggle?.addEventListener("click", ()=>{
 });
 
 updateThemeToggle();
-
-
-// Scroll-driven visual reveals. The page stays fully usable if JS is unavailable.
-document.documentElement.classList.add("js-ready");
-
-// Add a gentle first-load fade to visible text instead of an abrupt paint.
-const softEnterSelectors = [
-    ".hero-topline", ".hero-brandline", ".hero h1", ".hero-lead", ".hero-sub",
-    ".hero-actions", ".hero-bottom", ".quick-copy", ".quick-button"
-];
-const softEnterItems = [];
-softEnterSelectors.forEach((selector) => {
-    document.querySelectorAll(selector).forEach((el) => {
-        el.classList.add("soft-enter");
-        softEnterItems.push(el);
-    });
-});
-
-requestAnimationFrame(() => {
-    softEnterItems.forEach((el, index) => {
-        setTimeout(() => el.classList.add("soft-visible"), 80 + index * 70);
-    });
-});
-
-// Mark major sections for the scroll-depth pass.
-document.querySelectorAll("section, footer").forEach(el => el.classList.add("motion-section"));
-
-// Thin reading-progress indicator.
-const progress = document.createElement("div");
-progress.className = "scroll-progress";
-progress.innerHTML = "<i></i>";
-document.body.appendChild(progress);
-const progressBar = progress.querySelector("i");
-
-let scrollFrame = 0;
-function updateScrollMotion(){
-    scrollFrame = 0;
-    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const progressRatio = Math.min(1, Math.max(0, window.scrollY / max));
-    progressBar.style.transform = `scaleX(${progressRatio})`;
-
-    // Very subtle depth movement — enough to feel alive, never enough to
-    // make the typography drift away from its layout.
-    const ring = document.querySelector(".hero-ring");
-    if (ring && window.scrollY < window.innerHeight * 1.15) {
-        ring.style.transform = `translate3d(${window.scrollY * -0.018}px, ${window.scrollY * 0.035}px, 0) rotate(${window.scrollY * 0.018}deg)`;
-    }
-    const quoteRing = document.querySelector(".quote-section:before");
-    if (quoteRing) {
-        // Pseudo-elements cannot be addressed reliably from JS, so this is
-        // intentionally left to its CSS animation.
-    }
-}
-window.addEventListener("scroll", () => {
-    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollMotion);
-}, {passive:true});
-updateScrollMotion();
-
-const revealGroups = [
-    [".quick-start", "reveal-on-scroll"],
-    [".intro-section > .section-rule", "reveal-on-scroll"],
-    [".intro-section .split-heading", "reveal-from-right"],
-    [".location-card", "reveal-on-scroll"],
-    [".programmes > .section-rule", "reveal-on-scroll"],
-    [".programmes .split-heading", "reveal-from-left"],
-    [".bac-card", "reveal-scale"],
-    [".unavailable", "reveal-on-scroll"],
-    [".quote-section", "reveal-from-left"],
-    [".stats-section", "reveal-on-scroll"],
-    [".request-section .section-rule", "reveal-on-scroll"],
-    [".request-section .form-heading > h2", "reveal-from-left"],
-    [".request-section .form-heading > p", "reveal-from-right"],
-    [".form-wrap", "reveal-on-scroll"],
-    ["footer", "reveal-on-scroll"]
-];
-
-const revealItems = [];
-revealGroups.forEach(([selector, className]) => {
-    document.querySelectorAll(selector).forEach((el) => {
-        el.classList.add(className);
-        revealItems.push(el);
-    });
-});
-
-if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const revealObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-        });
-    }, { rootMargin: "-10% 0px -12% 0px", threshold: 0.08 });
-
-    revealItems.forEach((el) => revealObserver.observe(el));
-} else {
-    revealItems.forEach((el) => el.classList.add("is-visible"));
-}
-
-// Slightly enhance the hero as the visitor leaves it.
-const hero = document.querySelector(".hero");
-if (hero && "IntersectionObserver" in window) {
-    const heroObserver = new IntersectionObserver(([entry]) => {
-        hero.classList.toggle("hero-passed", !entry.isIntersecting);
-    }, { threshold: 0.18 });
-    heroObserver.observe(hero);
-}
 
 // Smooth, eased navigation to the inscription section.
 // This is intentionally slower than native scroll-behavior so the transition
@@ -436,10 +324,8 @@ form.addEventListener("submit", async event=>{
         if(!response.ok) throw new Error("request");
 
        try {
-            if (typeof window.emailjs === "undefined") {
-                console.warn("EmailJS is unavailable. Skipping email notification.");
-            } else {
-                await window.emailjs.send(
+            if (window.emailjs && typeof window.emailjs.send === "function") {
+            await emailjs.send(
                 "service_i1zf9ru",
                 "template_vjrqroz",
                 {
@@ -456,10 +342,10 @@ form.addEventListener("submit", async event=>{
                         timeStyle: "short"
                     })
                 }
-                );
-
-                console.log("Email notification sent successfully.");
+            );
             }
+
+            console.log("Email notification sent successfully.");
         } 
         catch (emailError) {
             console.error("EmailJS notification failed:", emailError);
@@ -488,3 +374,204 @@ form.addEventListener("submit", async event=>{
     }
 
 });
+
+
+/* ============================================================
+   PRO MOTION SYSTEM + STUDY BUDDY
+   Built against the actual page structure — no hidden sections at load.
+   ============================================================ */
+(function initPremiumMotion(){
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Only activate hidden-on-scroll states after JS is definitely running.
+    root.classList.add("motion-ready");
+
+    const revealTargets = [
+        [".intro-section .section-kicker", "up"],
+        [".intro-section .section-heading", "up"],
+        [".location-card", "up"],
+        [".site-stats-header", "up"],
+        [".site-stat-card", "up"],
+        [".subjects-section .section-heading", "up"],
+        [".bac-track", "up"],
+        [".quote-section", "up"],
+        [".request-intro", "left"],
+        [".form-wrap", "right"]
+    ];
+
+    revealTargets.forEach(([selector, direction])=>{
+        document.querySelectorAll(selector).forEach((el, index)=>{
+            el.classList.add("scroll-reveal");
+            if(direction !== "up") el.dataset.reveal = direction;
+            el.style.transitionDelay = `${Math.min(index * 70, 280)}ms`;
+        });
+    });
+
+    // Hero gets a deliberate entrance; everything else waits for its viewport.
+    if(!reduceMotion){
+        document.querySelectorAll(".hero-copy > *, .hero-visual > *").forEach((el,index)=>{
+            el.classList.add("hero-entry");
+            el.style.animationDelay = `${120 + index * 90}ms`;
+        });
+    }
+
+    const observer = "IntersectionObserver" in window ? new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+            if(entry.isIntersecting){
+                entry.target.classList.add("is-revealed");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {root:null,rootMargin:"-8% 0px -8% 0px",threshold:.08}) : null;
+
+    document.querySelectorAll(".scroll-reveal").forEach(el=>{
+        if(reduceMotion) el.classList.add("is-revealed");
+        else if(observer) observer.observe(el);
+        else el.classList.add("is-revealed");
+    });
+
+    const buddy = document.getElementById("studyBuddy");
+    const bubble = document.getElementById("buddyBubble");
+    if(!buddy) return;
+
+    const messages = [
+        {selector:".hero", text:"هاني معاك."},
+        {selector:".intro-section", text:"عندي ولا عندك؟"},
+        {selector:".site-stats-section", text:"نواصلو؟"},
+        {selector:".subjects-section", text:"إختار شُعبتك."},
+        {selector:".quote-section", text:"هكّا نفهموها."},
+        {selector:".request-section", text:"هاو وقت الـséance."}
+    ];
+
+    let currentSection = "";
+    let talkTimer = 0;
+    const setBuddyMood = (section, text)=>{
+        if(section === currentSection) return;
+        currentSection = section;
+        buddy.classList.remove("look-left","look-right","excited");
+        if(section === ".intro-section") buddy.classList.add("look-left");
+        if(section === ".subjects-section") buddy.classList.add("look-left");
+        if(section === ".request-section") buddy.classList.add("excited");
+        if(section === ".quote-section") buddy.classList.add("look-right");
+        if(bubble) bubble.textContent = text;
+        buddy.classList.add("is-talking");
+        clearTimeout(talkTimer);
+        talkTimer = window.setTimeout(()=>buddy.classList.remove("is-talking"), 1800);
+    };
+
+    const sectionObserver = "IntersectionObserver" in window ? new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+            if(entry.isIntersecting){
+                const match = messages.find(item=>entry.target.matches(item.selector));
+                if(match) setBuddyMood(match.selector, match.text);
+            }
+        });
+    }, {threshold:.45}) : null;
+
+    messages.forEach(item=>{
+        const el = document.querySelector(item.selector);
+        if(el && sectionObserver) sectionObserver.observe(el);
+    });
+
+    if(!reduceMotion){
+        let blinkTimer;
+        const blink = ()=>{
+            buddy.classList.add("blink");
+            window.setTimeout(()=>buddy.classList.remove("blink"), 145);
+            blinkTimer = window.setTimeout(blink, 2800 + Math.random()*2800);
+        };
+        blinkTimer = window.setTimeout(blink, 1900);
+        window.addEventListener("pagehide",()=>clearTimeout(blinkTimer),{once:true});
+    }
+
+    // Eyes follow the pointer, but with a deliberately restrained range.
+    let pointerX = 0, pointerY = 0;
+    window.addEventListener("pointermove", event=>{
+        pointerX = Math.max(-2.5, Math.min(2.5, (event.clientX / window.innerWidth - .5) * 5));
+        pointerY = Math.max(-2, Math.min(2, (event.clientY / window.innerHeight - .5) * 4));
+        buddy.style.setProperty("--look-x", `${pointerX}px`);
+        buddy.style.setProperty("--look-y", `${pointerY}px`);
+    }, {passive:true});
+
+    // A small scroll-driven body shift makes the character feel attached to the page.
+    let scrollTick = false;
+    window.addEventListener("scroll",()=>{
+        if(scrollTick) return;
+        scrollTick = true;
+        requestAnimationFrame(()=>{
+            const amount = Math.max(-4, Math.min(4, (window.scrollY % 360) / 90 - 2));
+            buddy.style.setProperty("--buddy-y", `${amount}px`);
+            scrollTick = false;
+        });
+    }, {passive:true});
+})();
+
+/* ============================================================
+   SCROLL STORY — scroll-linked, smoothed animation
+   ============================================================ */
+(function initScrollStory(){
+    const story = document.getElementById("scrollStory");
+    if(!story) return;
+    const root = story.querySelector(".scroll-story-sticky");
+    const copies = [...story.querySelectorAll(".story-copy")];
+    if(!root) return;
+
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    let raw = 0;
+    let smooth = 0;
+    let running = false;
+
+    const clamp = (n,a=0,b=1)=>Math.max(a,Math.min(b,n));
+    const ease = t => t*t*(3-2*t);
+
+    function measure(){
+        const rect = story.getBoundingClientRect();
+        const travel = Math.max(1, story.offsetHeight - window.innerHeight);
+        raw = clamp(-rect.top / travel);
+    }
+
+    function render(){
+        const delta = raw - smooth;
+        smooth += delta * (reduce ? 1 : .115);
+        const p = clamp(smooth);
+        const e = ease(p);
+
+        root.style.setProperty("--story-progress", p.toFixed(4));
+        root.style.setProperty("--story-ease", e.toFixed(4));
+        root.style.setProperty("--story-x", `${((p-.5)*-28).toFixed(2)}px`);
+        root.style.setProperty("--story-y", `${(Math.sin(p*Math.PI)*-10).toFixed(2)}px`);
+
+        // Three distinct moments instead of a blank/static scene.
+        const centers = [.14,.5,.86];
+        copies.forEach((el,i)=>{
+            const distance = Math.abs(p-centers[i]);
+            const opacity = clamp(1 - distance/.20);
+            const direction = i === 1 ? (p < .5 ? 24 : -24) : (i === 0 ? -24 : 24);
+            const y = (distance * 70);
+            el.style.opacity = opacity.toFixed(3);
+            el.style.transform = `translate3d(${(direction * distance).toFixed(1)}px,${y.toFixed(1)}px,0)`;
+        });
+
+        if(Math.abs(delta) > .0005 && !reduce){
+            requestAnimationFrame(render);
+        } else {
+            running = false;
+        }
+    }
+
+    function kick(){
+        measure();
+        if(!running){
+            running = true;
+            requestAnimationFrame(render);
+        }
+    }
+
+    window.addEventListener("scroll", kick, {passive:true});
+    window.addEventListener("resize", kick, {passive:true});
+    window.addEventListener("load", kick, {once:true});
+
+    // Initialize immediately so the scene has a deterministic state.
+    kick();
+})();
