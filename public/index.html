@@ -309,14 +309,6 @@
 <!-- //*src="js.js"*// -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://unpkg.com/lenis@1.3.26/dist/lenis.min.js"></script>
-<<<<<<< HEAD
-<script src="js.js?v=20261008-submitfix"></script>
-<script>
-(function(){
-  const form=document.getElementById("leadForm");
-  if(!form || window.__torbagaSubmitBound) return;
-  form.addEventListener("submit", async function(e){
-=======
 <script src="js.js?v=20261008-final-submit">
 </script>
 <script>
@@ -325,16 +317,11 @@
   if(!form || window.__torbagaSubmitFallback) return;
   window.__torbagaSubmitFallback=true;
   form.addEventListener("submit",async function(e){
->>>>>>> 831863d (ada)
     e.preventDefault();
     e.stopImmediatePropagation();
     const btn=document.getElementById("submitBtn");
     const error=document.getElementById("error");
-<<<<<<< HEAD
-    if(btn){ btn.disabled=true; btn.textContent="جاري الإرسال..."; }
-=======
     if(btn){btn.disabled=true;btn.textContent="جاري الإرسال...";}
->>>>>>> 831863d (ada)
     if(error) error.style.display="none";
     try{
       const data=Object.fromEntries(new FormData(form).entries());
@@ -343,29 +330,6 @@
       const result=await response.json().catch(()=>({}));
       if(!response.ok || result.ok===false) throw new Error(result.error||"Registration failed");
       form.reset();
-<<<<<<< HEAD
-      const modal=document.getElementById("successModal");
-      if(modal){
-        const title=modal.querySelector("[data-success-title]");
-        const msg=modal.querySelector("[data-success-message]");
-        if(title) title.textContent="إن شاء الله ادمين !";
-        if(msg) msg.textContent="طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.";
-        modal.classList.add("is-open");
-        modal.setAttribute("aria-hidden","false");
-        document.body.classList.add("modal-open");
-      }
-    }catch(err){
-      console.error("Registration failed:",err);
-      if(error){ error.textContent="ما نجّمش نبعثو الطلب توّة. عاود جرّب بعد شوية."; error.style.display="block"; }
-    }finally{
-      if(btn){ btn.disabled=false; btn.textContent="إطلب الـséance متاعك"; }
-    }
-  }, true);
-})();
-</script>
-</body>
-</html>
-=======
       if(typeof window.openSuccessModal === "function") window.openSuccessModal(String(data.full_name||"").trim());
       else {
         const modal=document.getElementById("successModal");
@@ -392,4 +356,3 @@
 
 
 
->>>>>>> 831863d (ada)
