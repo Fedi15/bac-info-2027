@@ -1,39 +1,69 @@
-# TORBAGA Prof Informatique — Cross-platform mobile app
+# Torbaga Prof — Cross-platform mobile wrapper
 
-This folder is the **single mobile project source** for Android and iOS around the existing Cloudflare website.
+This folder wraps the live Cloudflare site in Flutter and adds a native Instagram Stories bridge.
 
-## What is included
+Meta App ID configured in the native bridge:
 
-- Flutter application shell.
-- Android native Instagram Story bridge.
-- iOS native Instagram Story bridge.
-- WebView loading the live site:
-  `https://etude-bac.torbaga.workers.dev/`
-- The website's 1080×1920 Story is generated first; the mobile bridge receives the JPEG as a data URL.
-- Android uses Instagram's `com.instagram.share.ADD_TO_STORY` intent with a FileProvider URI.
-- iOS uses `instagram-stories://share` and the Instagram pasteboard background-image key.
-- Normal browser use keeps the existing Web Share/download fallback.
+`2568225346923281`
 
-## Important build note
+## Instagram flow
 
-The source is prepared for Flutter, but this environment does **not** have the Flutter SDK or Xcode installed, so an Android APK/iOS IPA was not falsely claimed as compiled here.
+Inside the mobile wrapper, tapping Instagram does **not** call the browser `navigator.share()` API.
+The website sends the generated Story JPEG through the `TorbagaNative` WebView JavaScript channel.
+Flutter writes it to a temporary file and invokes the native `torbaga/native` method channel.
 
-On a development machine with Flutter installed:
+### Android
 
-```text
-cd mobile
+The Android bridge:
+
+- verifies Instagram is installed
+- exposes the JPEG through AndroidX `FileProvider`
+- uses `com.instagram.share.ADD_TO_STORY`
+- sets the image URI as the Intent data with `image/jpeg`
+- sets `source_application=2568225346923281`
+- explicitly targets `com.instagram.android`
+- grants Instagram temporary read access
+
+This is the important difference from the previous version: `interactive_asset_uri` is not used for the full background image. It is a sticker-layer parameter; the full Story background is supplied as the Intent's data URI.
+
+### iOS
+
+The iOS bridge:
+
+- writes the JPEG data to `UIPasteboard`
+- uses `com.instagram.sharedSticker.backgroundImage`
+- opens `instagram-stories://share?source_application=2568225346923281`
+- keeps the pasteboard entry for five minutes
+
+## Build
+
+You need Flutter installed locally. The environment used to prepare this archive does not contain Flutter, Android SDK, or Xcode, so an APK/IPA was not falsely claimed as compiled here.
+
+### Android on Windows
+
+From this `mobile` folder:
+
+```powershell
 flutter pub get
-flutter run
+flutter build apk --release
 ```
 
-For Android, Android Studio/SDK is required. For iOS, macOS + Xcode is required for compilation/signing.
+Install the generated APK on a physical Android phone with Instagram installed.
 
-If opening the folder in Android Studio, open the `mobile` folder as a Flutter project after installing the Flutter/Dart plugins.
+### iOS
 
-## Instagram behavior
+On macOS with Xcode:
 
-Inside this mobile wrapper, tapping **Instagram → Story** does not call the generic `navigator.share()` chooser. The generated Story image is passed to the native bridge and the native platform requests Instagram's Story share handler directly.
+```bash
+flutter pub get
+cd ios
+pod install
+cd ..
+flutter build ios --release
+```
 
-Instagram still controls its own final Story editor and publishing screen. The app cannot silently publish a Story for the user.
+Instagram Story sharing must be tested on a physical iPhone; the iOS simulator cannot launch the Instagram app.
 
-The integration depends on the Instagram app being installed and on the current Instagram platform behavior/API. If Instagram does not expose the handler on a particular device/version, the app reports the failure instead of pretending the share succeeded.
+## Browser fallback
+
+If the site is opened directly in Chrome/Safari instead of this native wrapper, there is no native bridge. Instagram therefore falls back to the normal browser sharing path. A normal web page cannot force Instagram's Story composer.
