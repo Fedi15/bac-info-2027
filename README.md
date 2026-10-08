@@ -1,29 +1,117 @@
-# TORBAGA Prof Informatique — Cloudflare + Cross-platform Mobile v14
+# Bac Info 2027 — Private Tutoring — Cloudflare D1
 
-This package contains the existing Cloudflare/D1 website plus a single Flutter mobile source project for Android and iOS.
+Website for **Fedi Ghanmi (Torbaga)**'s private Informatique tutoring service.
 
-## Website
+## Cloudflare architecture
 
-The web project is preserved from the working v13 project. It contains:
+- Cloudflare Workers — backend/API
+- Cloudflare D1 — SQLite database
+- Workers Static Assets — `public/`
+- `src/worker.js` — Worker entry point
+- `api/register.js` — public registration handler
+- `api/leads.js` — protected admin leads handler
+- `public/admin.html` — simple admin viewer
 
-- `public/` — website files
-- `api/` — Cloudflare API functions
-- `migrations/` — D1 migrations
-- `src/worker.js` — Cloudflare Worker
-- `wrangler.toml` — Cloudflare configuration
+The project no longer uses Hatchable or PostgreSQL. D1 is SQLite-based and the Worker uses the native `env.DB.prepare(...).bind(...).run()` API.
 
-The mobile-only Instagram Story path has been added without removing the browser fallback.
+## Form structure
 
-## Mobile
+The student chooses **one combined Level / Section** field:
 
-`mobile/` contains the cross-platform app source. It loads:
+- 3ème année secondaire
+- Bac Économie & Gestion
+- Bac Mathématiques
+- Bac Technique
+- Bac Sciences Expérimentales
+- Bac Lettres
 
-`https://etude-bac.torbaga.workers.dev/`
+Bac Informatique is not offered.
 
-The site sends the generated Story image to the mobile bridge. Android and iOS then use platform-native Instagram Story handoff instead of the generic browser share chooser.
+Programmes:
 
-### Build requirement
+- **Économie & Gestion:** Access, Pandas, Python
+- **Mathématiques + Technique + Sciences Expérimentales:** Python, algorithmique
+- **Lettres:** Informatique not offered
 
-Flutter SDK is required to run/build the mobile project. Android builds require Android Studio/SDK. iOS builds require macOS + Xcode.
+City is fixed to **Sfax** and is not editable.
 
-This Linux build environment does not contain Flutter or Xcode, so no fake APK/IPA is included. The source is packaged and syntax-checked where possible.
+Students do not choose an availability time on the form. After submitting their details, they are contacted by email to confirm the information and arrange the lesson.
+
+## Create the D1 database
+
+Install/authenticate Wrangler if needed, then create the database:
+
+```powershell
+npx wrangler login
+npx wrangler d1 create bac-info-2027
+```
+
+Cloudflare will return a `database_id`. Put that ID into `wrangler.toml`:
+
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "bac-info-2027"
+database_id = "YOUR_REAL_D1_DATABASE_ID"
+```
+
+Do not commit a real secret token to Git.
+
+## Create the schema
+
+For the remote/production database:
+
+```powershell
+npx wrangler d1 execute bac-info-2027 --remote --file=migrations/001_d1_schema.sql
+```
+
+For local development:
+
+```powershell
+npx wrangler d1 execute bac-info-2027 --local --file=migrations/001_d1_schema.sql
+```
+
+## Admin token
+
+Create the admin token as a Worker secret:
+
+```powershell
+npx wrangler secret put ADMIN_TOKEN
+```
+
+Then open `/admin.html` and enter the same token. The API will reject requests without the correct Bearer token.
+
+## Local development
+
+```powershell
+npx wrangler dev
+```
+
+Then open the local URL shown by Wrangler.
+
+## Deploy
+
+```powershell
+npx wrangler deploy
+```
+
+The Worker serves the static site from `public/` and handles:
+
+- `POST /api/register`
+- `GET /api/leads`
+
+## Email note
+
+The form collects the student's email and the site explains that follow-up information will be sent by email. Cloudflare D1 stores the request; it does **not** itself send email. If you want an automatic email immediately after a request, connect an email provider such as Resend through a Worker secret/API integration.
+
+## Google Maps
+
+Teaching location:
+
+https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7
+
+
+## iPhone Instagram Story fallback
+On iPhone Safari, the Instagram button no longer calls `navigator.share()` first. It downloads the generated `torbaga-story.jpg` and then attempts to open Instagram's `instagram://camera` entry point. The user can select the newest saved image in Instagram. A native bridge, if present, still takes precedence.
+
+Important: Safari cannot silently write a web-generated image directly into the iOS Photos library. The browser download location/behavior is controlled by iOS.
