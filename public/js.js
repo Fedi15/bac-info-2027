@@ -1,6 +1,12 @@
-emailjs.init({
-    publicKey: "ZUjic6-9k2GvyJPsu"
-});
+// EmailJS is optional for local preview.
+// If the CDN is unavailable (for example when opening index.html offline),
+// the rest of the site must still initialize: theme toggle, animations,
+// navigation and the rest of the UI should never depend on EmailJS.
+if (typeof window.emailjs !== "undefined") {
+    window.emailjs.init({
+        publicKey: "ZUjic6-9k2GvyJPsu"
+    });
+}
 
 const translations = {
     tn: {
@@ -20,7 +26,7 @@ const translations = {
         visualLabel:"SÉANCE PRIVÉE / 01",
         visualCaption:"séance معمولة على قياسك.",
 
-        formatKicker:"زوز طرق باش تتعلّمي",
+        formatKicker:"زوز طرق باش تقرا",
         formatTitle:"عندي.<br><em>ولا عندك.</em>",
         formatLead:"ما فماش قاعة عادية ولا جوّ متاع groupe. فما séance فردية حقيقية، في البلاصة اللي ترتاح فيها أكثر.",
         homeTitle:"عندي",
@@ -98,7 +104,7 @@ function updateSuccessModal(name){
     const nameEl = document.getElementById("successName");
 
     kicker.textContent = "الطلب وصل";
-    title.textContent = "إن شاء الله ادمين !";
+    title.textContent = "إن شاء اللّٰه ادمين !";
     message.textContent = "طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.";
     footer.textContent = "نستناوك — FEDI GHANMI (TORBAGA)";
     returnBtn.textContent = "إرجع للموقع";
@@ -181,6 +187,112 @@ themeToggle?.addEventListener("click", ()=>{
 });
 
 updateThemeToggle();
+
+
+// Scroll-driven visual reveals. The page stays fully usable if JS is unavailable.
+document.documentElement.classList.add("js-ready");
+
+// Add a gentle first-load fade to visible text instead of an abrupt paint.
+const softEnterSelectors = [
+    ".hero-topline", ".hero-brandline", ".hero h1", ".hero-lead", ".hero-sub",
+    ".hero-actions", ".hero-bottom", ".quick-copy", ".quick-button"
+];
+const softEnterItems = [];
+softEnterSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => {
+        el.classList.add("soft-enter");
+        softEnterItems.push(el);
+    });
+});
+
+requestAnimationFrame(() => {
+    softEnterItems.forEach((el, index) => {
+        setTimeout(() => el.classList.add("soft-visible"), 80 + index * 70);
+    });
+});
+
+// Mark major sections for the scroll-depth pass.
+document.querySelectorAll("section, footer").forEach(el => el.classList.add("motion-section"));
+
+// Thin reading-progress indicator.
+const progress = document.createElement("div");
+progress.className = "scroll-progress";
+progress.innerHTML = "<i></i>";
+document.body.appendChild(progress);
+const progressBar = progress.querySelector("i");
+
+let scrollFrame = 0;
+function updateScrollMotion(){
+    scrollFrame = 0;
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const progressRatio = Math.min(1, Math.max(0, window.scrollY / max));
+    progressBar.style.transform = `scaleX(${progressRatio})`;
+
+    // Very subtle depth movement — enough to feel alive, never enough to
+    // make the typography drift away from its layout.
+    const ring = document.querySelector(".hero-ring");
+    if (ring && window.scrollY < window.innerHeight * 1.15) {
+        ring.style.transform = `translate3d(${window.scrollY * -0.018}px, ${window.scrollY * 0.035}px, 0) rotate(${window.scrollY * 0.018}deg)`;
+    }
+    const quoteRing = document.querySelector(".quote-section:before");
+    if (quoteRing) {
+        // Pseudo-elements cannot be addressed reliably from JS, so this is
+        // intentionally left to its CSS animation.
+    }
+}
+window.addEventListener("scroll", () => {
+    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollMotion);
+}, {passive:true});
+updateScrollMotion();
+
+const revealGroups = [
+    [".quick-start", "reveal-on-scroll"],
+    [".intro-section > .section-rule", "reveal-on-scroll"],
+    [".intro-section .split-heading", "reveal-from-right"],
+    [".location-card", "reveal-on-scroll"],
+    [".programmes > .section-rule", "reveal-on-scroll"],
+    [".programmes .split-heading", "reveal-from-left"],
+    [".bac-card", "reveal-scale"],
+    [".unavailable", "reveal-on-scroll"],
+    [".quote-section", "reveal-from-left"],
+    [".stats-section", "reveal-on-scroll"],
+    [".request-section .section-rule", "reveal-on-scroll"],
+    [".request-section .form-heading > h2", "reveal-from-left"],
+    [".request-section .form-heading > p", "reveal-from-right"],
+    [".form-wrap", "reveal-on-scroll"],
+    ["footer", "reveal-on-scroll"]
+];
+
+const revealItems = [];
+revealGroups.forEach(([selector, className]) => {
+    document.querySelectorAll(selector).forEach((el) => {
+        el.classList.add(className);
+        revealItems.push(el);
+    });
+});
+
+if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+        });
+    }, { rootMargin: "-10% 0px -12% 0px", threshold: 0.08 });
+
+    revealItems.forEach((el) => revealObserver.observe(el));
+} else {
+    revealItems.forEach((el) => el.classList.add("is-visible"));
+}
+
+// Slightly enhance the hero as the visitor leaves it.
+const hero = document.querySelector(".hero");
+if (hero && "IntersectionObserver" in window) {
+    const heroObserver = new IntersectionObserver(([entry]) => {
+        hero.classList.toggle("hero-passed", !entry.isIntersecting);
+    }, { threshold: 0.18 });
+    heroObserver.observe(hero);
+}
 
 // Smooth, eased navigation to the inscription section.
 // This is intentionally slower than native scroll-behavior so the transition
@@ -324,7 +436,10 @@ form.addEventListener("submit", async event=>{
         if(!response.ok) throw new Error("request");
 
        try {
-            await emailjs.send(
+            if (typeof window.emailjs === "undefined") {
+                console.warn("EmailJS is unavailable. Skipping email notification.");
+            } else {
+                await window.emailjs.send(
                 "service_i1zf9ru",
                 "template_vjrqroz",
                 {
@@ -341,9 +456,10 @@ form.addEventListener("submit", async event=>{
                         timeStyle: "short"
                     })
                 }
-            );
+                );
 
-            console.log("Email notification sent successfully.");
+                console.log("Email notification sent successfully.");
+            }
         } 
         catch (emailError) {
             console.error("EmailJS notification failed:", emailError);

@@ -1,268 +1,180 @@
-<!DOCTYPE html>
-
-<html lang="ar-TN">
+<!doctype html>
+<html lang="ar-TN" dir="rtl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Fedi Ghanmi (Torbaga) — séances فردية في informatique</title>
-<meta content="séances فردية في informatique مع Fedi Ghanmi (Torbaga)، في صفاقس. عندي ولا عندك، على قدّ مستواك وشنوّة تحتاج." name="description"/>
-<link href="style.css" rel="stylesheet"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TORBAGA — Prof Informatique</title>
+<meta name="description" content="séances particulières في informatique مع Fedi Ghanmi (Torbaga) في Sfax. عندي ولا عندك.">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="site-shell">
+
 <nav class="nav">
-<a aria-label="Fedi Ghanmi (Torbaga)" class="brand" href="/">
-<span>FEDI</span> GHANMI <small class="brand-nick">(TORBAGA)</small>
-        </a>
-<div class="nav-right">
-<button aria-label="الوضع الفاتح" class="theme-toggle" id="themeToggle" type="button" title="الوضع الفاتح"><span class="theme-icon" aria-hidden="true">☼</span><span class="theme-label">فاتح</span></button>
-<a class="nav-cta" data-i18n="navCta" href="#inscription">إطلب séance</a>
-</div>
+  <a class="brand" href="/" aria-label="Fedi Ghanmi Torbaga"><span>TORBAGA</span><small>Prof Informatique</small></a>
+  <div class="nav-right">
+    <button aria-label="الوضع الفاتح" class="theme-toggle" id="themeToggle" type="button" title="الوضع الفاتح"><span class="theme-icon" aria-hidden="true">☼</span><span class="theme-label">فاتح</span></button>
+    <a class="nav-cta" data-i18n="navCta" href="#inscription">إطلب séance</a>
+  </div>
 </nav>
-<header class="hero">
-<div class="hero-copy">
-<div class="eyebrow" data-i18n="eyebrow">séances particulières في informatique</div>
-<h1 data-i18n="heroTitle">informatique،<br/><em>على كيفك.</em></h1>
-<p class="hero-lead" data-i18n="heroLead">مرافقة فردية على قدّ مستواك، الصعوبات متاعك والأهداف اللي تحب توصللها.</p>
-<div class="hero-actions">
-<a class="btn primary" data-i18n="heroCta" href="#inscription">إطلب séance</a>
-<a class="text-link" data-i18n="heroSecondary" href="#format">شوف كيفاش تخدم</a>
-</div>
-<div class="location-line">
-<span data-i18n="locationLine">عندي ولا عندك.</span>
-<span class="dot">•</span>
-<span data-i18n="locationSub">إنتي تختار البلاصة.</span>
-</div>
-<a class="map-link hero-map-link" data-i18n="mapLink" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" rel="noopener" target="_blank">شوف بلاصة التدريس على Google Maps →</a>
-</div>
-<div class="hero-visual">
-<div class="visual-label" data-i18n="visualLabel">SÉANCE PRIVÉE / 01</div>
-<div class="visual-main">
-<span class="visual-word">1:1</span>
-<span class="visual-caption" data-i18n="visualCaption">séance معمولة على قياسك.</span>
-</div>
-<div class="visual-footer">
-<span>FEDI GHANMI <small>(TORBAGA)</small></span>
-<span>BAC 2027</span>
-</div>
-</div>
+
+<header class="hero" id="top">
+  <div class="hero-ring" aria-hidden="true"></div>
+  <div class="hero-topline">
+    <span>01 / COURS PARTICULIER</span>
+    <span>SFAX · 2026</span>
+  </div>
+  <div class="hero-content">
+    <div class="hero-brandline"><span class="hero-mark">T</span><span data-i18n="eyebrow">séances particulières في informatique</span></div>
+    <h1 data-i18n="heroTitle">تحب تقرا étude ؟<br><strong>عندي ولا عندك؟</strong><em>مفماش مشكلة.</em></h1>
+    <p class="hero-lead" data-i18n="heroLead">أنا نعاونك في informatique، خطوة بخطوة.</p>
+    <p class="hero-sub" data-i18n="heroSecondary">نفهموك الطريقة، نطبّقوها مع بعضنا، وإنتي تولّي تحلّ الدفوارات وحدك.</p>
+    <div class="hero-actions">
+      <a class="hero-cta" data-i18n="heroCta" href="#inscription"><span>→</span> إحجز séance</a>
+      <a class="hero-ghost" href="#programmes">شوف شنوّة نقري</a>
+    </div>
+  </div>
+  <div class="hero-bottom">
+    <span>FEDI GHANMI <small>(TORBAGA)</small></span>
+    <span>1 : 1 · SÉANCE PRIVÉE</span>
+  </div>
 </header>
+
+<section class="quick-start" aria-label="الحجز">
+  <div class="quick-copy">
+    <span class="kicker">باش نبدأو</span>
+    <h2>تحب séance؟ <strong>ما يلزمكش تدور.</strong></h2>
+    <p>إختار الشعبة والبلاصة، خلّي معلوماتك، وأنا نتواصل معاك بالإيميل.</p>
+  </div>
+  <a class="quick-button" href="#inscription"><span>إحجز معايا</span><b>↙</b></a>
+</section>
+
 <section class="intro-section" id="format">
-<div class="section-kicker" data-i18n="formatKicker">زوز طرق باش تتعلّمي</div>
-<div class="section-heading">
-<h2 data-i18n="formatTitle">عندي.<br/><em>ولا عندك.</em></h2>
-<p data-i18n="formatLead">ما فماش قاعة عادية ولا جوّ متاع groupe. فما séance فردية حقيقية، في البلاصة اللي ترتاح فيها أكثر.</p>
-</div>
-<div class="location-grid">
-<article class="location-card">
-<div class="card-number">01</div>
-<h3 data-i18n="homeTitle">عندي</h3>
-<p data-i18n="homeText">تجي تخدم في بلاصة هادئة ومخصّصة للـséance. ناخذو وقتنا باش نفهمو، نطبّقو ونصلحو الغلط.</p>
-<span class="card-note" data-i18n="homeNote">بلاصة مخصّصة للقراية</span>
-</article>
-<article class="location-card featured">
-<div class="card-number">02</div>
-<h3 data-i18n="studentTitle">عندك</h3>
-<p data-i18n="studentText">نجي لعندك للدار ونعملولك séance فردية مباشرة في البلاصة اللي تقرا فيها.</p>
-<span class="card-note" data-i18n="studentNote">نجي لعندك</span>
-</article>
-</div>
+  <div class="section-rule"><span>02</span><i></i><span>عندي · عندك</span></div>
+  <div class="split-heading">
+    <h2 data-i18n="formatTitle">عندي.<br><em>ولا عندك.</em></h2>
+    <p data-i18n="formatLead">ما فماش قاعة عادية ولا جوّ متاع groupe. فما séance فردية حقيقية، في البلاصة اللي ترتاح فيها أكثر.</p>
+  </div>
+  <div class="location-grid">
+    <article class="location-card home-card">
+      <div class="card-top"><span>01</span><i></i></div>
+      <h3 data-i18n="homeTitle">عندي</h3>
+      <p data-i18n="homeText">تجي تخدم في بلاصة هادئة ومخصّصة للـséance. ناخذو وقتنا باش نفهمو، نطبّقو ونصلحو الغلط.</p>
+      <span class="card-note" data-i18n="homeNote">بلاصة مخصّصة للقراية</span>
+    </article>
+    <article class="location-card student-card">
+      <div class="card-top"><span>02</span><i></i></div>
+      <h3 data-i18n="studentTitle">عندك</h3>
+      <p data-i18n="studentText">نجي لعندك للدار ونعملولك séance فردية مباشرة في البلاصة اللي تقرا فيها.</p>
+      <span class="card-note" data-i18n="studentNote">نجي لعندك</span>
+    </article>
+  </div>
 </section>
-<section aria-label="إحصائيات الموقع" class="site-stats-section">
-<div class="site-stats-header">
-<div>
-<div class="section-kicker" data-i18n="statsKicker">الموقع بالأرقام</div>
-<h2 data-i18n="statsTitle">شوية أرقام.<br/><em>وتقدّم حقيقي.</em></h2>
-</div>
-<p data-i18n="statsLead">إحصائيات الموقع تتحدّث في الوقت الحقيقي.</p>
-</div>
-<div class="site-stats-grid">
-<article class="site-stat-card">
-<div class="site-stat-top">
-<span class="site-stat-index">01</span>
-<span class="site-stat-label" data-i18n="statsVisitors">الزوار</span>
-</div>
-<div class="site-stat-value">
-<strong id="statVisitors">—</strong>
-<span>+</span>
-</div>
-<div class="site-stat-bottom">
-<span class="site-stat-note" data-i18n="statsVisitorsNote">زوار مختلفين</span>
-</div>
-</article>
-<article class="site-stat-card featured">
-<div class="site-stat-top">
-<span class="site-stat-index">02</span>
-<span class="site-stat-label" data-i18n="statsToday">اليوم</span>
-</div>
-<div class="site-stat-value">
-<strong id="statToday">—</strong>
-</div>
-<div class="site-stat-bottom">
-<span class="site-stat-note" data-i18n="statsTodayNote">زوار اليوم</span>
-</div>
-</article>
-<article class="site-stat-card">
-<div class="site-stat-top">
-<span class="site-stat-index">03</span>
-<span class="site-stat-label" data-i18n="statsRequests">الطلبات</span>
-</div>
-<div class="site-stat-value">
-<strong id="statRequests">—</strong>
-<span>+</span>
-</div>
-<div class="site-stat-bottom">
-<span class="site-stat-note" data-i18n="statsRequestsNote">طلبات الـséances</span>
-</div>
-</article>
-</div>
+
+<section class="programmes" id="programmes">
+  <div class="section-rule"><span>03</span><i></i><span>PROGRAMMES</span></div>
+  <div class="split-heading">
+    <h2 data-i18n="subjectsTitle">برنامج يتكيّف<br><em>مع الشعبة متاعك.</em></h2>
+    <p data-i18n="subjectsLead">نجمّعو الشعب اللي عندها نفس البرنامج: Économie &amp; Gestion وحدها، وبعد Mathématiques وTechnique وSciences Expérimentales مع بعضهم.</p>
+  </div>
+  <div class="bac-grid">
+    <article class="bac-card coral">
+      <div class="bac-index">01</div><span class="bac-label">BAC</span>
+      <h3 data-i18n="ecoLabel">ÉCONOMIE &amp; GESTION</h3>
+      <strong data-i18n="ecoTitle">Access · Pandas · Python</strong>
+      <p data-i18n="ecoText">خدمة مركّزة على البرنامج، خاصة Access وPandas وPython.</p>
+    </article>
+    <article class="bac-card blue">
+      <div class="bac-index">02</div><span class="bac-label">BAC</span>
+      <h3>Mathématiques</h3><strong>Python · Algorithmique</strong>
+      <p>نخدمو على Python والـalgorithmique حسب البرنامج.</p>
+    </article>
+    <article class="bac-card lime">
+      <div class="bac-index">03</div><span class="bac-label">BAC</span>
+      <h3>Technique</h3><strong>Python · Algorithmique</strong>
+      <p>نفس البرنامج، بخدمة تطبيقية وتمارين موجّهة.</p>
+    </article>
+    <article class="bac-card ink">
+      <div class="bac-index">04</div><span class="bac-label">BAC</span>
+      <h3>Sciences</h3><strong>Python · Algorithmique</strong>
+      <p>نفس برنامج Math وTechnique: Python والـalgorithmique.</p>
+    </article>
+  </div>
+  <div class="unavailable" data-i18n="litText">Bac Lettres: informatique موش متوفّرة للشعبة هاذي.</div>
 </section>
-<section class="subjects-section">
-<div class="section-heading compact">
-<div>
-<div class="section-kicker" data-i18n="subjectsKicker">شنوّة ننجمو نخدمو</div>
-<h2 data-i18n="subjectsTitle">برنامج يتكيّف<br/><em>مع الشعبة متاعك.</em></h2>
-</div>
-<p data-i18n="subjectsLead">نجمّعو الشعب اللي عندها نفس البرنامج: Économie &amp; Gestion وحدها، وبعد Mathématiques وTechnique وSciences Expérimentales مع بعضهم.</p>
-</div>
-<div class="bac-track-grid">
-<article class="bac-track eco">
-<div class="track-top">
-<span>01</span>
-<strong data-i18n="ecoLabel">BAC ÉCONOMIE &amp; GESTION</strong>
-</div>
-<h3 data-i18n="ecoTitle">Access · Pandas · Python</h3>
-<p data-i18n="ecoText">خدمة مركّزة على البرنامج، خاصة Access وPandas وPython.</p>
-<div class="track-tags"><span>Access</span><span>Pandas</span><span>Python</span></div>
-</article>
-<article class="bac-track shared-program">
-<div class="track-top">
-<span>02</span>
-<strong data-i18n="sharedLabel">BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES EXPÉRIMENTALES</strong>
-</div>
-<h3 data-i18n="sharedTitle">Python &amp; algorithmique</h3>
-<p data-i18n="sharedText">نفس برنامج الخدمة للشعب الثلاثة: Python وalgorithmique.</p>
-<div class="track-tags"><span>Python</span><span>Algorithmique</span></div>
-</article>
-<article class="bac-track unavailable">
-<div class="track-top">
-<span>03</span>
-<strong data-i18n="litLabel">BAC LETTRES</strong>
-</div>
-<h3 data-i18n="litTitle">ما فماش informatique</h3>
-<p data-i18n="litText">informatique موش متوفرة للشعبة هاذي.</p>
-<div class="track-tags"><span data-i18n="notOffered">موش متوفّرة</span></div>
-</article>
-</div>
-</section>
+
 <section class="quote-section">
-<div class="quote-mark">“</div>
-<blockquote data-i18n="quote">نفهموك الطريقة، نطبّقوها مع بعضنا، وإنتي تولّي تحلّ الدفوارات وحدك.</blockquote>
-<div class="quote-author">— FEDI GHANMI (TORBAGA)</div>
+  <div class="quote-number">04</div>
+  <div class="quote-mark">“</div>
+  <blockquote data-i18n="quote">نفهموك الطريقة، نطبّقوها مع بعضنا، وإنتي تولّي تحلّ الدفوارات وحدك.</blockquote>
+  <div class="quote-author">— FEDI GHANMI (TORBAGA)</div>
 </section>
+
+<section class="stats-section" aria-label="إحصائيات الموقع">
+  <div class="stats-title"><span>05 / LIVE</span><h2>الموقع بالأرقام.</h2></div>
+  <div class="stats-grid">
+    <article><small data-i18n="statsVisitors">الزوار</small><strong id="statVisitors">—</strong><span data-i18n="statsVisitorsNote">زوار مختلفين</span></article>
+    <article><small data-i18n="statsToday">اليوم</small><strong id="statToday">—</strong><span data-i18n="statsTodayNote">زوار اليوم</span></article>
+    <article><small data-i18n="statsRequests">الطلبات</small><strong id="statRequests">—</strong><span data-i18n="statsRequestsNote">طلبات الـséances</span></article>
+  </div>
+</section>
+
 <section class="request-section" id="inscription">
-<div class="request-intro">
-<div class="section-kicker" data-i18n="formKicker">أول séance</div>
-<h2 data-i18n="formTitle">عندك صعوبة في informatique؟ نعاونك<br/><em>معطّلك.</em></h2>
-<p data-i18n="formLead">شوية معلومات يكفيو. بعد نتواصل معاك باش نفهم شنوّة تحتاج ونرتّبو الـséance.</p>
-</div>
-<div class="form-wrap">
-<form id="leadForm">
-<div class="form-step">
-<span class="step-label">01</span>
-<h3 data-i18n="personalTitle">معلوماتك</h3>
-<div class="form-grid">
-<div class="field">
-<label data-i18n="nameLabel" for="full_name">الإسم واللقب *</label>
-<input id="full_name" maxlength="120" name="full_name" required=""/>
-</div>
-<div class="field">
-<label data-i18n="phoneLabel" for="phone">رقم التليفون *</label>
-<input id="phone" inputmode="tel" maxlength="30" name="phone" required=""/>
-</div>
-<div class="field">
-<label data-i18n="emailLabel" for="email">الإيميل *</label>
-<input autocomplete="email" id="email" maxlength="160" name="email" required="" type="email"/>
-</div>
-<div class="field full">
-<label data-i18n="levelLabel" for="level">المستوى / الشعبة *</label>
-<select id="level" name="level" required="">
-<option value="">إختار</option>
-<option>3ème année secondaire</option>
-<option>Bac Économie &amp; Gestion</option>
-<option>Bac Mathématiques</option>
-<option>Bac Technique</option>
-<option>Bac Sciences Expérimentales</option>
-<option>Bac Lettres</option>
-</select>
-<div class="field-hint" data-i18n="levelHint">إختار المستوى ولا الشعبة متاعك. Bac Informatique موش متوفّر.</div>
-</div>
-<div class="field">
-<label data-i18n="schoolLabel" for="school">الليسي / المؤسسة</label>
-<input id="school" maxlength="150" name="school"/>
-</div>
-</div>
-</div>
-<div class="form-step">
-<span class="step-label">02</span>
-<h3 data-i18n="needTitle">الـséance متاعك</h3>
-<div class="form-grid">
-<div class="field">
-<label data-i18n="locationLabel" for="lesson_location">بلاصة الـséance *</label>
-<select id="lesson_location" name="lesson_location" required="">
-<option value="">إختار</option>
-<option value="عندي">عندي</option>
-<option value="عندك">عندك</option>
-</select>
-<a class="map-link" data-i18n="mapLink" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" rel="noopener" target="_blank">شوف بلاصة التدريس على Google Maps →</a>
-</div>
-<div class="field">
-<label data-i18n="cityLabel">المدينة</label>
-<div class="fixed-field" data-i18n="sfax">صفاقس</div>
-<input id="city" name="city" type="hidden" value="Sfax"/>
-</div>
-<div class="field-hint email-followup" data-i18n="emailFollowup">بعد طلبك، باش نتواصل معاك بالإيميل باش نأكدو المعلومات ونرتّبو الـséance.</div>
-</div>
-</div>
-<button class="btn primary submit-btn" data-i18n="submit" id="submitBtn" type="submit">إطلب الـséance متاعك</button>
-<div class="form-note" data-i18n="formNote">بعد ما تبعث الطلب، يوصلك إيميل فيه المعلومات اللازمة للمرحلة الجاية. شوف زادة في الـspam إذا لزم.</div>
-<div class="success" data-i18n="success" id="success">الطلب تبعث بنجاح. شكراً. باش نتواصل معاك بالإيميل بالمعلومات الجاية.</div>
-<div class="error" data-i18n="error" id="error">ما نجّمش نبعثو الطلب توّة. عاود جرّب بعد شوية.</div>
-</form>
-</div>
+  <div class="form-heading">
+    <div class="section-rule"><span>06</span><i></i><span>ON COMMENCE ?</span></div>
+    <h2 data-i18n="formTitle">عندك صعوبة في informatique؟<br><em>سجل والباقي عليا.</em></h2>
+    <p data-i18n="formLead">شوية معلومات يكفيو. بعد نتواصل معاك باش نفهم شنوّة تحتاج ونرتّبو الـséance.</p>
+  </div>
+  <div class="form-wrap">
+    <form id="leadForm">
+      <div class="form-step">
+        <div class="form-step-head"><span>01</span><h3 data-i18n="personalTitle">معلوماتك</h3></div>
+        <div class="form-grid">
+          <div class="field"><label data-i18n="nameLabel" for="full_name">الإسم واللقب *</label><input id="full_name" maxlength="120" name="full_name" required></div>
+          <div class="field"><label data-i18n="phoneLabel" for="phone">رقم التليفون *</label><input id="phone" inputmode="tel" maxlength="30" name="phone" required></div>
+          <div class="field"><label data-i18n="emailLabel" for="email">الإيميل *</label><input autocomplete="email" id="email" maxlength="160" name="email" required type="email"></div>
+          <div class="field"><label data-i18n="levelLabel" for="level">المستوى / الشعبة *</label><select id="level" name="level" required><option value="">إختار</option><option>3ème année secondaire</option><option>Bac Économie &amp; Gestion</option><option>Bac Mathématiques</option><option>Bac Technique</option><option>Bac Sciences Expérimentales</option><option>Bac Lettres</option></select><div class="field-hint" data-i18n="levelHint">إختار المستوى ولا الشعبة متاعك. Bac Informatique موش متوفّر.</div></div>
+          <div class="field"><label data-i18n="schoolLabel" for="school">الليسي / المؤسسة</label><input id="school" maxlength="150" name="school"></div>
+        </div>
+      </div>
+      <div class="form-step">
+        <div class="form-step-head"><span>02</span><h3 data-i18n="needTitle">الـséance متاعك</h3></div>
+        <div class="form-grid">
+          <div class="field"><label data-i18n="locationLabel" for="lesson_location">بلاصة الـséance *</label><select id="lesson_location" name="lesson_location" required><option value="">إختار</option><option value="عندي">عندي</option><option value="عندك">عندك</option></select><a class="map-link" data-i18n="mapLink" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" rel="noopener" target="_blank">شوف بلاصة التدريس على Google Maps →</a></div>
+          <div class="field"><label data-i18n="cityLabel">المدينة</label><div class="fixed-field" data-i18n="sfax">Sfax</div><input id="city" name="city" type="hidden" value="Sfax"></div>
+          <div class="field-hint email-followup" data-i18n="emailFollowup">بعد طلبك، باش نتواصل معاك بالإيميل باش نأكدو المعلومات ونرتّبو الـséance.</div>
+        </div>
+      </div>
+      <button class="submit-btn" data-i18n="submit" id="submitBtn" type="submit">إحجز الـséance متاعك</button>
+      <div class="form-note" data-i18n="formNote">بعد ما تبعث الطلب، يوصلك إيميل فيه المعلومات اللازمة للمرحلة الجاية. شوف زادة في الـspam إذا لزم.</div>
+      <div class="success" data-i18n="success" id="success">الطلب تبعث بنجاح. شكراً. باش نتواصل معاك بالإيميل بالمعلومات الجاية.</div>
+      <div class="error" data-i18n="error" id="error">ما نجّمش نبعثو الطلب توّة. عاود جرّب بعد شوية.</div>
+    </form>
+  </div>
 </section>
-<div aria-hidden="false" class="success-modal" id="successModal">
-<div class="success-backdrop" data-success-close=""></div>
-<div aria-labelledby="successTitle" aria-modal="true" class="success-dialog" role="dialog">
-<button aria-label="سكر" class="success-close" data-success-close="" type="button">
-            ×
-        </button>
-<!-- Check mark inside the circle -->
-<div aria-hidden="true" class="success-orbit">
-<div class="success-emoji">✓</div>
+
+<div aria-hidden="true" class="success-modal" id="successModal">
+  <div class="success-backdrop" data-success-close></div>
+  <div aria-labelledby="successTitle" aria-modal="true" class="success-dialog" role="dialog">
+    <button aria-label="سكر" class="success-close" data-success-close type="button">×</button>
+    <div aria-hidden="true" class="success-orbit"><div class="success-emoji">✓</div></div>
+    <div class="success-kicker" data-success-kicker>الطلب وصل</div>
+    <h2 data-success-title id="successTitle">إن شاء الله ادمين !</h2>
+    <p class="success-name" id="successName"></p>
+    <p class="success-message" data-success-message>طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.</p>
+    <div aria-hidden="true" class="success-rule"></div>
+    <p class="success-footer" data-success-footer>نستناوك — FEDI GHANMI (TORBAGA)</p>
+    <button class="success-return" data-success-close data-success-return type="button">إرجع للموقع</button>
+  </div>
 </div>
-<div class="success-kicker" data-success-kicker="">الطلب وصل</div>
-<h2 data-success-title="" id="successTitle">إن شاء الله ادمين !</h2>
-<p class="success-name" id="successName"></p>
-<p class="success-message" data-success-message="">طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.</p>
-<div aria-hidden="true" class="success-rule"></div>
-<p class="success-footer" data-success-footer="">نستناوك — FEDI GHANMI (TORBAGA)</p>
-<button class="btn primary success-return" data-success-close="" data-success-return="" type="button">إرجع للموقع</button>
-</div>
-</div>
+
 <footer>
-<div class="footer-inner">
-<div><strong>FEDI GHANMI (TORBAGA)</strong><br/><span data-i18n="footerRole">séances particulières في informatique</span></div>
-<div data-i18n="footerLine">عندي · عندك · بالموعد</div>
-</div>
+  <div class="footer-inner"><div><strong>TORBAGA</strong><br><span data-i18n="footerRole">séances particulières في informatique</span></div><div data-i18n="footerLine">عندي · عندك · Sfax</div></div>
 </footer>
 </div>
-<!-- //*src="js.js"*// -->
+
+<a class="mobile-book" href="#inscription">إحجز séance <span>↙</span></a>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="js.js">
-</script>
+<script src="js.js"></script>
 </body>
 </html>
-
-
-
