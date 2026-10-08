@@ -1,33 +1,39 @@
-# TORBAGA Mobile Share Bridge
+# TORBAGA Prof Informatique — Cross-platform mobile app
 
-This folder adds the native Android bridge required for direct Instagram Story handoff.
+This folder is the **single mobile project source** for Android and iOS around the existing Cloudflare website.
 
-## What changed
+## What is included
 
-The web page keeps the existing v13 Story renderer. When it runs inside the Android app, the Instagram button calls `TorbagaNative.shareToInstagramStory(dataUrl)` instead of `navigator.share()`.
+- Flutter application shell.
+- Android native Instagram Story bridge.
+- iOS native Instagram Story bridge.
+- WebView loading the live site:
+  `https://etude-bac.torbaga.workers.dev/`
+- The website's 1080×1920 Story is generated first; the mobile bridge receives the JPEG as a data URL.
+- Android uses Instagram's `com.instagram.share.ADD_TO_STORY` intent with a FileProvider URI.
+- iOS uses `instagram-stories://share` and the Instagram pasteboard background-image key.
+- Normal browser use keeps the existing Web Share/download fallback.
 
-The Android app then:
+## Important build note
 
-1. Receives the generated 1080×1920 JPEG as a base64 data URL.
-2. Stores it in the app cache.
-3. Exposes it through AndroidX `FileProvider`.
-4. Sends `com.instagram.share.ADD_TO_STORY` directly to the Instagram package (`com.instagram.android`).
-5. Passes the image URI and read permission to Instagram.
+The source is prepared for Flutter, but this environment does **not** have the Flutter SDK or Xcode installed, so an Android APK/iOS IPA was not falsely claimed as compiled here.
 
-There is intentionally **no Android chooser** in this path.
+On a development machine with Flutter installed:
 
-## Build
+```text
+cd mobile
+flutter pub get
+flutter run
+```
 
-Open `mobile/android` in Android Studio and let Gradle sync. Build/install the `debug` APK on an Android phone that has Instagram installed.
+For Android, Android Studio/SDK is required. For iOS, macOS + Xcode is required for compilation/signing.
 
-The app loads the live Cloudflare site:
+If opening the folder in Android Studio, open the `mobile` folder as a Flutter project after installing the Flutter/Dart plugins.
 
-`https://etude-bac.torbaga.workers.dev/`
+## Instagram behavior
 
-## Important
+Inside this mobile wrapper, tapping **Instagram → Story** does not call the generic `navigator.share()` chooser. The generated Story image is passed to the native bridge and the native platform requests Instagram's Story share handler directly.
 
-The browser website still works normally. Outside the native Android wrapper, the code falls back to the existing Web Share behavior.
+Instagram still controls its own final Story editor and publishing screen. The app cannot silently publish a Story for the user.
 
-Instagram controls the final Story editor. The native integration can open Instagram's Story share handler directly, but it cannot automatically publish the Story or bypass Instagram's own editing/publishing UI.
-
-The iOS equivalent requires a native iOS target using `instagram-stories://share` and pasteboard APIs; this Android implementation does not claim iOS support yet.
+The integration depends on the Instagram app being installed and on the current Instagram platform behavior/API. If Instagram does not expose the handler on a particular device/version, the app reports the failure instead of pretending the share succeeded.

@@ -1,0 +1,4 @@
+<!-- Add this array entry to LSApplicationQueriesSchemes in the generated Runner/Info.plist. -->
+<array>
+    <string>instagram-stories</string>
+</array>
