@@ -508,6 +508,55 @@ form.addEventListener("submit", async event=>{
 })();
 
 /* ============================================================
+   FULL PAGE CHAPTER MOTION
+   The same scroll-linked language continues through the whole site.
+   No content is hidden; each chapter simply composes itself around
+   the current viewport position.
+   ============================================================ */
+(function initFullPageChapters(){
+    const chapters = [...document.querySelectorAll(".scroll-chapter")];
+    if(!chapters.length) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const clamp = (n,a=0,b=1)=>Math.max(a,Math.min(b,n));
+    const smooth = t => t*t*(3-2*t);
+    let raf = 0;
+    let lastScroll = window.scrollY;
+    let velocity = 0;
+
+    function update(){
+        raf = 0;
+        const vh = window.innerHeight || 1;
+        const center = vh * .5;
+        chapters.forEach((chapter)=>{
+            const rect = chapter.getBoundingClientRect();
+            const span = Math.max(vh * .72, rect.height * .55);
+            const raw = clamp((center - rect.top) / span);
+            const e = smooth(raw);
+            const shift = (raw - .5) * -80;
+            chapter.style.setProperty("--chapter-p", raw.toFixed(4));
+            chapter.style.setProperty("--chapter-e", e.toFixed(4));
+            chapter.style.setProperty("--chapter-shift", `${shift.toFixed(2)}px`);
+        });
+    }
+
+    function request(){
+        if(raf) return;
+        raf = requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", ()=>{
+        const now = window.scrollY;
+        velocity = now - lastScroll;
+        lastScroll = now;
+        document.documentElement.style.setProperty("--scroll-velocity", `${clamp(Math.abs(velocity)/35,0,1).toFixed(3)}`);
+        request();
+    }, {passive:true});
+    window.addEventListener("resize", request, {passive:true});
+    window.addEventListener("load", request, {once:true});
+    request();
+})();
+
+/* ============================================================
    SCROLL STORY — scroll-linked, smoothed animation
    ============================================================ */
 (function initScrollStory(){

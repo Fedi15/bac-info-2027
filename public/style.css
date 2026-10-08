@@ -2436,3 +2436,194 @@ html.light-mode .scroll-story,html.light-mode .scroll-story-sticky{background:#1
 @media (prefers-reduced-motion:reduce){
   .story-scene,.story-desk,.story-monitor,.story-character,.story-notebook,.story-chip,.story-grid,.story-orbit-one,.story-orbit-two{will-change:auto}
 }
+
+/* ============================================================
+   FULL-PAGE SCROLL CINEMA
+   Each major section becomes a visual chapter. The content stays
+   present and readable; only its composition responds to scroll.
+   ============================================================ */
+.scroll-chapter{
+    position:relative;
+    min-height:100svh;
+    isolation:isolate;
+    overflow:clip;
+    --chapter-p:0;
+    --chapter-e:0;
+    --chapter-shift:0px;
+}
+.scroll-chapter::before{
+    content:attr(data-chapter);
+    position:absolute;
+    z-index:-2;
+    left:-.04em;
+    top:50%;
+    transform:translate3d(calc((var(--chapter-e) - .5) * -90px),-50%,0);
+    font:900 clamp(190px,31vw,520px)/.75 system-ui,sans-serif;
+    letter-spacing:-.1em;
+    color:rgba(216,181,106,.045);
+    pointer-events:none;
+    user-select:none;
+    will-change:transform;
+}
+.scroll-chapter::after{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    width:min(42vw,620px);
+    aspect-ratio:1;
+    right:-13vw;
+    top:50%;
+    border:1px solid rgba(216,181,106,.14);
+    border-radius:50%;
+    transform:translate3d(calc(var(--chapter-shift) * .35),-50%,0) rotate(calc(var(--chapter-p) * 75deg));
+    box-shadow:0 0 0 70px rgba(216,181,106,.018),0 0 0 140px rgba(216,181,106,.012);
+    pointer-events:none;
+    will-change:transform;
+}
+.scroll-chapter > *{
+    position:relative;
+    z-index:1;
+}
+
+/* Chapter 01 — physical location cards */
+.intro-section.scroll-chapter{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-top:clamp(70px,9vh,110px);
+    padding-bottom:clamp(60px,9vh,100px);
+}
+.intro-section.scroll-chapter .section-kicker,
+.intro-section.scroll-chapter .section-heading,
+.intro-section.scroll-chapter .location-card{
+    will-change:transform,opacity;
+}
+.intro-section.scroll-chapter .section-heading{
+    transform:translate3d(calc((.5 - var(--chapter-e)) * 34px),calc((1 - var(--chapter-e)) * 28px),0) scale(calc(.98 + var(--chapter-e) * .02));
+}
+.intro-section.scroll-chapter .location-card:nth-child(1){
+    transform:translate3d(calc((1 - var(--chapter-e)) * -70px),calc((1 - var(--chapter-e)) * 35px),0) rotate(calc((1 - var(--chapter-e)) * -2deg));
+}
+.intro-section.scroll-chapter .location-card:nth-child(2){
+    transform:translate3d(calc((1 - var(--chapter-e)) * 70px),calc((1 - var(--chapter-e)) * 48px),0) rotate(calc((1 - var(--chapter-e)) * 2deg));
+}
+
+/* Chapter 02 — numbers physically travel toward the reader */
+.site-stats-section.scroll-chapter{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+.site-stats-section.scroll-chapter .site-stats-header{
+    transform:translate3d(0,calc((1 - var(--chapter-e)) * 38px),0);
+    will-change:transform;
+}
+.site-stats-section.scroll-chapter .site-stat-card{
+    transform:translate3d(0,calc((1 - var(--chapter-e)) * 90px),0) rotateX(calc((1 - var(--chapter-e)) * 8deg));
+    opacity:calc(.55 + var(--chapter-e) * .45);
+    will-change:transform,opacity;
+}
+.site-stats-section.scroll-chapter .site-stat-card:nth-child(1){transition-delay:.02s}
+.site-stats-section.scroll-chapter .site-stat-card:nth-child(2){transform:translate3d(0,calc((1 - var(--chapter-e)) * 115px),0) rotateX(calc((1 - var(--chapter-e)) * 8deg))}
+.site-stats-section.scroll-chapter .site-stat-card:nth-child(3){transform:translate3d(0,calc((1 - var(--chapter-e)) * 140px),0) rotateX(calc((1 - var(--chapter-e)) * 8deg))}
+
+/* Chapter 03 — programme cards enter from alternating directions */
+.subjects-section.scroll-chapter{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+.subjects-section.scroll-chapter .section-heading{
+    transform:translate3d(0,calc((1 - var(--chapter-e)) * 34px),0);
+    will-change:transform;
+}
+.subjects-section.scroll-chapter .bac-track{
+    will-change:transform,opacity;
+    opacity:calc(.62 + var(--chapter-e) * .38);
+}
+.subjects-section.scroll-chapter .bac-track:nth-child(1){transform:translate3d(calc((1 - var(--chapter-e)) * -75px),calc((1 - var(--chapter-e)) * 35px),0) rotate(calc((1 - var(--chapter-e)) * -3deg))}
+.subjects-section.scroll-chapter .bac-track:nth-child(2){transform:translate3d(0,calc((1 - var(--chapter-e)) * 65px),0) scale(calc(.97 + var(--chapter-e) * .03))}
+.subjects-section.scroll-chapter .bac-track:nth-child(3){transform:translate3d(calc((1 - var(--chapter-e)) * 75px),calc((1 - var(--chapter-e)) * 35px),0) rotate(calc((1 - var(--chapter-e)) * 3deg))}
+
+/* Chapter 04 — quote behaves like a full-screen statement */
+.quote-section.scroll-chapter{
+    min-height:82svh;
+    display:grid;
+    place-content:center;
+    text-align:center;
+}
+.quote-section.scroll-chapter .quote-mark{
+    transform:translate3d(calc((var(--chapter-e) - .5) * 90px),calc((1 - var(--chapter-e)) * 30px),0) rotate(calc((1 - var(--chapter-e)) * -10deg));
+    opacity:calc(.35 + var(--chapter-e) * .65);
+}
+.quote-section.scroll-chapter blockquote{
+    transform:translate3d(0,calc((1 - var(--chapter-e)) * 48px),0) scale(calc(.94 + var(--chapter-e) * .06));
+    opacity:calc(.45 + var(--chapter-e) * .55);
+    will-change:transform,opacity;
+}
+.quote-section.scroll-chapter .quote-author{
+    transform:translate3d(0,calc((1 - var(--chapter-e)) * 22px),0);
+    opacity:calc(.35 + var(--chapter-e) * .65);
+}
+
+/* Chapter 05 — the form is the final destination */
+.request-section.scroll-chapter{
+    min-height:100svh;
+    align-content:center;
+}
+.request-section.scroll-chapter .request-intro{
+    transform:translate3d(calc((1 - var(--chapter-e)) * -55px),calc((1 - var(--chapter-e)) * 28px),0);
+    will-change:transform;
+}
+.request-section.scroll-chapter .form-wrap{
+    transform:translate3d(calc((1 - var(--chapter-e)) * 65px),calc((1 - var(--chapter-e)) * 36px),0) scale(calc(.975 + var(--chapter-e) * .025));
+    opacity:calc(.55 + var(--chapter-e) * .45);
+    will-change:transform,opacity;
+}
+
+/* A small chapter marker travels along the viewport edge. */
+.scroll-chapter .section-kicker::before{
+    content:"";
+    display:inline-block;
+    width:22px;
+    height:1px;
+    margin-inline-end:9px;
+    vertical-align:middle;
+    background:var(--gold);
+    transform:scaleX(calc(.4 + var(--chapter-e) * .6));
+    transform-origin:left;
+}
+
+@media(max-width:900px){
+    .scroll-chapter{min-height:auto;padding-top:90px;padding-bottom:90px}
+    .scroll-chapter::before{font-size:210px;top:25%;left:-.08em}
+    .scroll-chapter::after{width:80vw;right:-42vw}
+    .intro-section.scroll-chapter,.site-stats-section.scroll-chapter,.subjects-section.scroll-chapter{display:block}
+    .intro-section.scroll-chapter .section-heading,
+    .site-stats-section.scroll-chapter .site-stats-header,
+    .subjects-section.scroll-chapter .section-heading,
+    .request-section.scroll-chapter .request-intro,
+    .request-section.scroll-chapter .form-wrap{transform:none}
+    .intro-section.scroll-chapter .location-card:nth-child(1),
+    .intro-section.scroll-chapter .location-card:nth-child(2),
+    .subjects-section.scroll-chapter .bac-track:nth-child(1),
+    .subjects-section.scroll-chapter .bac-track:nth-child(2),
+    .subjects-section.scroll-chapter .bac-track:nth-child(3),
+    .site-stats-section.scroll-chapter .site-stat-card,
+    .site-stats-section.scroll-chapter .site-stat-card:nth-child(2),
+    .site-stats-section.scroll-chapter .site-stat-card:nth-child(3){transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+    .scroll-chapter::before,.scroll-chapter::after,
+    .intro-section.scroll-chapter .section-heading,
+    .intro-section.scroll-chapter .location-card,
+    .site-stats-section.scroll-chapter .site-stats-header,
+    .site-stats-section.scroll-chapter .site-stat-card,
+    .subjects-section.scroll-chapter .section-heading,
+    .subjects-section.scroll-chapter .bac-track,
+    .quote-section.scroll-chapter blockquote,
+    .quote-section.scroll-chapter .quote-mark,
+    .quote-section.scroll-chapter .quote-author,
+    .request-section.scroll-chapter .request-intro,
+    .request-section.scroll-chapter .form-wrap{transform:none!important;opacity:1!important}
+}
