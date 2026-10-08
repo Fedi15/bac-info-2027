@@ -126,3 +126,74 @@ body::after{
   body::after{display:none}
   .topbar::after{transition:none}
 }
+
+/* BAC selection + text micro-interactions */
+.bac-card{
+  cursor:pointer;
+  transform:translate3d(0,var(--card-y,0),0) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.bac-card:focus-visible{
+  outline:3px solid var(--blue);
+  outline-offset:4px;
+}
+.bac-card.is-selected{
+  background:var(--navy);
+  color:var(--white);
+  box-shadow:8px 9px 0 var(--red),0 25px 55px rgba(0,0,0,.18);
+}
+.bac-card.is-selected p{color:#ddd5c6}
+.bac-card.is-selected h3{color:var(--lime)}
+.bac-card.is-selected .bac-no{color:var(--white)}
+
+/* Text should feel alive without becoming distracting. */
+.section-head h2,
+.section-kicker,
+.section-index,
+.section-intro,
+.bac-card h3,
+.bac-card p,
+.bac-no,
+.location-strip strong,
+.location-strip span,
+.form-card h2,
+.form-card h3,
+.form-card label,
+.form-note,
+.bottom-cta p,
+.bottom-cta h2,
+.bottom-cta a{
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),color .3s ease,letter-spacing .3s ease,text-shadow .3s ease;
+}
+
+@media (hover:hover) and (pointer:fine){
+  .section-head h2:hover,
+  .bottom-cta h2:hover{
+    transform:translateX(5px);
+    text-shadow:0 8px 28px rgba(23,24,32,.14);
+  }
+  .section-kicker:hover,
+  .section-index:hover,
+  .bottom-cta p:hover{
+    color:var(--red);
+    letter-spacing:.14em;
+  }
+  .section-intro:hover,
+  .form-note:hover{
+    color:#332f29;
+    transform:translateY(-2px);
+  }
+  .bac-card:hover h3{transform:translateX(7px) translateZ(8px);letter-spacing:.01em}
+  .bac-card:hover p{transform:translateX(4px);color:#332f29}
+  .bac-card:hover .bac-no{transform:translateY(-3px);color:var(--red)}
+  .location-strip:hover strong{transform:translateX(6px);color:var(--lime)}
+  .location-strip:hover span{transform:translateX(4px);color:#fff}
+  .form-card h2:hover,.form-card h3:hover{transform:translateX(4px);color:var(--red)}
+  .form-card label:hover{color:var(--blue);letter-spacing:.12em}
+  .bottom-cta a:hover{transform:translateY(-3px);letter-spacing:.08em}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .bac-card,.section-head h2,.section-kicker,.section-index,.section-intro,.bac-card h3,.bac-card p,.bac-no,.location-strip strong,.location-strip span,.form-card h2,.form-card h3,.form-card label,.form-note,.bottom-cta p,.bottom-cta h2,.bottom-cta a{transition:none!important;transform:none!important}
+}

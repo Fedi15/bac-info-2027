@@ -148,6 +148,59 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
     });
   }
 
+  /* BAC cards -> select the exact same section and glide to registration. */
+  const bacLevelMap = {
+    science: 'Bac Science',
+    eco: 'Bac Économie & Gestion',
+    math: 'Bac Mathématiques',
+    technique: 'Bac Technique'
+  };
+  const bacCards = [...document.querySelectorAll('.bac-card')];
+  const levelSelect = document.getElementById('level');
+  const inscription = document.getElementById('inscription');
+
+  function selectBacAndScroll(card){
+    if(!card || !levelSelect || !inscription) return;
+    const key = Object.keys(bacLevelMap).find(k => card.classList.contains(k));
+    const value = key ? bacLevelMap[key] : '';
+    if(!value) return;
+
+    levelSelect.value = value;
+    levelSelect.dispatchEvent(new Event('change', {bubbles:true}));
+
+    bacCards.forEach(item => item.classList.remove('is-selected'));
+    card.classList.add('is-selected');
+
+    smoothTo(inscription);
+    if(history.replaceState) history.replaceState(null, '', '#inscription');
+
+    requestAnimationFrame(()=>{
+      levelSelect.focus({preventScroll:true});
+      setTimeout(()=>levelSelect.blur(), 420);
+    });
+  }
+
+  bacCards.forEach(card=>{
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.addEventListener('click',()=>selectBacAndScroll(card));
+    card.addEventListener('keydown',event=>{
+      if(event.key==='Enter' || event.key===' '){
+        event.preventDefault();
+        selectBacAndScroll(card);
+      }
+    });
+  });
+
+  /* Make the BAC choice feel selected in the form too. */
+  levelSelect?.addEventListener('change',()=>{
+    const value=levelSelect.value;
+    bacCards.forEach(card=>{
+      const key=Object.keys(bacLevelMap).find(k=>bacLevelMap[k]===value);
+      card.classList.toggle('is-selected', !!key && card.classList.contains(key));
+    });
+  });
+
   /* Make every actionable element feel clickable. */
   document.querySelectorAll('button,a,.choice,.bac-card,.location-strip').forEach(el=>{
     el.addEventListener('pointerdown',()=>el.classList.add('is-pressing'));
