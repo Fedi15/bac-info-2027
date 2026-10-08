@@ -9,7 +9,7 @@ function json(data, status = 200) {
 const ALLOWED_LOCATIONS = [
   "Chez moi", "Chez l'élève",
   "At my place", "At the student's place",
-  "عندي", "عند التلميذ"
+  "عندي", "عندك", "عند التلميذ"
 ];
 
 export async function registerLead(request, env) {

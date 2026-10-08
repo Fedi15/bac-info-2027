@@ -1,372 +1,86 @@
 <!DOCTYPE html>
-
-<html lang="ar-TN">
+<html lang="ar-TN" dir="rtl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Fedi Ghanmi (Torbaga) — séances فردية في informatique</title>
-<meta content="séances فردية في informatique مع Fedi Ghanmi (Torbaga)، في صفاقس. عندي ولا عندك، على قدّ مستواك وشنوّة تحتاج." name="description"/>
-<link href="style.css" rel="stylesheet"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#0b0d16"/>
+  <title>TORBAGA — Prof Informatique | Sfax</title>
+  <meta name="description" content="دروس خصوصية في informatique في صفاقس مع Torbaga. إختار شعبتك وبلاصة الـséance وسجّل معلوماتك باش نتواصلو معاك."/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<div class="site-shell">
-<nav class="nav">
-<a aria-label="Fedi Ghanmi (Torbaga)" class="brand" href="/">
-<span>FEDI</span> GHANMI <small class="brand-nick">(TORBAGA)</small>
-        </a>
-<div class="nav-right">
-<button class="mobile-share-btn" id="topShare" type="button">شارك ↗</button>
-<button aria-label="الوضع الفاتح" class="theme-toggle" id="themeToggle" type="button" title="الوضع الفاتح"><span class="theme-icon" aria-hidden="true">☼</span><span class="theme-label">فاتح</span></button>
-<a class="nav-cta" data-i18n="navCta" href="#inscription">إطلب séance</a>
-</div>
-</nav>
-<header class="hero">
-<div class="hero-copy">
-<div class="eyebrow" data-i18n="eyebrow">séances particulières في informatique</div>
-<h1 data-i18n="heroTitle">informatique،<br/><em>على كيفك.</em></h1>
-<p class="hero-lead" data-i18n="heroLead">مرافقة فردية على قدّ مستواك، الصعوبات متاعك والأهداف اللي تحب توصللها.</p>
-<div class="hero-actions">
-<a class="btn primary" data-i18n="heroCta" href="#inscription">إطلب séance</a>
-<a class="text-link" data-i18n="heroSecondary" href="#format">شوف كيفاش تخدم</a>
-</div>
-<div class="location-line">
-<span data-i18n="locationLine">عندي ولا عندك.</span>
-<span class="dot">•</span>
-<span data-i18n="locationSub">إنتي تختار البلاصة.</span>
-</div>
-<a class="map-link hero-map-link" data-i18n="mapLink" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" rel="noopener" target="_blank">شوف بلاصة التدريس على Google Maps →</a>
-</div>
-<div class="hero-visual">
-<div class="visual-label" data-i18n="visualLabel">SÉANCE PRIVÉE / 01</div>
-<div class="visual-main">
-<span class="visual-word">1:1</span>
-<span class="visual-caption" data-i18n="visualCaption">séance معمولة على قياسك.</span>
-</div>
-<div class="visual-footer">
-<span>FEDI GHANMI <small>(TORBAGA)</small></span>
-<span>BAC 2027</span>
-</div>
-</div>
-</header>
-
-<!-- Scroll-driven visual story: one screen-sized scene reacts continuously to scroll. -->
-<section class="scroll-story" id="scrollStory" aria-label="رحلة القراية">
-  <div class="scroll-story-sticky">
-    <div class="story-topline"><span>TORBAGA / 02</span><span>SCROLL TO LEARN</span></div>
-    <div class="story-grid" aria-hidden="true"></div>
-    <div class="story-orbit story-orbit-one" aria-hidden="true"></div>
-    <div class="story-orbit story-orbit-two" aria-hidden="true"></div>
-
-    <div class="story-copy story-copy-one">
-      <span class="story-index">01 / نفهمو</span>
-      <h2>نبدأو من <em>وين إنتي.</em></h2>
-      <p>نشوفو الصعوبة، نفهمو الطريقة، وبعدها نطبّقوها مع بعضنا.</p>
-    </div>
-    <div class="story-copy story-copy-two">
-      <span class="story-index">02 / نطبّقو</span>
-      <h2>موش حفظ.<br/><em>فهم.</em></h2>
-      <p>كل خطوة تولّي واضحة، وكل exercice عندو منطق.</p>
-    </div>
-    <div class="story-copy story-copy-three">
-      <span class="story-index">03 / وحدك</span>
-      <h2>وفي الآخر،<br/><em>إنتي تحل.</em></h2>
-      <p>الهدف موش تبقى محتاجني. الهدف تولّي قادر تحلّ وحدك.</p>
-    </div>
-
-    <div class="story-scene" aria-hidden="true">
-      <div class="story-glow"></div>
-      <div class="story-desk">
-        <div class="story-monitor">
-          <div class="monitor-top"><span></span><span></span><span></span><b>PYTHON / ALGO</b></div>
-          <div class="code-lines"><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="monitor-result">✓</div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="logo" href="/" aria-label="Torbaga Prof Informatique"><span class="logo-name">TORBAGA</span><span class="logo-role">Prof Informatique</span></a>
+    <div class="top-actions"><button class="top-share" id="topShare" type="button">شارك ↗</button><a class="top-action" href="#inscription">نسجّل</a></div>
+  </header>
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-orbit orbit-red" aria-hidden="true"></div><div class="hero-orbit orbit-blue" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <div class="poster-meta"><span>01 / COURS PARTICULIER</span><span>SFAX • 2026</span></div>
+          <div class="scan-badge"><span class="scan-dot"></span> جيت من الـaffiche؟ إنت في البلاصة الصحيحة.</div>
+          <p class="hero-mini">Prof Informatique · Sfax</p>
+          <h1>تحب تقرا<br/><span>informatique؟</span></h1>
+          <p class="hero-question">عندي ولا عندك؟</p>
+          <p class="hero-lead">نعاونك خطوة بخطوة، نفهموك الطريقة، نطبّقوها مع بعضنا، وإنتي تولّي تحلّ الدفوار وحدك.</p>
+          <div class="hero-cta-row"><a class="main-cta" href="#inscription"><span>نبدأو</span><b>↓</b></a><div class="hero-note"><strong>شوية معلومات برك.</strong><span>بعدها نتواصل معاك ونرتّبو الـséance.</span></div></div>
         </div>
-        <div class="story-notebook">
-          <span>f(x)</span><strong>→</strong><small>نجرّبو</small>
+        <div class="hero-card">
+          <div class="hero-card-top"><span>SCAN → INSCRIPTION</span><span>1:1</span></div>
+          <div class="hero-card-center"><div class="big-mark">T</div><div><strong>séance<br/>على كيفك.</strong><small>Chez moi • Chez toi</small></div></div>
+          <div class="hero-card-bottom"><span>TORBAGA</span><span>01</span></div>
         </div>
       </div>
-      <div class="story-character">
-        <div class="story-head">
-          <div class="story-eye story-eye-left"><i></i></div>
-          <div class="story-eye story-eye-right"><i></i></div>
-          <div class="story-mouth"></div>
-          <div class="story-hair"></div>
-        </div>
-        <div class="story-neck"></div>
-        <div class="story-body"><span>T</span></div>
-        <div class="story-arm story-arm-left"></div>
-        <div class="story-arm story-arm-right"></div>
+      <div class="scroll-hint" aria-hidden="true"><span></span> هبط شوية</div>
+    </section>
+
+    <section class="mobile-share" id="partager">
+      <div class="mobile-share-card">
+        <div class="mobile-share-top"><span>03 / PARTAGE</span><span>STORY 9:16</span></div>
+        <div class="mobile-share-copy"><span class="section-index">03</span><p class="section-kicker">إبعث الـaffiche لصحابك</p><h2>شاركها.<br/><em>خلّيهم يعرفو.</em></h2><p>الصورة تتجهّز وحدها بمقاس Story. إختار Instagram ولا Facebook ولا Snapchat، وبعد زيد الـlink sticker من داخل الـStory.</p></div>
+        <button class="share-main-btn" id="openShare" type="button"><span>شارك الـaffiche</span><b>↗</b></button>
+        <p class="share-mobile-only-note" id="shareSupportNote">خاصّة بالتليفون · الصورة وحدها تتبعث · الـlink تزيدو إنتي في الـStory</p>
       </div>
-      <div class="story-floor"></div>
-    </div>
+    </section>
 
-    <div class="story-chip chip-python">Python</div>
-    <div class="story-chip chip-access">Access</div>
-    <div class="story-chip chip-algo">Algorithmique</div>
-    <div class="story-arrow" aria-hidden="true">↓</div>
-    <div class="story-progress"><span></span></div>
-  </div>
-</section>
+    <section class="quick-section">
+      <div class="section-head"><div><span class="section-index">01</span><p class="section-kicker">شنوّة نقرّيو؟</p><h2>إختار <em>شُعبتك.</em></h2></div><p class="section-intro">نفس الروح متاع الـaffiche: واضحة، سريعة، وما فيهاش معلومات زايدة.</p></div>
+      <div class="bac-grid">
+        <article class="bac-card science"><span class="bac-no">01</span><div><h3>Bac Science</h3><p>Python · Algorithmique</p></div></article>
+        <article class="bac-card eco"><span class="bac-no">02</span><div><h3>Bac Éco</h3><p>Access · Pandas · Python</p></div></article>
+        <article class="bac-card math"><span class="bac-no">03</span><div><h3>Bac Math</h3><p>Python · Algorithmique</p></div></article>
+        <article class="bac-card technique"><span class="bac-no">04</span><div><h3>Bac Technique</h3><p>Python · Algorithmique</p></div></article>
+      </div>
+      <div class="location-strip"><div><strong>Sfax</strong><span>إنتي تختار وين ترتاح أكثر</span></div><div class="location-options"><span>Chez moi</span><b>•</b><span>Chez toi</span></div></div>
+    </section>
 
-<section class="intro-section scroll-chapter" id="format" data-chapter="01">
-<div class="section-kicker" data-i18n="formatKicker">زوز طرق باش تتعلّمي</div>
-<div class="section-heading">
-<h2 data-i18n="formatTitle">عندي.<br/><em>ولا عندك.</em></h2>
-<p data-i18n="formatLead">ما فماش قاعة عادية ولا جوّ متاع groupe. فما séance فردية حقيقية، في البلاصة اللي ترتاح فيها أكثر.</p>
-</div>
-<div class="location-grid">
-<article class="location-card">
-<div class="card-number">01</div>
-<h3 data-i18n="homeTitle">عندي</h3>
-<p data-i18n="homeText">تجي تخدم في بلاصة هادئة ومخصّصة للـséance. ناخذو وقتنا باش نفهمو، نطبّقو ونصلحو الغلط.</p>
-<span class="card-note" data-i18n="homeNote">بلاصة مخصّصة للقراية</span>
-</article>
-<article class="location-card featured">
-<div class="card-number">02</div>
-<h3 data-i18n="studentTitle">عندك</h3>
-<p data-i18n="studentText">نجي لعندك للدار ونعملولك séance فردية مباشرة في البلاصة اللي تقرا فيها.</p>
-<span class="card-note" data-i18n="studentNote">نجي لعندك</span>
-</article>
-</div>
-</section>
-<section aria-label="إحصائيات الموقع" class="site-stats-section scroll-chapter" data-chapter="02">
-<div class="site-stats-header">
-<div>
-<div class="section-kicker" data-i18n="statsKicker">الموقع بالأرقام</div>
-<h2 data-i18n="statsTitle">شوية أرقام.<br/><em>وتقدّم حقيقي.</em></h2>
-</div>
-<p data-i18n="statsLead">إحصائيات الموقع تتحدّث في الوقت الحقيقي.</p>
-</div>
-<div class="site-stats-grid">
-<article class="site-stat-card">
-<div class="site-stat-top">
-<span class="site-stat-index">01</span>
-<span class="site-stat-label" data-i18n="statsVisitors">الزوار</span>
-</div>
-<div class="site-stat-value">
-<strong id="statVisitors">—</strong>
-<span>+</span>
-</div>
-<div class="site-stat-bottom">
-<span class="site-stat-note" data-i18n="statsVisitorsNote">زوار مختلفين</span>
-</div>
-</article>
-<article class="site-stat-card featured">
-<div class="site-stat-top">
-<span class="site-stat-index">02</span>
-<span class="site-stat-label" data-i18n="statsToday">اليوم</span>
-</div>
-<div class="site-stat-value">
-<strong id="statToday">—</strong>
-</div>
-<div class="site-stat-bottom">
-<span class="site-stat-note" data-i18n="statsTodayNote">زوار اليوم</span>
-</div>
-</article>
-<article class="site-stat-card">
-<div class="site-stat-top">
-<span class="site-stat-index">03</span>
-<span class="site-stat-label" data-i18n="statsRequests">الطلبات</span>
-</div>
-<div class="site-stat-value">
-<strong id="statRequests">—</strong>
-<span>+</span>
-</div>
-<div class="site-stat-bottom">
-<span class="site-stat-note" data-i18n="statsRequestsNote">طلبات الـséances</span>
-</div>
-</article>
-</div>
-</section>
-<section class="subjects-section scroll-chapter" data-chapter="03">
-<div class="section-heading compact">
-<div>
-<div class="section-kicker" data-i18n="subjectsKicker">شنوّة ننجمو نخدمو</div>
-<h2 data-i18n="subjectsTitle">برنامج يتكيّف<br/><em>مع الشعبة متاعك.</em></h2>
-</div>
-<p data-i18n="subjectsLead">نجمّعو الشعب اللي عندها نفس البرنامج: Économie &amp; Gestion وحدها، وبعد Mathématiques وTechnique وSciences Expérimentales مع بعضهم.</p>
-</div>
-<div class="bac-track-grid">
-<article class="bac-track eco">
-<div class="track-top">
-<span>01</span>
-<strong data-i18n="ecoLabel">BAC ÉCONOMIE &amp; GESTION</strong>
-</div>
-<h3 data-i18n="ecoTitle">Access · Pandas · Python</h3>
-<p data-i18n="ecoText">خدمة مركّزة على البرنامج، خاصة Access وPandas وPython.</p>
-<div class="track-tags"><span>Access</span><span>Pandas</span><span>Python</span></div>
-</article>
-<article class="bac-track shared-program">
-<div class="track-top">
-<span>02</span>
-<strong data-i18n="sharedLabel">BAC MATHÉMATIQUES · TECHNIQUE · SCIENCES EXPÉRIMENTALES</strong>
-</div>
-<h3 data-i18n="sharedTitle">Python &amp; algorithmique</h3>
-<p data-i18n="sharedText">نفس برنامج الخدمة للشعب الثلاثة: Python وalgorithmique.</p>
-<div class="track-tags"><span>Python</span><span>Algorithmique</span></div>
-</article>
-<article class="bac-track unavailable">
-<div class="track-top">
-<span>03</span>
-<strong data-i18n="litLabel">BAC LETTRES</strong>
-</div>
-<h3 data-i18n="litTitle">ما فماش informatique</h3>
-<p data-i18n="litText">informatique موش متوفرة للشعبة هاذي.</p>
-<div class="track-tags"><span data-i18n="notOffered">موش متوفّرة</span></div>
-</article>
-</div>
-</section>
-<section class="quote-section scroll-chapter" data-chapter="04">
-<div class="quote-mark">“</div>
-<blockquote data-i18n="quote">نفهموك الطريقة، نطبّقوها مع بعضنا، وإنتي تولّي تحلّ الدفوارات وحدك.</blockquote>
-<div class="quote-author">— FEDI GHANMI (TORBAGA)</div>
-</section>
-<section class="request-section scroll-chapter" id="inscription" data-chapter="05">
-<div class="request-intro">
-<div class="section-kicker" data-i18n="formKicker">أول séance</div>
-<h2 data-i18n="formTitle">عندك صعوبة في informatique؟ نعاونك<br/><em>معطّلك.</em></h2>
-<p data-i18n="formLead">شوية معلومات يكفيو. بعد نتواصل معاك باش نفهم شنوّة تحتاج ونرتّبو الـséance.</p>
-</div>
-<div class="form-wrap">
-<form id="leadForm">
-<div class="form-step">
-<span class="step-label">01</span>
-<h3 data-i18n="personalTitle">معلوماتك</h3>
-<div class="form-grid">
-<div class="field">
-<label data-i18n="nameLabel" for="full_name">الإسم واللقب *</label>
-<input id="full_name" maxlength="120" name="full_name" required=""/>
-</div>
-<div class="field">
-<label data-i18n="phoneLabel" for="phone">رقم التليفون *</label>
-<input id="phone" inputmode="tel" maxlength="30" name="phone" required=""/>
-</div>
-<div class="field">
-<label data-i18n="emailLabel" for="email">الإيميل *</label>
-<input autocomplete="email" id="email" maxlength="160" name="email" required="" type="email"/>
-</div>
-<div class="field full">
-<label data-i18n="levelLabel" for="level">المستوى / الشعبة *</label>
-<select id="level" name="level" required="">
-<option value="">إختار</option>
-<option>3ème année secondaire</option>
-<option>Bac Économie &amp; Gestion</option>
-<option>Bac Mathématiques</option>
-<option>Bac Technique</option>
-<option>Bac Sciences Expérimentales</option>
-<option>Bac Lettres</option>
-</select>
-<div class="field-hint" data-i18n="levelHint">إختار المستوى ولا الشعبة متاعك. Bac Informatique موش متوفّر.</div>
-</div>
-<div class="field">
-<label data-i18n="schoolLabel" for="school">الليسي / المؤسسة</label>
-<input id="school" maxlength="150" name="school"/>
-</div>
-</div>
-</div>
-<div class="form-step">
-<span class="step-label">02</span>
-<h3 data-i18n="needTitle">الـséance متاعك</h3>
-<div class="form-grid">
-<div class="field">
-<label data-i18n="locationLabel" for="lesson_location">بلاصة الـséance *</label>
-<select id="lesson_location" name="lesson_location" required="">
-<option value="">إختار</option>
-<option value="عندي">عندي</option>
-<option value="عندك">عندك</option>
-</select>
-<a class="map-link" data-i18n="mapLink" href="https://maps.app.goo.gl/mSkGnLRJGRDpTnhc7" rel="noopener" target="_blank">شوف بلاصة التدريس على Google Maps →</a>
-</div>
-<div class="field">
-<label data-i18n="cityLabel">المدينة</label>
-<div class="fixed-field" data-i18n="sfax">صفاقس</div>
-<input id="city" name="city" type="hidden" value="Sfax"/>
-</div>
-<div class="field-hint email-followup" data-i18n="emailFollowup">بعد طلبك، باش نتواصل معاك بالإيميل باش نأكدو المعلومات ونرتّبو الـséance.</div>
-</div>
-</div>
-<button class="btn primary submit-btn" data-i18n="submit" id="submitBtn" type="submit">إطلب الـséance متاعك</button>
-<div class="form-note" data-i18n="formNote">بعد ما تبعث الطلب، يوصلك إيميل فيه المعلومات اللازمة للمرحلة الجاية. شوف زادة في الـspam إذا لزم.</div>
-<div class="success" data-i18n="success" id="success">الطلب تبعث بنجاح. شكراً. باش نتواصل معاك بالإيميل بالمعلومات الجاية.</div>
-<div class="error" data-i18n="error" id="error">ما نجّمش نبعثو الطلب توّة. عاود جرّب بعد شوية.</div>
-</form>
-</div>
-</section>
-<div aria-hidden="false" class="success-modal" id="successModal">
-<div class="success-backdrop" data-success-close=""></div>
-<div aria-labelledby="successTitle" aria-modal="true" class="success-dialog" role="dialog">
-<button aria-label="سكر" class="success-close" data-success-close="" type="button">
-            ×
-        </button>
-<!-- Check mark inside the circle -->
-<div aria-hidden="true" class="success-orbit">
-<div class="success-emoji">✓</div>
-</div>
-<div class="success-kicker" data-success-kicker="">الطلب وصل</div>
-<h2 data-success-title="" id="successTitle">إن شاء الله ادمين !</h2>
-<p class="success-name" id="successName"></p>
-<p class="success-message" data-success-message="">طلبك وصل بنجاح. باش نتواصل معاك بالإيميل ونأكد معاك التفاصيل وننظمو الـséance.</p>
-<div aria-hidden="true" class="success-rule"></div>
-<p class="success-footer" data-success-footer="">نستناوك — FEDI GHANMI (TORBAGA)</p>
-<button class="btn primary success-return" data-success-close="" data-success-return="" type="button">إرجع للموقع</button>
-</div>
-</div>
+    <section class="register-section" id="inscription">
+      <div class="register-intro"><div class="section-head compact"><div><span class="section-index red-index">02</span><p class="section-kicker">SCAN POUR T'INSCRIRE</p><h2>نسجّلو معلوماتك.<br/><em>والباقي عليّا.</em></h2></div></div><p class="register-lead">ما يلزمكش حساب، وما يلزمكش تحدّد الوقت توّة. عمّر الفورم، وبعد نتواصل معاك بالإيميل باش نكمّلو التفاصيل.</p><div class="promise-list"><div><span>01</span><strong>إبعث معلوماتك</strong><small>دقيقة ولا أقل.</small></div><div><span>02</span><strong>نتواصل معاك</strong><small>بالإيميل والتفاصيل.</small></div><div><span>03</span><strong>نرتّبو الـséance</strong><small>على قدّك.</small></div></div></div>
+      <div class="form-card">
+        <div class="form-card-top"><span>INSCRIPTION / 02</span><span>TORBAGA</span></div>
+        <form id="leadForm" novalidate>
+          <div class="form-row two"><label class="field"><span>الإسم واللقب <i>*</i></span><input id="full_name" name="full_name" autocomplete="name" maxlength="120" placeholder="مثال: أحمد بن محمد" required/></label><label class="field"><span>رقم التليفون <i>*</i></span><input id="phone" name="phone" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="مثال: 20 000 000" required/></label></div>
+          <label class="field"><span>الإيميل <i>*</i></span><input id="email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="باش نتواصل معاك عليه" required/></label>
+          <label class="field"><span>الشعبة <i>*</i></span><select id="level" name="level" required><option value="">إختار شُعبتك</option><option>Bac Science</option><option>Bac Économie &amp; Gestion</option><option>Bac Mathématiques</option><option>Bac Technique</option></select></label>
+          <div class="field"><span>وين تحب الـséance؟ <i>*</i></span><div class="choice-grid"><label class="choice"><input type="radio" name="lesson_location" value="عندي" required/><span><b>عندي</b><small>تجي عندي</small></span></label><label class="choice"><input type="radio" name="lesson_location" value="عندك"/><span><b>عندك</b><small>نجي لعندك</small></span></label></div></div>
+          <div class="form-row two"><label class="field"><span>الليسي / المؤسسة <small>إختار ولا إكتب</small></span><input id="school" name="school" list="schoolOptions" maxlength="150" autocomplete="organization" placeholder="إختار من القائمة ولا إكتب وحدك"/><datalist id="schoolOptions"><option value="Lycée 20 Mars 1956"></option><option value="Lycée 15 Novembre 1955 (El Hay)"></option><option value="Lycée Hédi Chaker"></option><option value="Lycée Majida Boulila"></option><option value="Lycée Habib Maâzoun"></option><option value="Lycée Mohamed Ali"></option><option value="Lycée Cité El Habib"></option><option value="Lycée Pilote Farhat Hached de Sfax"></option></datalist></label><div class="field fixed-field-wrap"><span>المدينة</span><div class="fixed-field"><b>Sfax</b><small>ثابتة</small></div><input type="hidden" name="city" value="Sfax"/></div></div>
+          <input type="hidden" name="source" value="affiche"/>
+          <button class="submit-btn" id="submitBtn" type="submit"><span>إبعث التسجيل</span><b>→</b></button>
+          <p class="form-footnote">ما باش نطلبوش منك وقت توّة. نتواصلو معاك بعد التسجيل باش نكمّلو التفاصيل.</p><p class="form-message success" id="success" role="status"></p><p class="form-message error" id="error" role="alert">ما نجّمش نبعثو التسجيل توّة. عاود جرّب بعد شوية.</p>
+        </form>
+      </div>
+    </section>
+    <section class="bottom-cta"><div class="bottom-rule"></div><p>FEDI GHANMI <span>(TORBAGA)</span></p><h2>إن شاء الله <em>Admis(e) !</em></h2><a href="#inscription">نسجّل توّة ↑</a></section>
+  </main>
 
-<!-- Mobile story sharing -->
-<div class="share-sheet" id="shareSheet" aria-hidden="true">
-  <div class="share-sheet-backdrop" data-share-close></div>
-  <div class="share-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
-    <button class="share-sheet-close" type="button" data-share-close aria-label="سكر">×</button>
-    <div class="share-sheet-handle"></div>
-    <p class="share-sheet-kicker">PARTAGER / STORY</p>
-    <h2 id="shareTitle">وين تحب تشاركها؟</h2>
-    <p class="share-sheet-text">الصورة تتحضّر وحدها. الـlink نخليه فارغ باش تزيدو إنتي كـLink Sticker.</p>
-    <div class="share-app-grid">
-      <button class="share-app instagram" type="button" data-share-app="Instagram" disabled><span class="share-app-icon">◎</span><span><b>Instagram</b><small>Story</small></span></button>
-      <button class="share-app facebook" type="button" data-share-app="Facebook" disabled><span class="share-app-icon">f</span><span><b>Facebook</b><small>Story</small></span></button>
-      <button class="share-app snapchat" type="button" data-share-app="Snapchat" disabled><span class="share-app-icon">S</span><span><b>Snapchat</b><small>Story</small></span></button>
-    </div>
-    <p class="share-sheet-status" id="shareStatus">جاري تحضير الصورة...</p>
-    <button class="share-download" id="downloadStory" type="button">ما خدمش؟ حمّل الصورة للتليفون</button>
-  </div>
-</div>
+  <div class="success-modal" id="successModal" aria-hidden="true"><div class="success-backdrop" data-success-close></div><div class="success-dialog" role="dialog" aria-modal="true" aria-labelledby="successTitle"><button class="success-close" type="button" data-success-close aria-label="سكر">×</button><div class="success-burst" aria-hidden="true"><span>✓</span></div><p class="success-kicker">التسجيل وصل</p><h2 id="successTitle">إن شاء الله<br/><em>Admis(e) !</em></h2><p class="success-name" id="successName"></p><p class="success-message">يعطيك الصحة. معلوماتك وصلت، وباش نتواصل معاك بالإيميل باش نأكدو التفاصيل ونرتّبو الـséance.</p><div class="success-line"></div><p class="success-sign">FEDI GHANMI (TORBAGA)</p><button class="modal-return" type="button" data-success-close>إرجع للموقع</button></div></div>
+  <footer><span>TORBAGA — Prof Informatique</span><span>Sfax • Chez moi • Chez toi</span></footer>
 
-<div class="story-render-host" aria-hidden="true">
-  <article class="story-card" id="storyCard">
-    <div class="story-accent red"></div><div class="story-accent lime"></div><div class="story-accent blue"></div>
-    <header class="story-head-share"><div><strong>TORBAGA</strong><span>Prof Informatique</span></div><span>SFAX<br/>2026</span></header>
-    <div class="story-kicker-share">COURS PARTICULIER</div>
-    <h3><bdi dir="rtl">تحب تقرا</bdi><br/><em>informatique؟</em></h3>
-    <div class="story-question-share">عندي ولا عندك؟</div>
-    <div class="story-redline-share">مفماش مشكلة.</div>
-    <p class="story-lead-share">نعاونك خطوة بخطوة، نفهموك الطريقة ونطبّقوها مع بعضنا.</p>
-    <div class="story-bacs-share">
-      <div><b>Bac Science</b><span>Python · Algorithmique</span></div>
-      <div><b>Bac Éco</b><span>Access · Pandas · Python</span></div>
-      <div><b>Bac Math</b><span>Python · Algorithmique</span></div>
-      <div><b>Bac Technique</b><span>Python · Algorithmique</span></div>
-    </div>
-    <div class="story-location-share"><strong>Sfax</strong><span>Chez moi · Chez toi</span></div>
-    <div class="story-link-placeholder-share"></div>
-    <div class="story-final-share">إِنْ شَاءَ اللّٰهُ <em>ADMIS(E) !</em></div>
-    <footer><span>TORBAGA</span><span>SFAX • 2026</span></footer>
-  </article>
-</div>
+  <div class="share-sheet" id="shareSheet" aria-hidden="true"><div class="share-sheet-backdrop" data-share-close></div><div class="share-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="shareTitle"><button class="share-sheet-close" type="button" data-share-close aria-label="سكر">×</button><div class="share-sheet-handle"></div><p class="share-sheet-kicker">PARTAGER / STORY</p><h2 id="shareTitle">وين تحب تشاركها؟</h2><p class="share-sheet-text">الصورة تتحضّر وحدها. ما نبعثوش الـlink، باش تزيدو إنتي كـLink Sticker في الـStory.</p><div class="share-app-grid"><button class="share-app instagram" type="button" data-share-app="Instagram" disabled><span class="share-app-icon">◎</span><span><b>Instagram</b><small>Story</small></span></button><button class="share-app facebook" type="button" data-share-app="Facebook" disabled><span class="share-app-icon">f</span><span><b>Facebook</b><small>Story</small></span></button><button class="share-app snapchat" type="button" data-share-app="Snapchat" disabled><span class="share-app-icon">S</span><span><b>Snapchat</b><small>Story</small></span></button></div><p class="share-sheet-status" id="shareStatus">جاري تحضير الصورة...</p><button class="share-download" id="downloadStory" type="button">ما خدمش؟ حمّل الصورة للتليفون</button></div></div>
 
-<footer>
-<div class="footer-inner">
-<div><strong>FEDI GHANMI (TORBAGA)</strong><br/><span data-i18n="footerRole">séances particulières في informatique</span></div>
-<div data-i18n="footerLine">عندي · عندك · بالموعد</div>
-</div>
-</footer>
-</div>
-
-<!-- //*src="js.js"*// -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="js.js"></script>
+  <div class="story-render-host" aria-hidden="true"><article class="story-card" id="storyCard"><div class="story-accent red"></div><div class="story-accent lime"></div><div class="story-accent blue"></div><div class="story-orbit"></div><header class="story-head"><div><strong>TORBAGA</strong><span>Prof Informatique</span></div><span>SFAX<br/>2026</span></header><div class="story-kicker">COURS PARTICULIER</div><h3><bdi dir="rtl">تحب تقرا</bdi><br/><em>informatique؟</em></h3><div class="story-question">عندي ولا عندك؟</div><div class="story-redline">مفماش مشكلة.</div><p class="story-lead">نعاونك خطوة بخطوة، نفهموك الطريقة ونطبّقوها مع بعضنا.</p><div class="story-bacs"><div><b>Bac Science</b><span>Python · Algorithmique</span></div><div><b>Bac Éco</b><span>Access · Pandas · Python</span></div><div><b>Bac Math</b><span>Python · Algorithmique</span></div><div><b>Bac Technique</b><span>Python · Algorithmique</span></div></div><div class="story-location"><strong>Sfax</strong><span>Chez moi&nbsp; • &nbsp;Chez toi</span></div><div class="story-link-placeholder" aria-hidden="true"></div><div class="story-final">إِنْ شَاءَ اللّٰهُ <em>ADMIS(E) !</em></div><footer><span>TORBAGA</span><span>SFAX • 2026</span></footer></article></div>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script><script src="js.js"></script>
 </body>
 </html>
-
-
-
