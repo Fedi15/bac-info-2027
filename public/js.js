@@ -12,7 +12,107 @@ window.addEventListener("pageshow",()=>{const firstField=document.getElementById
 const shareOpen=document.getElementById("openShare"),topShare=document.getElementById("topShare"),shareSheet=document.getElementById("shareSheet"),shareStatus=document.getElementById("shareStatus"),storyCard=document.getElementById("storyCard"),downloadStory=document.getElementById("downloadStory"),shareAppButtons=[...document.querySelectorAll("[data-share-app]")],mobileShareQuery=window.matchMedia("(max-width: 600px) and (pointer: coarse)");let storyFilePromise=null,storyFile=null;
 function isMobileShareDevice(){return mobileShareQuery.matches}function openShareSheet(){if(!shareSheet)return;shareSheet.classList.add("is-open");shareSheet.setAttribute("aria-hidden","false");document.body.classList.add("modal-open")}function closeShareSheet(){if(!shareSheet)return;shareSheet.classList.remove("is-open");shareSheet.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open")}
 document.querySelectorAll("[data-share-close]").forEach(el=>el.addEventListener("click",closeShareSheet));
-async function buildStoryFile(){if(storyFile)return storyFile;if(storyFilePromise)return storyFilePromise;storyFilePromise=(async()=>{if(!window.html2canvas||!storyCard)throw new Error("story_renderer_unavailable");const canvas=await html2canvas(storyCard,{width:1080,height:1920,scale:1,backgroundColor:"#f3e8d0",useCORS:true,logging:false});const blob=await new Promise((resolve,reject)=>{canvas.toBlob(result=>result?resolve(result):reject(new Error("story_blob_failed")),"image/jpeg",.92)});storyFile=new File([blob],"torbaga-story.jpg",{type:"image/jpeg"});return storyFile})();try{return await storyFilePromise}finally{storyFilePromise=null}}
+function makeArabicCanvas(source,doc){
+  const rect=source.getBoundingClientRect();
+  const style=getComputedStyle(source);
+  const width=Math.max(1,Math.round(rect.width));
+  const height=Math.max(1,Math.round(rect.height));
+  const canvas=doc.createElement("canvas");
+  canvas.width=width;
+  canvas.height=height;
+  canvas.style.cssText=`display:${style.display};width:${width}px;height:${height}px;direction:ltr;`;
+  const ctx=canvas.getContext("2d");
+  if(!ctx)return canvas;
+
+  const fontStyle=style.fontStyle||"normal";
+  const fontVariant=style.fontVariant||"normal";
+  const fontWeight=style.fontWeight||"400";
+  const fontSize=parseFloat(style.fontSize)||16;
+  const fontFamily=style.fontFamily||"Arial,sans-serif";
+  const lineHeight=style.lineHeight==="normal"?fontSize*1.2:(parseFloat(style.lineHeight)||fontSize*1.2);
+  const padLeft=parseFloat(style.paddingLeft)||0;
+  const padRight=parseFloat(style.paddingRight)||0;
+  const padTop=parseFloat(style.paddingTop)||0;
+  const padBottom=parseFloat(style.paddingBottom)||0;
+  const availableWidth=Math.max(1,width-padLeft-padRight);
+
+  ctx.font=`${fontStyle} ${fontVariant} ${fontWeight} ${fontSize}px ${fontFamily}`;
+  ctx.textBaseline="alphabetic";
+  ctx.direction="rtl";
+  ctx.textAlign="right";
+  ctx.fillStyle=style.color||"#171820";
+
+  const text=(source.textContent||"").trim();
+  const words=text.split(/\s+/).filter(Boolean);
+  const lines=[];
+  let line="";
+  for(const word of words){
+    const candidate=line?`${line} ${word}`:word;
+    if(line&&ctx.measureText(candidate).width>availableWidth){
+      lines.push(line);
+      line=word;
+    }else{
+      line=candidate;
+    }
+  }
+  if(line||!lines.length)lines.push(line);
+
+  const x=width-padRight;
+  const firstBaseline=padTop+fontSize;
+  lines.forEach((item,index)=>ctx.fillText(item,x,firstBaseline+index*lineHeight));
+  return canvas;
+}
+
+function prepareStoryArabicForCanvas(cloneDoc){
+  const selectors=[
+    ".story-arabic-title",
+    ".story-question",
+    ".story-redline",
+    ".story-lead"
+  ];
+  selectors.forEach(selector=>{
+    const original=storyCard.querySelector(selector);
+    const clone=cloneDoc.querySelector(`#storyCard ${selector}`);
+    if(!original||!clone)return;
+    clone.replaceChildren(makeArabicCanvas(original,cloneDoc));
+  });
+
+  const originalFinal=storyCard.querySelector(".story-final");
+  const cloneFinal=cloneDoc.querySelector("#storyCard .story-final");
+  if(originalFinal&&cloneFinal){
+    const arabicNode=[...originalFinal.childNodes].find(node=>node.nodeType===Node.TEXT_NODE&&node.textContent.trim());
+    const cloneArabicNode=[...cloneFinal.childNodes].find(node=>node.nodeType===Node.TEXT_NODE&&node.textContent.trim());
+    if(arabicNode&&cloneArabicNode){
+      const temp=originalFinal.ownerDocument.createElement("span");
+      temp.textContent=arabicNode.textContent.trim();
+      temp.style.cssText="position:absolute;visibility:hidden;white-space:nowrap;";
+      const finalStyle=getComputedStyle(originalFinal);
+      temp.style.font=`${finalStyle.fontStyle||"normal"} ${finalStyle.fontWeight||"400"} ${finalStyle.fontSize||"16px"} ${finalStyle.fontFamily||"Arial,sans-serif"}`;
+      originalFinal.appendChild(temp);
+      const measured=Math.max(1,Math.ceil(temp.getBoundingClientRect().width));
+      temp.remove();
+
+      const canvas=makeArabicCanvas(originalFinal,cloneDoc);
+      canvas.width=measured;
+      canvas.style.width=`${measured}px`;
+      canvas.style.display="inline-block";
+      canvas.style.verticalAlign="baseline";
+      const ctx=canvas.getContext("2d");
+      const fs=parseFloat(finalStyle.fontSize)||16;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.font=`${finalStyle.fontStyle||"normal"} ${finalStyle.fontWeight||"400"} ${fs}px ${finalStyle.fontFamily||"Arial,sans-serif"}`;
+      ctx.textBaseline="alphabetic";
+      ctx.direction="rtl";
+      ctx.textAlign="right";
+      ctx.fillStyle=finalStyle.color||"#171820";
+      ctx.fillText(arabicNode.textContent.trim(),measured,fs);
+
+      cloneArabicNode.replaceWith(canvas);
+    }
+  }
+}
+
+async function buildStoryFile(){if(storyFile)return storyFile;if(storyFilePromise)return storyFilePromise;storyFilePromise=(async()=>{if(!window.html2canvas||!storyCard)throw new Error("story_renderer_unavailable");if(document.fonts?.ready)await document.fonts.ready;const canvas=await html2canvas(storyCard,{width:1080,height:1920,scale:1,backgroundColor:"#f3e8d0",useCORS:true,logging:false,onclone:(cloneDoc)=>prepareStoryArabicForCanvas(cloneDoc)});const blob=await new Promise((resolve,reject)=>{canvas.toBlob(result=>result?resolve(result):reject(new Error("story_blob_failed")),"image/jpeg",.92)});storyFile=new File([blob],"torbaga-story.jpg",{type:"image/jpeg"});return storyFile})();try{return await storyFilePromise}finally{storyFilePromise=null}}
 function hasNativeStoryBridge(){return !!(window.TorbagaNative&&typeof window.TorbagaNative.shareToInstagramStory==="function")}
 function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(reader.error||new Error("file_read_failed"));reader.readAsDataURL(file)})}
 async function prepareStory(){if(!isMobileShareDevice())return;openShareSheet();shareAppButtons.forEach(button=>button.disabled=true);if(shareStatus)shareStatus.textContent="جاري تحضير الصورة...";try{const file=await buildStoryFile(),nativeInstagram=hasNativeStoryBridge(),canFileShare=!!(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]}));shareAppButtons.forEach(button=>{const app=button.dataset.shareApp||"";button.disabled=app==="Instagram"?!nativeInstagram&&!canFileShare:!canFileShare});if(shareStatus)shareStatus.textContent=nativeInstagram?"Instagram جاهز — الصورة تدخل مباشرة للـStory.":canFileShare?"إختار المنصّة. الصورة وحدها باش تتبعث.":"التليفون متاعك ما يدعمش المشاركة المباشرة. حمّل الصورة من الزر لتحت."}catch(err){console.error("Story image preparation failed:",err);if(shareStatus)shareStatus.textContent="ما نجّمش نحضّر الصورة توّة. جرّب التحميل."}}
