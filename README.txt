@@ -1,14 +1,9 @@
-Bac Info 2027 — Hatchable project source
-Project: Bac Info 2027
-Hatchable project ID: proj_ASkK6pl8fb1e
+TORBAGA — QUOTA COUNTER DIAGNOSTIC PATCH
 
-This archive contains the current project source files retrieved from Hatchable.
-Database data is not included; the migration defines the student_leads table.
-The project currently uses Hatchable's "hatchable" runtime and database bindings.
+This patch changes only api/broadcast.js to show the actual category of the Apps Script quota-response failure. It does not change the email design or the sending loop.
 
-Main routes:
-- /              Public landing page
-- /lang.html     Redirects to the Tunisian-only public site
-- /admin         Owner/admin lead dashboard
-- POST /api/register
-- GET /api/leads
+INSTALL:
+1. Replace api/broadcast.js in your existing project with the included file.
+2. From the project root run: npx wrangler deploy
+3. Refresh the admin page and click the quota counter refresh button.
+4. Copy the exact error and diagnostic fields shown by the admin/API response, but never share API keys, ADMIN_TOKEN, GMAIL_BROADCAST_SECRET, or BROADCAST_SECRET.

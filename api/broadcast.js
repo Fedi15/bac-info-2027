@@ -30,8 +30,33 @@ export async function sendBroadcast(request, env) {
       const raw = await response.text();
       let result;
       try { result = JSON.parse(raw); } catch { result = null; }
-      if (!response.ok || !result || result.ok !== true || !Number.isFinite(Number(result.remainingQuota))) {
-        return json({ ok: false, error: result?.error || "Could not read Gmail's remaining quota. Check the Apps Script deployment." }, 502);
+      if (!response.ok) {
+        return json({
+          ok: false,
+          error: `Google Apps Script returned HTTP ${response.status}. Check the Web App deployment access and URL.`,
+          diagnostic: { status: response.status, contentType: response.headers.get("content-type") || "unknown", responsePreview: raw.slice(0, 240) }
+        }, 502);
+      }
+      if (!result) {
+        return json({
+          ok: false,
+          error: "Google Apps Script did not return JSON. The URL may be incorrect or the Web App may not be publicly accessible.",
+          diagnostic: { status: response.status, contentType: response.headers.get("content-type") || "unknown", responsePreview: raw.slice(0, 240) }
+        }, 502);
+      }
+      if (result.ok !== true) {
+        return json({
+          ok: false,
+          error: result.error || "Google Apps Script returned ok:false without an error message.",
+          diagnostic: { status: response.status, contentType: response.headers.get("content-type") || "unknown", responseKeys: Object.keys(result) }
+        }, 502);
+      }
+      if (result.remainingQuota === undefined || result.remainingQuota === null || !Number.isFinite(Number(result.remainingQuota))) {
+        return json({
+          ok: false,
+          error: "Google Apps Script returned JSON but did not include a valid remainingQuota number. Confirm the deployed version contains the quota action branch.",
+          diagnostic: { status: response.status, contentType: response.headers.get("content-type") || "unknown", responseKeys: Object.keys(result) }
+        }, 502);
       }
       return json({ ok: true, remainingQuota: Number(result.remainingQuota) });
     } catch (error) {
