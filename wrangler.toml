@@ -15,12 +15,13 @@ database_id = "533ce25d-e466-4ccd-ba57-951fc9c916d8"
 # Set ADMIN_TOKEN as a secret instead of committing it:
 # npx wrangler secret put ADMIN_TOKEN
 [observability]
-enabled = false
+enabled = true
+
 
 [observability.logs]
-enabled = false
+enabled = true
 invocation_logs = true
 
 [observability.traces]
-enabled = false
+enabled = true
 
