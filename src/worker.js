@@ -79,8 +79,8 @@ async function getPublicStats(env) {
 }
 
 
-// Public lycée catalogue proxy. Cache successful Overpass results to avoid
-// asking the public map service on every student's click.
+// Public lycée catalogue proxy. Query the tested Sfax bounding box directly:
+// the administrative-area query was returning an empty set even when schools exist.
 async function getSfaxLycees(request, env) {
   if (request.method !== "GET") {
     return Response.json({ ok: false, error: "Method not allowed" }, { status: 405 });
@@ -91,46 +91,48 @@ async function getSfaxLycees(request, env) {
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
 
-  // First query Overpass area objects directly. The previous relation->area
-  // expression can produce an empty set on some Overpass instances, even when
-  // Sfax schools exist. Query named administrative areas and collect school
-  // features from those areas.
-  const queries = [
-    `[out:json][timeout:60];area["name"~"Sfax|صفاقس",i]["boundary"="administrative"]["admin_level"~"4|6|7|8"]->.sfaxArea;(nwr(area.sfaxArea)["amenity"="school"];nwr(area.sfaxArea)["building"="school"];nwr(area.sfaxArea)["school:level"];nwr(area.sfaxArea)["isced:level"];nwr(area.sfaxArea)["name"~"lycée|lycee|ثانوية|معهد|المعهد|high school|secondary school",i];nwr(area.sfaxArea)["name:ar"~"ثانوية|معهد|المعهد",i];);out center tags;`,
-    // Fallback: query school objects in the Sfax urban area when an Overpass
-    // instance cannot resolve the administrative area. Results are not cached
-    // when empty. The client still filters candidates to secondary lycées.
-    `[out:json][timeout:60];(nwr(34.55,10.55,34.95,11.05)["amenity"="school"];nwr(34.55,10.55,34.95,11.05)["building"="school"];nwr(34.55,10.55,34.95,11.05)["school:level"];nwr(34.55,10.55,34.95,11.05)["isced:level"];nwr(34.55,10.55,34.95,11.05)["name"~"lycée|lycee|ثانوية|معهد|المعهد|high school|secondary school",i];nwr(34.55,10.55,34.95,11.05)["name:ar"~"ثانوية|معهد|المعهد",i];);out center tags;`
+  // Search name variants observed in Tunisian OSM data. Keep school-tagged
+  // objects too, since some actual schools do not have a lycée in their name.
+  // Sfax urban bbox: south, west, north, east.
+  const query = `[out:json][timeout:60];(nwr(34.55,10.55,34.95,11.05)["name"~"معهد|المعهد|ثانوية|lycée|lycee|lycce|high school|secondary school",i];nwr(34.55,10.55,34.95,11.05)["name:ar"~"معهد|المعهد|ثانوية",i];nwr(34.55,10.55,34.95,11.05)["amenity"="school"];nwr(34.55,10.55,34.95,11.05)["school:level"~"secondary|upper secondary",i];nwr(34.55,10.55,34.95,11.05)["isced:level"~"3",i];);out center tags;`;
+  const endpoints = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter"
   ];
-  const endpoints = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
   let lastError = null;
+
   for (const endpoint of endpoints) {
-    for (const query of queries) {
-      try {
-        const upstream = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=UTF-8", "User-Agent": "TorbagaProfInformatique/1.0" },
-          body: query,
-          signal: AbortSignal.timeout(65000)
-        });
-        if (!upstream.ok) throw new Error(`Overpass returned ${upstream.status}`);
-        const payload = await upstream.json();
-        // Do not cache empty responses; try the next query/server instead.
-        if (!Array.isArray(payload.elements) || payload.elements.length === 0) {
-          lastError = new Error("Overpass returned no school objects");
-          console.warn("Sfax school query returned no elements:", endpoint);
-          continue;
-        }
-        const response = Response.json(payload, { headers: { "Cache-Control": "public, max-age=43200" } });
-        await cache.put(cacheKey, response.clone());
-        return response;
-      } catch (error) {
-        lastError = error;
-        console.warn("Sfax lycée catalogue upstream failed:", endpoint, String(error));
+    try {
+      const upstream = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=UTF-8" },
+        body: query,
+        signal: AbortSignal.timeout(65000)
+      });
+      if (!upstream.ok) throw new Error(`Overpass returned ${upstream.status}`);
+      const payload = await upstream.json();
+      if (!Array.isArray(payload.elements)) throw new Error("Overpass response did not contain elements");
+      if (payload.elements.length === 0) {
+        lastError = new Error("Overpass returned zero elements");
+        continue;
       }
+      const response = Response.json(payload, {
+        headers: { "Cache-Control": "public, max-age=43200" }
+      });
+      await cache.put(cacheKey, response.clone());
+      return response;
+    } catch (error) {
+      lastError = error;
+      console.warn("Sfax lycée catalogue upstream failed:", endpoint, String(error));
     }
   }
-  return Response.json({ ok: false, error: "The lycée catalogue is temporarily unavailable. Please retry." }, { status: 503 });
+
+  console.error("Sfax lycée catalogue unavailable:", String(lastError));
+  return Response.json({
+    ok: false,
+    error: "The lycée catalogue is temporarily unavailable. Please retry."
+  }, { status: 503 });
 }
 
 export default {

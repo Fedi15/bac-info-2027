@@ -17,15 +17,16 @@ function distanceMeters(lat1,lon1,lat2,lon2){const rad=v=>v*Math.PI/180;const dL
 function isSecondaryLycee(tags={}){
   const name=[tags.name,tags['name:ar'],tags['name:fr'],tags['official_name']].filter(Boolean).join(' ').toLocaleLowerCase();
   const level=String([tags['school:level'],tags['isced:level'],tags['education'],tags['school:type']].filter(Boolean).join(' ')).toLocaleLowerCase();
-  if(/ابتدائي|مدرسة ابتدائية|école primaire|ecole primaire|primary school|collège|college|إعدادية|اعدادية|مدرسة إعدادية|مدرسة اعدادية|kindergarten|روضة|جامعة|university|faculté|faculte|formation professionnelle|vocational|مركز تكوين|تكوين مهني/i.test(name))return false;
+  // Exclude transit stops and unrelated education providers even when their
+  // names contain "Lycée" (OSM sometimes labels bus stops after nearby schools).
+  if(tags.highway||tags.public_transport||tags.bus||tags.railway||tags.amenity==='bus_station')return false;
+  if(/ابتدائي|مدرسة ابتدائية|école primaire|ecole primaire|primary school|collège|college|إعدادية|اعدادية|مدرسة إعدادية|مدرسة اعدادية|kindergarten|روضة|جامعة|university|faculté|faculte|formation professionnelle|vocational|مركز تكوين|تكوين مهني|معهد عالي|المعهد العالي/i.test(name))return false;
   const explicitSecondary=/ثانوية|معهد ثانوي|المعهد الثانوي|lycée|lycee|lycce|high school|secondary school/i.test(name)||/secondary|upper secondary|isced.?3|lycée|lycee|lycce/.test(level);
-  // Many Tunisian lycées are mapped simply as "معهد [name]". OSM may tag
-  // them with amenity=school, building=school, or education/school-level tags.
+  // In Tunisia, many secondary schools are simply named "معهد [name]".
+  // The successful Sfax query returns these even when OSM lacks school-level tags.
+  const tunisianInstitute=/(^|\s)(معهد|المعهد)(\s|$)/i.test(name);
   const schoolFeature=tags.amenity==='school'||tags.building==='school'||Boolean(tags['school:level']||tags['isced:level']||tags.education||tags.school);
-  const tunisianInstitute=/(^|\s)(معهد|المعهد)(\s|$)/i.test(name)&&schoolFeature;
-  // Some map entries omit the school feature tag entirely but use an unambiguous
-  // lycée/secondary name; retain those too.
-  return explicitSecondary||tunisianInstitute;
+  return explicitSecondary||tunisianInstitute||(schoolFeature&&/secondary|upper.?secondary|isced.?3/i.test(level));
 }
 function getElementCoords(el){if(Number.isFinite(el.lat)&&Number.isFinite(el.lon))return {lat:el.lat,lon:el.lon};if(Number.isFinite(el.center?.lat)&&Number.isFinite(el.center?.lon))return {lat:el.center.lat,lon:el.center.lon};return null}
 if(detectSchoolBtn&&schoolInput){
