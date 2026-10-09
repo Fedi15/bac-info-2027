@@ -1,87 +1,16 @@
 if (window.emailjs && typeof window.emailjs.init === "function") emailjs.init({ publicKey: "ZUjic6-9k2GvyJPsu" });
 const form=document.getElementById("leadForm"),submitBtn=document.getElementById("submitBtn"),success=document.getElementById("success"),error=document.getElementById("error"),modal=document.getElementById("successModal"),successName=document.getElementById("successName");
+const emailLocal=document.getElementById("emailLocal"),emailDomain=document.getElementById("emailDomain"),emailCustomDomain=document.getElementById("emailCustomDomain"),emailCombined=document.getElementById("email");
+function syncEmailField(){const custom=emailDomain?.value==="other";if(emailCustomDomain){emailCustomDomain.hidden=!custom;emailCustomDomain.required=custom;}const domain=custom?(emailCustomDomain?.value||"").trim().replace(/^@+/,""):emailDomain?.value||"";const local=(emailLocal?.value||"").trim().replace(/\s/g,"");if(emailCombined)emailCombined.value=local&&domain?`${local}@${domain}`:"";return {local,domain,email:emailCombined?.value||""};}
+emailLocal?.addEventListener("input",syncEmailField);emailDomain?.addEventListener("change",()=>{syncEmailField();if(emailDomain.value==="other")emailCustomDomain?.focus();});emailCustomDomain?.addEventListener("input",syncEmailField);
+emailLocal?.addEventListener("paste",event=>{const pasted=(event.clipboardData||window.clipboardData)?.getData("text")||"";if(!pasted.includes("@"))return;const [local,domain]=pasted.trim().split(/@(.+)/);if(!local||!domain)return;const option=[...emailDomain.options].find(item=>item.value.toLowerCase()===domain.toLowerCase());event.preventDefault();emailLocal.value=local;if(option){emailDomain.value=option.value;}else{emailDomain.value="other";emailCustomDomain.value=domain;}syncEmailField();});
 function showMessage(el,message){if(!el)return;el.textContent=message;el.style.display="block"}function hideMessage(el){if(el)el.style.display="none"}
 function openSuccessModal(name){if(!modal)return;if(successName)successName.textContent=name?`برافو ${name}`:"";modal.classList.add("is-open");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-open");modal.querySelector(".success-close")?.focus()}
 function closeSuccessModal(){if(!modal)return;modal.classList.remove("is-open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open")}
 document.querySelectorAll("[data-success-close]").forEach(el=>el.addEventListener("click",closeSuccessModal));document.addEventListener("keydown",event=>{if(event.key==="Escape"&&modal?.classList.contains("is-open"))closeSuccessModal()});
 document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener("click",event=>{const id=link.getAttribute("href")?.slice(1),target=id?document.getElementById(id):null;if(!target)return;event.preventDefault();target.scrollIntoView({behavior:"smooth",block:"start"});history.replaceState(null,"",`#${id}`)}));
 document.querySelectorAll(".choice input").forEach(input=>input.addEventListener("change",()=>{document.querySelectorAll(".choice").forEach(choice=>choice.classList.remove("selected"));input.closest(".choice")?.classList.add("selected")}));
-form?.addEventListener("submit",async event=>{event.preventDefault();hideMessage(success);hideMessage(error);if(!form.checkValidity()){form.reportValidity();return}const data=Object.fromEntries(new FormData(form).entries());data.source=new URLSearchParams(location.search).get("source")||data.source||"affiche";data.city="Sfax";submitBtn.disabled=true;submitBtn.querySelector("span").textContent="جاري الإرسال...";try{const response=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}),result=await response.json().catch(()=>({}));if(!response.ok||!result.ok)throw new Error(result.error||"register_failed");try{if(window.emailjs&&typeof window.emailjs.send==="function")await emailjs.send("service_i1zf9ru","template_vjrqroz",{full_name:data.full_name||"",phone:data.phone||"",email:data.email||"",level:data.level||"",school:data.school||"Non renseigné",lesson_location:data.lesson_location||"",city:"Sfax",source:data.source||"affiche",created_at:new Date().toLocaleString("ar-TN",{dateStyle:"full",timeStyle:"short"})})}catch(emailError){console.warn("Teacher notification channel failed; registration was saved.",emailError)}const name=String(data.full_name||"").trim();form.reset();document.querySelectorAll(".choice").forEach(choice=>choice.classList.remove("selected"));openSuccessModal(name)}catch(err){console.error("Registration failed:",err);showMessage(error,"ما نجّمش نبعثو التسجيل توّة. عاود جرّب بعد شوية.")}finally{submitBtn.disabled=false;submitBtn.querySelector("span").textContent="إبعث التسجيل"}});
-
-/* GPS lycée detection: use the Cloudflare proxy, never call Overpass from the browser. */
-const detectSchoolBtn=document.getElementById('detectSchool');
-const schoolInput=document.getElementById('school');
-const schoolDetectStatus=document.getElementById('schoolDetectStatus');
-function setSchoolDetectStatus(message,isError=false){if(!schoolDetectStatus)return;schoolDetectStatus.textContent=message;schoolDetectStatus.classList.toggle('is-error',isError)}
-function distanceMeters(lat1,lon1,lat2,lon2){const rad=v=>v*Math.PI/180;const dLat=rad(lat2-lat1),dLon=rad(lon2-lon1);const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLon/2)**2;return 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
-function isSecondaryLycee(tags={}){
-  const name=[tags.name,tags['name:ar'],tags['name:fr'],tags['official_name']].filter(Boolean).join(' ').toLocaleLowerCase();
-  const level=String([tags['school:level'],tags['isced:level'],tags['education'],tags['school:type']].filter(Boolean).join(' ')).toLocaleLowerCase();
-  // Exclude transit stops and unrelated education providers even when their
-  // names contain "Lycée" (OSM sometimes labels bus stops after nearby schools).
-  if(tags.highway||tags.public_transport||tags.bus||tags.railway||tags.amenity==='bus_station')return false;
-  if(/ابتدائي|مدرسة ابتدائية|école primaire|ecole primaire|primary school|collège|college|إعدادية|اعدادية|مدرسة إعدادية|مدرسة اعدادية|kindergarten|روضة|جامعة|university|faculté|faculte|formation professionnelle|vocational|مركز تكوين|تكوين مهني|معهد عالي|المعهد العالي/i.test(name))return false;
-  const explicitSecondary=/ثانوية|معهد ثانوي|المعهد الثانوي|lycée|lycee|lycce|high school|secondary school/i.test(name)||/secondary|upper secondary|isced.?3|lycée|lycee|lycce/.test(level);
-  // In Tunisia, many secondary schools are simply named "معهد [name]".
-  // The successful Sfax query returns these even when OSM lacks school-level tags.
-  const tunisianInstitute=/(^|\s)(معهد|المعهد)(\s|$)/i.test(name);
-  const schoolFeature=tags.amenity==='school'||tags.building==='school'||Boolean(tags['school:level']||tags['isced:level']||tags.education||tags.school);
-  return explicitSecondary||tunisianInstitute||(schoolFeature&&/secondary|upper.?secondary|isced.?3/i.test(level));
-}
-function getElementCoords(el){if(Number.isFinite(el.lat)&&Number.isFinite(el.lon))return {lat:el.lat,lon:el.lon};if(Number.isFinite(el.center?.lat)&&Number.isFinite(el.center?.lon))return {lat:el.center.lat,lon:el.center.lon};return null}
-if(detectSchoolBtn&&schoolInput){
- detectSchoolBtn.addEventListener('click',()=>{
-  if(!navigator.geolocation){setSchoolDetectStatus('المتصفّح هذا ما يدعمش تحديد الموقع. اكتب اسم الليسي يدويّاً.',true);return}
-  detectSchoolBtn.disabled=true;detectSchoolBtn.classList.add('is-loading');setSchoolDetectStatus('جاري تحديد موقعك والبحث على أقرب ليسي في صفاقس…');
-  navigator.geolocation.getCurrentPosition(async position=>{
-   try{
-    const {latitude,longitude}=position.coords;
-    let payload=null;
-    // Prefer the Worker catalogue. If Overpass rate-limits the Worker (HTTP 503),
-    // fall back to a single direct browser query; this was verified to work in the
-    // user's browser. Cache successful results locally to avoid repeat requests.
-    const localCacheKey='torbaga_sfax_lycee_catalogue_v1';
-    try {
-      const cached=JSON.parse(localStorage.getItem(localCacheKey)||'null');
-      if(cached&&Array.isArray(cached.elements)&&cached.elements.length&&Date.now()-cached.savedAt<24*60*60*1000){
-        payload={elements:cached.elements};
-      }
-    } catch (_) {}
-    if(!payload){
-      try {
-        const response=await fetch('/api/sfax-lycees',{headers:{Accept:'application/json'},cache:'no-store'});
-        const candidate=await response.json().catch(()=>({}));
-        if(response.ok&&Array.isArray(candidate.elements)&&candidate.elements.length)payload=candidate;
-        else console.warn('Worker lycée catalogue unavailable; trying direct Overpass fallback.',response.status,candidate);
-      } catch (workerError) {
-        console.warn('Worker lycée catalogue request failed; trying direct Overpass fallback.',workerError);
-      }
-    }
-    if(!payload){
-      const query='[out:json][timeout:25];nwr(34.55,10.55,34.95,11.05)["name"~"معهد|المعهد|ثانوية|lycée|lycee|lycce",i];out center tags;';
-      const response=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:query,cache:'no-store'});
-      if(!response.ok)throw new Error('overpass_http_'+response.status);
-      const directPayload=await response.json();
-      if(!Array.isArray(directPayload.elements)||!directPayload.elements.length)throw new Error('no_secondary_lycees');
-      payload=directPayload;
-      try{localStorage.setItem(localCacheKey,JSON.stringify({savedAt:Date.now(),elements:payload.elements}));}catch(_){}
-    }
-    try{localStorage.setItem(localCacheKey,JSON.stringify({savedAt:Date.now(),elements:payload.elements}));}catch(_){}
-    const candidates=payload.elements.map(el=>{const tags=el.tags||{},coords=getElementCoords(el);if(!coords||!isSecondaryLycee(tags))return null;const fullName=tags['name:ar']||tags.name||tags['name:fr']||tags.official_name||'';return {fullName,coords,tags,distance:distanceMeters(latitude,longitude,coords.lat,coords.lon)}}).filter(Boolean);
-    const unique=[...new Map(candidates.map(item=>[item.fullName.trim().toLocaleLowerCase(),item])).values()];
-    if(!unique.length)throw new Error('no_secondary_lycees');
-    unique.sort((a,b)=>a.distance-b.distance);
-    const chosen=unique[0];
-    let displayName=chosen.fullName.trim().replace(/^(?:ثانوية|المعهد الثانوي|معهد ثانوي|Lycée|Lycee|Lycce)\s*/i,'').trim();
-    if(!displayName)displayName=chosen.fullName.trim();
-    schoolInput.value=displayName;schoolInput.dispatchEvent(new Event('input',{bubbles:true}));schoolInput.dispatchEvent(new Event('change',{bubbles:true}));
-    setSchoolDetectStatus(`لقينا أقرب ليسي: ${displayName} · على بُعد حوالي ${(chosen.distance/1000).toFixed(1)} كم.`);
-   }catch(err){console.error('Lycée detection failed:',err);setSchoolDetectStatus(err.message==='no_secondary_lycees'?'ما لقيناش بيانات ثانويات كافية في القائمة حالياً. تنجم تكتب الاسم يدويّاً.':'تعذّر جلب قائمة الثانويات توّة. عاود جرّب بعد شوية أو اكتب الاسم يدويّاً.',true)}
-   finally{detectSchoolBtn.disabled=false;detectSchoolBtn.classList.remove('is-loading')}
-  },err=>{const message=err.code===1?'لازم تسمح للموقع باستعمال موقعك باش نحدّد أقرب ليسي.':err.code===2?'ما نجّمش نحدّد موقعك. تثبّت من GPS وعاود جرّب.':'تحديد الموقع طول برشة. عاود جرّب.';setSchoolDetectStatus(message,true);detectSchoolBtn.disabled=false;detectSchoolBtn.classList.remove('is-loading')},{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
- });
-}
-
+form?.addEventListener("submit",async event=>{event.preventDefault();hideMessage(success);hideMessage(error);const composedEmail=syncEmailField();if(!composedEmail.local||!composedEmail.domain||!emailCombined?.checkValidity()){showMessage(error,"ثبت الإيميل وتأكد من الجزء قبل @ والنطاق المختار.");(composedEmail.local?emailDomain:emailLocal)?.focus();return}if(!form.checkValidity()){form.reportValidity();return}const data=Object.fromEntries(new FormData(form).entries());data.source=new URLSearchParams(location.search).get("source")||data.source||"affiche";data.city="Sfax";submitBtn.disabled=true;submitBtn.querySelector("span").textContent="جاري الإرسال...";try{const response=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}),result=await response.json().catch(()=>({}));if(!response.ok||!result.ok)throw new Error(result.error||"register_failed");try{if(window.emailjs&&typeof window.emailjs.send==="function")await emailjs.send("service_i1zf9ru","template_vjrqroz",{full_name:data.full_name||"",phone:data.phone||"",email:data.email||"",level:data.level||"",school:data.school||"Non renseigné",lesson_location:data.lesson_location||"",city:"Sfax",source:data.source||"affiche",created_at:new Date().toLocaleString("ar-TN",{dateStyle:"full",timeStyle:"short"})})}catch(emailError){console.warn("Teacher notification channel failed; registration was saved.",emailError)}const name=String(data.full_name||"").trim();form.reset();syncEmailField();document.querySelectorAll(".choice").forEach(choice=>choice.classList.remove("selected"));openSuccessModal(name)}catch(err){console.error("Registration failed:",err);showMessage(error,"ما نجّمش نبعثو التسجيل توّة. عاود جرّب بعد شوية.")}finally{submitBtn.disabled=false;submitBtn.querySelector("span").textContent="إبعث التسجيل"}});
 const observer="IntersectionObserver"in window?new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add("seen")})},{threshold:.12}):null;document.querySelectorAll(".bac-card,.location-strip,.register-intro,.form-card,.bottom-cta").forEach(el=>{if(observer)observer.observe(el)});
 window.addEventListener("pageshow",()=>{const firstField=document.getElementById("full_name");if(location.hash==="#inscription")firstField?.focus({preventScroll:true})});
 const shareOpen=document.getElementById("openShare"),topShare=document.getElementById("topShare"),shareSheet=document.getElementById("shareSheet"),shareStatus=document.getElementById("shareStatus"),storyCard=document.getElementById("storyCard"),downloadStory=document.getElementById("downloadStory"),shareAppButtons=[...document.querySelectorAll("[data-share-app]")],mobileShareQuery=window.matchMedia("(max-width: 600px) and (pointer: coarse)");let storyFilePromise=null,storyFile=null;
