@@ -78,6 +78,43 @@ async function getPublicStats(env) {
   });
 }
 
+
+// Public lycée catalogue proxy. Cache successful Overpass results to avoid
+// asking the public map service on every student's click.
+async function getSfaxLycees(request, env) {
+  if (request.method !== "GET") {
+    return Response.json({ ok: false, error: "Method not allowed" }, { status: 405 });
+  }
+
+  const cache = caches.default;
+  const cacheKey = new Request(new URL("/api/sfax-lycees", request.url).toString(), { method: "GET" });
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  const query = `[out:json][timeout:60];(relation["boundary"="administrative"]["name"~"^(Sfax|صفاقس)$"]["admin_level"~"^[45]$"];relation["boundary"="administrative"]["name:ar"="صفاقس"]["admin_level"~"^[45]$"];)->.sfaxRelations;.sfaxRelations map_to_area -> .sfaxArea;(nwr(area.sfaxArea)["name"~"lycée|lycee|ثانوية|معهد ثانوي|المعهد الثانوي|secondary school|high school",i];nwr(area.sfaxArea)["name:ar"~"ثانوية|معهد ثانوي|المعهد الثانوي",i];nwr(area.sfaxArea)["school:level"~"secondary|lycée|lycee",i];nwr(area.sfaxArea)["isced:level"~"3",i];);out center tags;`;
+  const endpoints = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+  let lastError = null;
+  for (const endpoint of endpoints) {
+    try {
+      const upstream = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=UTF-8", "User-Agent": "TorbagaProfInformatique/1.0" },
+        body: query,
+        signal: AbortSignal.timeout(65000)
+      });
+      if (!upstream.ok) throw new Error(`Overpass returned ${upstream.status}`);
+      const payload = await upstream.json();
+      const response = Response.json(payload, { headers: { "Cache-Control": "public, max-age=43200" } });
+      await cache.put(cacheKey, response.clone());
+      return response;
+    } catch (error) {
+      lastError = error;
+      console.warn("Sfax lycée catalogue upstream failed:", endpoint, String(error));
+    }
+  }
+  return Response.json({ ok: false, error: "The lycée catalogue is temporarily unavailable. Please retry." }, { status: 503 });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -89,6 +126,11 @@ export default {
        * API ROUTES
        * =========================
        */
+
+      // Public Sfax secondary-school catalogue (proxied and cached server-side)
+      if (url.pathname === "/api/sfax-lycees") {
+        return await getSfaxLycees(request, env);
+      }
 
       // Student registration
       if (url.pathname === "/api/register") {
