@@ -212,3 +212,36 @@ body::after{
 .school-detect-status{margin:7px 0 0;font-size:.78rem;line-height:1.7;opacity:.85;overflow-wrap:anywhere}
 .school-detect-status.is-error{color:#d99b8f}
 @media(max-width:560px){.school-detect-row{flex-wrap:wrap}.school-detect-row input{flex:1 1 100%}.school-detect-btn{width:100%;min-height:44px}}
+
+/* School field: reserve space for the native datalist arrow and prevent text overlap. */
+#school {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  direction: rtl;
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: clip;
+  padding-inline-start: 2.1rem;
+  font-size: clamp(11px, 2.8vw, 14px);
+}
+
+/* Give the school name the full form width on narrow screens and desktop alike. */
+.form-row.two:has(#school) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.form-row.two:has(#school) > .field,
+.form-row.two:has(#school) > label.field {
+  min-width: 0;
+  width: 100%;
+}
+.form-row.two:has(#school) .fixed-field-wrap {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  #school {
+    font-size: 12px;
+    padding-inline-start: 1.9rem;
+  }
+}
