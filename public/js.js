@@ -36,9 +36,37 @@ if(detectSchoolBtn&&schoolInput){
   navigator.geolocation.getCurrentPosition(async position=>{
    try{
     const {latitude,longitude}=position.coords;
-    const response=await fetch('/api/sfax-lycees',{headers:{Accept:'application/json'},cache:'no-store'});
-    const payload=await response.json().catch(()=>({}));
-    if(!response.ok||!Array.isArray(payload.elements))throw new Error(payload.error||'catalogue_unavailable');
+    let payload=null;
+    // Prefer the Worker catalogue. If Overpass rate-limits the Worker (HTTP 503),
+    // fall back to a single direct browser query; this was verified to work in the
+    // user's browser. Cache successful results locally to avoid repeat requests.
+    const localCacheKey='torbaga_sfax_lycee_catalogue_v1';
+    try {
+      const cached=JSON.parse(localStorage.getItem(localCacheKey)||'null');
+      if(cached&&Array.isArray(cached.elements)&&cached.elements.length&&Date.now()-cached.savedAt<24*60*60*1000){
+        payload={elements:cached.elements};
+      }
+    } catch (_) {}
+    if(!payload){
+      try {
+        const response=await fetch('/api/sfax-lycees',{headers:{Accept:'application/json'},cache:'no-store'});
+        const candidate=await response.json().catch(()=>({}));
+        if(response.ok&&Array.isArray(candidate.elements)&&candidate.elements.length)payload=candidate;
+        else console.warn('Worker lycée catalogue unavailable; trying direct Overpass fallback.',response.status,candidate);
+      } catch (workerError) {
+        console.warn('Worker lycée catalogue request failed; trying direct Overpass fallback.',workerError);
+      }
+    }
+    if(!payload){
+      const query='[out:json][timeout:25];nwr(34.55,10.55,34.95,11.05)["name"~"معهد|المعهد|ثانوية|lycée|lycee|lycce",i];out center tags;';
+      const response=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:query,cache:'no-store'});
+      if(!response.ok)throw new Error('overpass_http_'+response.status);
+      const directPayload=await response.json();
+      if(!Array.isArray(directPayload.elements)||!directPayload.elements.length)throw new Error('no_secondary_lycees');
+      payload=directPayload;
+      try{localStorage.setItem(localCacheKey,JSON.stringify({savedAt:Date.now(),elements:payload.elements}));}catch(_){}
+    }
+    try{localStorage.setItem(localCacheKey,JSON.stringify({savedAt:Date.now(),elements:payload.elements}));}catch(_){}
     const candidates=payload.elements.map(el=>{const tags=el.tags||{},coords=getElementCoords(el);if(!coords||!isSecondaryLycee(tags))return null;const fullName=tags['name:ar']||tags.name||tags['name:fr']||tags.official_name||'';return {fullName,coords,tags,distance:distanceMeters(latitude,longitude,coords.lat,coords.lon)}}).filter(Boolean);
     const unique=[...new Map(candidates.map(item=>[item.fullName.trim().toLocaleLowerCase(),item])).values()];
     if(!unique.length)throw new Error('no_secondary_lycees');
