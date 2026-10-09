@@ -34,6 +34,10 @@
     .send-all:disabled{opacity:.55;cursor:wait}
     .mail-preview{margin-top:14px;border:1px solid #39332a;border-radius:8px;padding:16px;background:#0b0b0c;color:#ddd;white-space:pre-wrap;line-height:1.7}
     .mail-count{color:#c7a66a;font-size:13px}
+    .quota-card{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 16px;padding:15px 17px;border:1px solid #51432b;border-radius:9px;background:#0b0b0c}
+    .quota-card .quota-label{font-size:13px;color:#aaa;line-height:1.6}
+    .quota-card .quota-value{font-size:27px;font-weight:700;color:#c7a66a;line-height:1.2;font-variant-numeric:tabular-nums}
+    .quota-card .quota-meta{font-size:11px;color:#817b70;margin-top:4px}
     .secondary{border-color:#555;color:#ccc}
     .delete-cell{white-space:nowrap}
     .table-wrap{overflow:auto;border:1px solid #333}
@@ -73,6 +77,10 @@
   <section class="mail-panel" aria-labelledby="mailTitle">
     <h2 id="mailTitle">ابعث إيميل للتلامذة الكل</h2>
     <p>اكتب العنوان والمحتوى، شوف المعاينة، وبعد أكّد الإرسال. كل تلميذ توصله رسالة وحده وما يشوفش عناوين بقية التلامذة.</p>
+    <div class="quota-card" aria-live="polite">
+      <div><div class="quota-label">الإيميلات اللي مازالت تنجم تبعثهم اليوم</div><div class="quota-meta" id="quotaMeta">يتحدّث بعد تحميل الطلبات</div></div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><div class="quota-value" id="quotaRemaining">—</div><button id="refreshQuota" class="secondary" type="button">حدّث العدد</button></div>
+    </div>
     <div class="mail-fields">
       <input id="mailSubject" type="text" maxlength="180" placeholder="عنوان الإيميل" aria-label="Email subject">
       <textarea id="mailMessage" maxlength="8000" placeholder="اكتب محتوى الإيميل هنا…" aria-label="Email message"></textarea>
@@ -128,6 +136,9 @@ const sendTestEmail = document.getElementById("sendTestEmail");
 const testEmailAddress = document.getElementById("testEmailAddress");
 const emailRecipientCount = document.getElementById("emailRecipientCount");
 const mailStatus = document.getElementById("mailStatus");
+const quotaRemaining = document.getElementById("quotaRemaining");
+const quotaMeta = document.getElementById("quotaMeta");
+const refreshQuota = document.getElementById("refreshQuota");
 const TOKEN_STORAGE_KEY = "torbaga_admin_token";
 let allLeads = [];
 let lastStats = null;
@@ -198,6 +209,35 @@ function renderLeads() {
   else status.textContent = query ? t.shown(filtered.length, allLeads.length) : t.requests(allLeads.length);
 }
 
+async function refreshMailQuota() {
+  if (!token.value.trim()) {
+    quotaRemaining.textContent = "—";
+    quotaMeta.textContent = "دخل المفتاح الإداري باش تشوف العدد";
+    return;
+  }
+  refreshQuota.disabled = true;
+  quotaMeta.textContent = "جاري التثبّت من العدد…";
+  try {
+    const response = await fetch("/api/broadcast", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token.value.trim()}` },
+      body: JSON.stringify({ action: "quota" })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data.ok !== true || !Number.isFinite(Number(data.remainingQuota))) {
+      throw new Error(data.error || "ما نجّمش نجيب العدد المتبقّي.");
+    }
+    quotaRemaining.textContent = Number(data.remainingQuota).toLocaleString();
+    quotaMeta.textContent = "العدد الحالي من Google؛ يشمل إيميلات التجربة زادة";
+  } catch (error) {
+    quotaRemaining.textContent = "—";
+    quotaMeta.textContent = error.message || "تعذّر جلب العدد. جرّب حدّث.";
+  } finally {
+    refreshQuota.disabled = false;
+  }
+}
+refreshQuota.addEventListener("click", refreshMailQuota);
+
 async function loadRequests() {
   if (!token.value.trim()) {
     status.textContent = "دخل ADMIN_TOKEN باش تفتح الطلبات.";
@@ -224,6 +264,7 @@ async function loadRequests() {
     localStorage.setItem(TOKEN_STORAGE_KEY, token.value.trim());
     allLeads = Array.isArray(leadsData.leads) ? leadsData.leads : [];
     updateEmailRecipientCount();
+    refreshMailQuota();
     lastStats = statsData;
     visitorCount.textContent = Number(statsData.unique_visitors || 0).toLocaleString();
     todayVisitorCount.textContent = Number(statsData.today_visitors || 0).toLocaleString();
@@ -269,6 +310,7 @@ sendTestEmail.addEventListener("click", async () => {
     mailStatus.textContent = error.message || "تعذّر إرسال إيميل التجربة.";
   } finally {
     sendTestEmail.disabled = false;
+    refreshMailQuota();
   }
 });
 sendAllEmail.addEventListener("click", async () => {
@@ -302,6 +344,7 @@ sendAllEmail.addEventListener("click", async () => {
     mailStatus.textContent = error.message || "تعذّر إرسال الإيميلات.";
   } finally {
     sendAllEmail.disabled = false;
+    refreshMailQuota();
   }
 });
 token.addEventListener("keydown", event => { if (event.key === "Enter") loadRequests(); });
@@ -309,6 +352,8 @@ searchName.addEventListener("input", renderLeads);
 forgetToken.addEventListener("click", () => {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
   token.value = "";
+  quotaRemaining.textContent = "—";
+  quotaMeta.textContent = "دخل المفتاح الإداري باش تشوف العدد";
   status.textContent = t.forgot;
 });
 

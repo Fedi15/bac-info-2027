@@ -19,6 +19,26 @@ export async function sendBroadcast(request, env) {
 
   let body;
   try { body = await request.json(); } catch { return json({ ok: false, error: "Invalid JSON" }, 400); }
+  // Live Gmail quota lookup for the authenticated admin panel.
+  if (body.action === "quota") {
+    try {
+      const response = await fetch(env.GMAIL_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secret: env.GMAIL_BROADCAST_SECRET, action: "quota" })
+      });
+      const raw = await response.text();
+      let result;
+      try { result = JSON.parse(raw); } catch { result = null; }
+      if (!response.ok || !result || result.ok !== true || !Number.isFinite(Number(result.remainingQuota))) {
+        return json({ ok: false, error: result?.error || "Could not read Gmail's remaining quota. Check the Apps Script deployment." }, 502);
+      }
+      return json({ ok: true, remainingQuota: Number(result.remainingQuota) });
+    } catch (error) {
+      return json({ ok: false, error: `Could not contact Google Apps Script: ${String(error?.message || "network error")}` }, 502);
+    }
+  }
+
   const subject = String(body.subject || "").trim();
   const message = String(body.message || "").trim();
   if (subject.length < 2 || subject.length > 180) return json({ ok: false, error: "Subject must be 2–180 characters." }, 400);
