@@ -312,89 +312,76 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
 })();
 
 
-// Sfax lycée detection: only accept secondary schools, then shorten the displayed name.
+// Sfax lycée detection: search the Sfax Governorate catalogue, then choose the nearest lycée.
 (() => {
   const schoolInput = document.getElementById("school");
   const detectButton = document.getElementById("detectSchool");
   const detectStatus = document.getElementById("schoolDetectStatus");
   if (!schoolInput || !detectButton || !detectStatus) return;
-
-  const inSfaxBounds = (lat, lon) => lat >= 34.65 && lat <= 34.85 && lon >= 10.65 && lon <= 10.85;
   const setStatus = (message, isError = false) => {
     detectStatus.textContent = message;
     detectStatus.classList.toggle("is-error", isError);
   };
+  const normalize = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const isClearlyNotSecondary = text => /\b(primary|elementary|kindergarten|maternelle|preparatoire|preparatory|college|ecole primaire|مدرسة ابتدائية|إعدادية|اعدادية|معهد عالي|universite|university|faculte|formation professionnelle|centre de formation)\b/i.test(text);
   const isSecondaryLycee = item => {
     const t = item.tags || {};
-    const name = String(t.name || "").trim();
-    // Reject primary schools, colleges and generic school POIs.
-    const secondaryTag = [t["school:level"], t["isced:level"], t.school, t.amenity, t.education].filter(Boolean).join(" ").toLowerCase();
-    const nameLooksSecondary = /(^|[\\s-])(lycée|lycee|lyc[eé]e|ثانوية|معهد\s*ثانوي|المعهد\s*الثانوي|secondary school|high school)([\\s-]|$)/i.test(name);
-    const taggedSecondary = /secondary|lyc[eé]e|ثانوية|معهد\s*ثانوي|المعهد\s*الثانوي|upper.?secondary/i.test(secondaryTag);
-    const clearlyPrimary = /primary|elementary|préparatoire|preparatory|coll[eè]ge|إعدادية|مدرسة ابتدائية/i.test([name, secondaryTag].join(" "));
-    return name && !clearlyPrimary && (nameLooksSecondary || taggedSecondary);
+    const name = String(t["name:ar"] || t.name || t["name:fr"] || "").trim();
+    const metadata = [t["school:level"], t["isced:level"], t.school, t.amenity, t.education, t.operator, t["name:ar"], t["name:fr"]].filter(Boolean).join(" ");
+    const all = `${name} ${metadata}`;
+    if (!name || isClearlyNotSecondary(normalize(all))) return false;
+    return /lyc[eé]e|high\s*school|secondary\s*school|upper.?secondary|ثانوية|معهد\s*ثانوي|المعهد\s*الثانوي/i.test(all) ||
+      /secondary/i.test(String(t["school:level"] || "")) || /upper.?secondary/i.test(String(t["isced:level"] || ""));
   };
-  const shortName = raw => String(raw || "").trim()
-    .replace(/^\\s*(?:ثانوية|lycée(?:\\s+secondaire)?|lycee(?:\\s+secondaire)?|secondary school|high school)\\s*[:–—-]?\\s*/i, "")
-    .replace(/^\\s*(?:lyc[eé]e)\\s+/i, "")
-    .trim() || String(raw || "").trim();
-
+  const shortName = raw => {
+    const original = String(raw || "").trim();
+    return original.replace(/^\s*(?:الثانوية|ثانوية|معهد\s*ثانوي|المعهد\s*الثانوي|lycée\s+secondaire|lycee\s+secondaire|lycée|lycee|secondary\s+school|high\s+school)\s*[:–—-]?\s*/i, "").trim() || original;
+  };
+  const distanceMeters = (a, b) => {
+    const dy = (a.lat - b.lat) * 111320;
+    const dx = (a.lon - b.lon) * 111320 * Math.cos(b.lat * Math.PI / 180);
+    return Math.hypot(dx, dy);
+  };
   detectButton.addEventListener("click", () => {
-    if (!navigator.geolocation) {
-      setStatus("المتصفح هذا ما يدعمش تحديد الموقع. اكتب اسم الثانوية يدويّاً.", true);
-      return;
-    }
+    if (!navigator.geolocation) { setStatus("المتصفح هذا ما يدعمش تحديد الموقع. اكتب اسم الثانوية يدويّاً.", true); return; }
     detectButton.disabled = true;
+    const originalText = detectButton.textContent;
     detectButton.textContent = "جاري التحديد…";
-    setStatus("اسمح للموقع باستعمال موقعك باش نلقاو أقرب ثانوية في صفاقس.");
+    setStatus("جاري البحث على الثانويات العمومية والخاصة في ولاية صفاقس…");
     navigator.geolocation.getCurrentPosition(async position => {
       try {
-        const { latitude, longitude } = position.coords;
-        if (!inSfaxBounds(latitude, longitude)) {
-          setStatus("التحديد هذا يخدم كان في صفاقس. تنجم تكتب اسم الثانوية وحدك.", true);
-          return;
+        const student = { lat: position.coords.latitude, lon: position.coords.longitude };
+        // Use the Sfax Governorate administrative area, not a radius around the student.
+        const query = `[out:json][timeout:60];(relation["boundary"="administrative"]["name"~"^(Sfax|صفاقس)$"]["admin_level"~"^[45]$"];relation["boundary"="administrative"]["name:ar"="صفاقس"]["admin_level"~"^[45]$"];)->.sfaxRelations;.sfaxRelations map_to_area -> .sfaxArea;(nwr(area.sfaxArea)["name"~"lycée|lycee|ثانوية|معهد ثانوي|المعهد الثانوي|secondary school|high school",i];nwr(area.sfaxArea)["name:ar"~"ثانوية|معهد ثانوي|المعهد الثانوي",i];nwr(area.sfaxArea)["school:level"~"secondary|lycée|lycee",i];nwr(area.sfaxArea)["isced:level"~"3",i];);out center tags;`;
+        const endpoints = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+        let data = null, lastError = null;
+        for (const endpoint of endpoints) {
+          try {
+            const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" }, body: query });
+            if (!response.ok) throw new Error(`Overpass ${response.status}`);
+            data = await response.json(); break;
+          } catch (error) { lastError = error; }
         }
-        // Fetch the full Sfax-area school catalogue once per detection, then rank every
-        // mapped secondary-school candidate by distance from the student's GPS position.
-        // Searching the whole Sfax bounding box avoids missing a nearby lycée just because
-        // its OSM tags are incomplete or the initial radius was too small.
-        const bounds = "(34.65,10.65,34.85,10.85)";
-        const schoolCatalogueQuery = `[out:json][timeout:35];(nwr${bounds}["amenity"="school"]["name"];nwr${bounds}["education"="school"]["name"];nwr${bounds}["school:level"]["name"];nwr${bounds}["isced:level"]["name"];nwr${bounds}["name"~"lycée|lycee|ثانوية|معهد ثانوي|المعهد الثانوي|secondary school|high school",i];);out center tags;`;
-        const lookup = async query => {
-          const response = await fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" }, body: query });
-          if (!response.ok) throw new Error("school_lookup");
-          return response.json();
-        };
-        const data = await lookup(schoolCatalogueQuery);
+        if (!data) throw lastError || new Error("school_lookup");
         const candidates = (data.elements || []).filter(isSecondaryLycee).map(item => {
-          const tags = item.tags || {};
-          return { name: tags.name, lat: item.lat ?? item.center?.lat, lon: item.lon ?? item.center?.lon };
-        }).filter(item => item.name && Number.isFinite(item.lat) && Number.isFinite(item.lon) && inSfaxBounds(item.lat, item.lon));
-        const unique = [...new Map(candidates.map(item => [item.name.trim().toLocaleLowerCase(), item])).values()];
-        unique.sort((a, b) => {
-          const distance = item => Math.hypot((item.lat - latitude) * 111320, (item.lon - longitude) * 111320 * Math.cos(latitude * Math.PI / 180));
-          return distance(a) - distance(b);
-        });
-        if (!unique.length) {
-          setStatus("ما لقيناش اسم ثانوية واضح في بيانات الخريطة. جرّب مرّة أخرى، أو اختار أقرب ثانوية من القائمة/اكتب اسمها.", true);
-          return;
-        }
+          const t = item.tags || {};
+          return { name: t["name:ar"] || t.name || t["name:fr"], lat: item.lat ?? item.center?.lat, lon: item.lon ?? item.center?.lon };
+        }).filter(x => x.name && Number.isFinite(x.lat) && Number.isFinite(x.lon));
+        const unique = [...new Map(candidates.map(x => [normalize(x.name).trim(), x])).values()];
+        if (!unique.length) { setStatus("بيانات الخريطة ما رجّعتش قائمة ثانويات صفاقس. عاود جرّب بعد شوية ولا اكتب الاسم يدويّاً.", true); return; }
+        unique.sort((a,b) => distanceMeters(a, student) - distanceMeters(b, student));
         const chosen = shortName(unique[0].name);
         schoolInput.value = chosen;
         schoolInput.dispatchEvent(new Event("input", { bubbles: true }));
         schoolInput.dispatchEvent(new Event("change", { bubbles: true }));
         schoolInput.title = chosen;
-        setStatus(`اقترحنا أقرب ثانوية: ${chosen}. تثبّت من الاسم قبل التسجيل.`);
+        setStatus(`أقرب ثانوية حسب البيانات المتوفّرة: ${chosen} (حوالي ${(distanceMeters(unique[0], student)/1000).toFixed(1)} كم). تثبّت من الاسم قبل التسجيل.`);
       } catch (_) {
-        setStatus("تعذّر البحث على الثانوية توّة. جرّب بعد شوية ولا اكتب الاسم يدويّاً.", true);
-      } finally {
-        detectButton.disabled = false;
-        detectButton.textContent = "حدّد الليسي";
-      }
+        setStatus("تعذّر تحميل قائمة ثانويات صفاقس توّة. عاود جرّب بعد شوية ولا اكتب الاسم يدويّاً.", true);
+      } finally { detectButton.disabled = false; detectButton.textContent = originalText || "حدّد الليسي"; }
     }, error => {
       setStatus(error.code === 1 ? "ما سمحتش باستعمال الموقع. تنجم تكتب اسم الثانوية يدويّاً." : "ما نجّمش نحدّد موقعك توّة. جرّب مرّة أخرى ولا اكتب الاسم.", true);
-      detectButton.disabled = false;
-      detectButton.textContent = "حدّد الليسي";
-    }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 });
+      detectButton.disabled = false; detectButton.textContent = originalText || "حدّد الليسي";
+    }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 300000 });
   });
 })();
