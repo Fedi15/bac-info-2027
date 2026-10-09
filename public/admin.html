@@ -19,7 +19,12 @@
     .stat-label{font-size:12px;color:#aaa;margin-bottom:8px}
     .stat-value{font-size:30px;font-weight:700;color:#c7a66a;line-height:1.1}
     @media (max-width:700px){.stats{grid-template-columns:1fr}}
-    .status{margin:16px 0;color:#aaa}
+    .status{margin:16px 0;color:#aaa;line-height:1.6}
+    .toolbar{margin:18px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    #searchName{flex:1;min-width:220px}
+    .danger{border-color:#b84a4a;color:#ffb8b8;background:#241313;padding:7px 10px}
+    .secondary{border-color:#555;color:#ccc}
+    .delete-cell{white-space:nowrap}
     .table-wrap{overflow:auto;border:1px solid #333}
     table{border-collapse:collapse;width:100%;min-width:1000px}
     th,td{padding:10px;border-bottom:1px solid #29292a;text-align:left;font-size:13px;vertical-align:top}
@@ -37,10 +42,14 @@
   </div>
 
   <div class="top">
-    <input id="token" type="password" placeholder="ADMIN_TOKEN">
-    <button id="load" type="button">Load requests</button>
+    <input id="token" type="password" placeholder="ADMIN_TOKEN" autocomplete="current-password">
+    <button id="load" type="button">حمّل الطلبات</button>
+    <button id="forgetToken" class="secondary" type="button">انسى المفتاح</button>
   </div>
 
+  <div class="toolbar">
+    <input id="searchName" type="search" placeholder="فتّش باسم التلميذ…" autocomplete="off" aria-label="Search students by name">
+  </div>
 
   <div class="stats">
     <div class="stat"><div class="stat-label" id="sVisitorsLabel">Unique visitors</div><div class="stat-value" id="visitorCount">—</div></div>
@@ -63,6 +72,7 @@
           <th id="hCity">City</th>
           <th id="hLocation">Location</th>
           <th id="hSource">Source</th>
+          <th id="hActions">إجراءات</th>
         </tr>
       </thead>
       <tbody id="rows"></tbody>
@@ -73,54 +83,47 @@
 <script>
 const token = document.getElementById("token");
 const load = document.getElementById("load");
+const forgetToken = document.getElementById("forgetToken");
+const searchName = document.getElementById("searchName");
 const status = document.getElementById("status");
 const rows = document.getElementById("rows");
 const visitorCount = document.getElementById("visitorCount");
 const todayVisitorCount = document.getElementById("todayVisitorCount");
 const requestCount = document.getElementById("requestCount");
+const TOKEN_STORAGE_KEY = "torbaga_admin_token";
+let allLeads = [];
+let lastStats = null;
 
 const translations = {
   tn: {
-    dir: "rtl",
-    title: "طلبات التلامذة",
-    load: "حمّل الطلبات",
-    loading: "جاري التحميل…",
-    date: "التاريخ",
-    name: "الإسم",
-    phone: "التليفون",
-    email: "الإيميل",
-    level: "المستوى / الشعبة",
-    school: "الليسي / المؤسسة",
-    city: "المدينة",
-    location: "بلاصة الـséance",
-    source: "المصدر",
-    requests: n => `${n} طلب`,
-    unable: "ما نجّمش نحمّلو الطلبات.",
-    requestFailed: "الطلب فشل",
-    visitors: "الزوار المختلفين",
-    todayVisitors: "زوار اليوم",
-    studentRequests: "طلبات التلامذة"
+    dir: "rtl", title: "طلبات التلامذة", load: "حمّل الطلبات", loading: "جاري التحميل…",
+    date: "التاريخ", name: "الإسم", phone: "التليفون", email: "الإيميل",
+    level: "المستوى / الشعبة", school: "الليسي / المؤسسة", city: "المدينة",
+    location: "بلاصة الـséance", source: "المصدر", actions: "إجراءات",
+    search: "فتّش باسم التلميذ…", requests: n => `${n} طلب`,
+    shown: (shown, total) => `ظاهر ${shown} من ${total} طلب`,
+    unable: "ما نجّمش نحمّلو الطلبات.", requestFailed: "الطلب فشل",
+    visitors: "الزوار المختلفين", todayVisitors: "زوار اليوم", studentRequests: "طلبات التلامذة",
+    delete: "فسخ", confirmDelete: name => `متأكد اللي تحب تفسخ طلب ${name}؟ ما تنجمش ترجعو بعد.`,
+    deleted: "تم فسخ الطلب.", deleteFailed: "ما نجّمش نفسخو الطلب.",
+    noResults: "ما لقيناش تلميذ بالاسم هذا.", forgot: "تم مسح المفتاح المحفوظ. يلزمك تدخل المفتاح من جديد.",
+    saved: "تم حفظ المفتاح على الجهاز هذا باش ما تعاودش تدخلو المرة الجاية.",
+    unauthorized: "المفتاح موش صحيح أو انتهت صلاحيته. عاود أدخلو."
   }
 };
-
+const t = translations.tn;
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  "'":"&#39;",
-  '"':"&quot;"
+  "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;"
 }[c]));
 
-let currentLang = "tn";
-
 function applyLanguage() {
-  currentLang = "tn";
-  const t = translations.tn;
   document.documentElement.lang = "ar-TN";
   document.documentElement.dir = t.dir;
-
   document.getElementById("pageTitle").textContent = t.title;
   load.textContent = t.load;
+  forgetToken.textContent = "انسى المفتاح";
+  searchName.placeholder = t.search;
+  searchName.setAttribute("aria-label", t.search);
   document.getElementById("hDate").textContent = t.date;
   document.getElementById("hName").textContent = t.name;
   document.getElementById("hPhone").textContent = t.phone;
@@ -130,65 +133,111 @@ function applyLanguage() {
   document.getElementById("hCity").textContent = t.city;
   document.getElementById("hLocation").textContent = t.location;
   document.getElementById("hSource").textContent = t.source;
+  document.getElementById("hActions").textContent = t.actions;
   document.getElementById("sVisitorsLabel").textContent = t.visitors;
   document.getElementById("sTodayLabel").textContent = t.todayVisitors;
   document.getElementById("sRequestsLabel").textContent = t.studentRequests;
 }
 
-load.addEventListener("click", async () => {
-  const t = translations.tn;
+function renderLeads() {
+  const query = searchName.value.trim().toLocaleLowerCase();
+  const filtered = allLeads.filter(lead => String(lead.full_name || "").toLocaleLowerCase().includes(query));
+  rows.innerHTML = filtered.map(x => `
+    <tr>
+      <td>${esc(x.created_at)}</td>
+      <td>${esc(x.full_name)}</td>
+      <td>${esc(x.phone)}</td>
+      <td>${esc(x.email)}</td>
+      <td>${esc(x.level)}</td>
+      <td>${esc(x.school)}</td>
+      <td>${esc(x.city)}</td>
+      <td>${esc(x.lesson_location)}</td>
+      <td>${esc(x.source)}</td>
+      <td class="delete-cell"><button type="button" class="danger" data-delete-id="${esc(x.id)}" data-delete-name="${esc(x.full_name)}">${t.delete}</button></td>
+    </tr>
+  `).join("");
+  if (filtered.length === 0 && allLeads.length > 0) status.textContent = t.noResults;
+  else status.textContent = query ? t.shown(filtered.length, allLeads.length) : t.requests(allLeads.length);
+}
 
+async function loadRequests() {
+  if (!token.value.trim()) {
+    status.textContent = "دخل ADMIN_TOKEN باش تفتح الطلبات.";
+    token.focus();
+    return;
+  }
   status.textContent = t.loading;
   rows.innerHTML = "";
-  visitorCount.textContent = "—";
-  todayVisitorCount.textContent = "—";
-  requestCount.textContent = "—";
-
   try {
-    const headers = {
-      Authorization: `Bearer ${token.value}`
-    };
-
+    const headers = { Authorization: `Bearer ${token.value.trim()}` };
     const [leadsResponse, statsResponse] = await Promise.all([
       fetch("/api/leads", { headers }),
       fetch("/api/stats", { headers })
     ]);
-
     const leadsData = await leadsResponse.json();
     const statsData = await statsResponse.json();
-
     if (!leadsResponse.ok) {
-      throw new Error(leadsData.error || t.requestFailed);
+      if (leadsResponse.status === 401) localStorage.removeItem(TOKEN_STORAGE_KEY);
+      throw new Error(leadsResponse.status === 401 ? t.unauthorized : (leadsData.error || t.requestFailed));
     }
+    if (!statsResponse.ok) throw new Error(statsData.error || t.requestFailed);
 
-    if (!statsResponse.ok) {
-      throw new Error(statsData.error || t.requestFailed);
-    }
-
-    rows.innerHTML = leadsData.leads.map(x => `
-      <tr>
-        <td>${esc(x.created_at)}</td>
-        <td>${esc(x.full_name)}</td>
-        <td>${esc(x.phone)}</td>
-        <td>${esc(x.email)}</td>
-        <td>${esc(x.level)}</td>
-        <td>${esc(x.school)}</td>
-        <td>${esc(x.city)}</td>
-        <td>${esc(x.lesson_location)}</td>
-        <td>${esc(x.source)}</td>
-      </tr>
-    `).join("");
-
+    // Remember the key only after the server accepts it.
+    localStorage.setItem(TOKEN_STORAGE_KEY, token.value.trim());
+    allLeads = Array.isArray(leadsData.leads) ? leadsData.leads : [];
+    lastStats = statsData;
     visitorCount.textContent = Number(statsData.unique_visitors || 0).toLocaleString();
     todayVisitorCount.textContent = Number(statsData.today_visitors || 0).toLocaleString();
-    requestCount.textContent = Number(leadsData.leads.length || 0).toLocaleString();
-    status.textContent = t.requests(leadsData.leads.length);
+    requestCount.textContent = Number(allLeads.length).toLocaleString();
+    renderLeads();
   } catch (e) {
     status.textContent = e.message || t.unable;
   }
+}
+
+load.addEventListener("click", loadRequests);
+token.addEventListener("keydown", event => { if (event.key === "Enter") loadRequests(); });
+searchName.addEventListener("input", renderLeads);
+forgetToken.addEventListener("click", () => {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+  token.value = "";
+  status.textContent = t.forgot;
 });
 
-applyLanguage(currentLang);
+rows.addEventListener("click", async event => {
+  const button = event.target.closest("button[data-delete-id]");
+  if (!button) return;
+  const id = button.dataset.deleteId;
+  const name = button.dataset.deleteName || "هذا التلميذ";
+  if (!id || !confirm(t.confirmDelete(name))) return;
+
+  button.disabled = true;
+  button.textContent = "...";
+  try {
+    const response = await fetch(`/api/leads?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token.value.trim()}` }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || t.deleteFailed);
+    allLeads = allLeads.filter(lead => String(lead.id) !== String(id));
+    requestCount.textContent = Number(allLeads.length).toLocaleString();
+    if (lastStats) lastStats.student_requests = allLeads.length;
+    renderLeads();
+    status.textContent = t.deleted + " " + (searchName.value.trim() ? t.shown(allLeads.filter(lead => String(lead.full_name || "").toLocaleLowerCase().includes(searchName.value.trim().toLocaleLowerCase())).length, allLeads.length) : t.requests(allLeads.length));
+  } catch (e) {
+    status.textContent = e.message || t.deleteFailed;
+    button.disabled = false;
+    button.textContent = t.delete;
+  }
+});
+
+applyLanguage();
+const savedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+if (savedToken) {
+  token.value = savedToken;
+  loadRequests();
+}
 </script>
 </body>
 </html>
