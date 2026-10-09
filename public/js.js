@@ -310,3 +310,81 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
   requestMotion();
   updateChapter();
 })();
+
+
+// Optional lycée auto-detection: use GPS only to suggest a named school in Sfax.
+// Coordinates are checked against a broad Sfax city bounding box; they are not stored.
+(() => {
+  const schoolInput = document.getElementById("school");
+  const detectButton = document.getElementById("detectSchool");
+  const detectStatus = document.getElementById("schoolDetectStatus");
+  if (!schoolInput || !detectButton || !detectStatus) return;
+
+  const inSfaxBounds = (lat, lon) => lat >= 34.65 && lat <= 34.85 && lon >= 10.65 && lon <= 10.85;
+  const setStatus = (message, isError = false) => {
+    detectStatus.textContent = message;
+    detectStatus.style.color = isError ? "#ff9c9c" : "";
+  };
+
+  detectButton.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      setStatus("المتصفح هذا ما يدعمش تحديد الموقع. اكتب اسم الليسي يدويّاً.", true);
+      return;
+    }
+    detectButton.disabled = true;
+    detectButton.textContent = "جاري التحديد…";
+    setStatus("اسمح للموقع باستعمال موقعك باش نلقاو أقرب ليسي في صفاقس.");
+    navigator.geolocation.getCurrentPosition(async position => {
+      try {
+        const { latitude, longitude } = position.coords;
+        if (!inSfaxBounds(latitude, longitude)) {
+          setStatus("التحديد هذا يخدم كان في صفاقس. تنجم تكتب اسم الليسي وحدك.", true);
+          return;
+        }
+        const query = `[out:json][timeout:20];(nwr(around:6500,${latitude},${longitude})["amenity"="school"]["name"](34.65,10.65,34.85,10.85);nwr(around:6500,${latitude},${longitude})["school"="secondary"]["name"](34.65,10.65,34.85,10.85););out center tags;`;
+        const response = await fetch("https://overpass-api.de/api/interpreter", {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body: query
+        });
+        if (!response.ok) throw new Error("school_lookup");
+        const data = await response.json();
+        const candidates = (data.elements || []).map(item => {
+          const tags = item.tags || {};
+          const lat = item.lat ?? item.center?.lat;
+          const lon = item.lon ?? item.center?.lon;
+          return { name: tags.name, lat, lon, tags };
+        }).filter(item => item.name && Number.isFinite(item.lat) && Number.isFinite(item.lon) && inSfaxBounds(item.lat, item.lon));
+        const unique = [...new Map(candidates.map(item => [item.name.trim(), item])).values()];
+        unique.sort((a, b) => {
+          const distance = item => {
+            const dLat = (item.lat - latitude) * 111320;
+            const dLon = (item.lon - longitude) * 111320 * Math.cos(latitude * Math.PI / 180);
+            return Math.hypot(dLat, dLon);
+          };
+          return distance(a) - distance(b);
+        });
+        if (!unique.length) {
+          setStatus("ما لقيناش ليسي قريب في القائمة. اكتب الاسم يدويّاً.", true);
+          return;
+        }
+        schoolInput.value = unique[0].name;
+        schoolInput.dispatchEvent(new Event("input", { bubbles: true }));
+        schoolInput.dispatchEvent(new Event("change", { bubbles: true }));
+        setStatus(`اقترحنا أقرب مؤسسة: ${unique[0].name}. تثبّت من الاسم قبل التسجيل.`);
+      } catch (_) {
+        setStatus("تعذّر البحث على الليسي توّة. جرّب بعد شوية ولا اكتب الاسم يدويّاً.", true);
+      } finally {
+        detectButton.disabled = false;
+        detectButton.textContent = "حدّد الليسي";
+      }
+    }, error => {
+      const message = error.code === 1
+        ? "ما سمحتش باستعمال الموقع. تنجم تكتب اسم الليسي يدويّاً."
+        : "ما نجّمش نحدّد موقعك توّة. جرّب مرّة أخرى ولا اكتب الاسم.";
+      setStatus(message, true);
+      detectButton.disabled = false;
+      detectButton.textContent = "حدّد الليسي";
+    }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 });
+  });
+})();

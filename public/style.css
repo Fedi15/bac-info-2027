@@ -197,3 +197,13 @@ body::after{
 @media (prefers-reduced-motion:reduce){
   .bac-card,.section-head h2,.section-kicker,.section-index,.section-intro,.bac-card h3,.bac-card p,.bac-no,.location-strip strong,.location-strip span,.form-card h2,.form-card h3,.form-card label,.form-note,.bottom-cta p,.bottom-cta h2,.bottom-cta a{transition:none!important;transform:none!important}
 }
+
+/* Sfax lycée location helper */
+.school-input-row{display:flex;align-items:stretch;gap:8px}
+.school-input-row #school{flex:1;min-width:0}
+.detect-school-btn{flex:0 0 auto;min-height:51px;padding:0 13px;border:1px solid var(--lime);border-radius:10px;background:rgba(184,223,44,.09);color:var(--lime);font:inherit;font-size:11px;font-weight:900;white-space:nowrap;transition:background .2s,border-color .2s}
+.detect-school-btn:hover{background:rgba(184,223,44,.16)}
+.detect-school-btn:disabled{opacity:.55;cursor:wait}
+.school-detect-status{margin:7px 0 0;color:#a8a9b2;font-size:11px;line-height:1.6}
+.school-detect-status:empty{display:none}
+@media(max-width:480px){.school-input-row{gap:6px}.detect-school-btn{padding:0 9px;font-size:10px}}
