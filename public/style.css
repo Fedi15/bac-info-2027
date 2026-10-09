@@ -198,12 +198,15 @@ body::after{
   .bac-card,.section-head h2,.section-kicker,.section-index,.section-intro,.bac-card h3,.bac-card p,.bac-no,.location-strip strong,.location-strip span,.form-card h2,.form-card h3,.form-card label,.form-note,.bottom-cta p,.bottom-cta h2,.bottom-cta a{transition:none!important;transform:none!important}
 }
 
-/* Sfax lycée location helper */
-.school-input-row{display:flex;align-items:stretch;gap:8px}
-.school-input-row #school{flex:1;min-width:0}
-.detect-school-btn{flex:0 0 auto;min-height:51px;padding:0 13px;border:1px solid var(--lime);border-radius:10px;background:rgba(184,223,44,.09);color:var(--lime);font:inherit;font-size:11px;font-weight:900;white-space:nowrap;transition:background .2s,border-color .2s}
-.detect-school-btn:hover{background:rgba(184,223,44,.16)}
-.detect-school-btn:disabled{opacity:.55;cursor:wait}
-.school-detect-status{margin:7px 0 0;color:#a8a9b2;font-size:11px;line-height:1.6}
-.school-detect-status:empty{display:none}
-@media(max-width:480px){.school-input-row{gap:6px}.detect-school-btn{padding:0 9px;font-size:10px}}
+
+/* Lycée field: compact action button, no native datalist arrow overlay, responsive width. */
+.school-location-row{grid-template-columns:minmax(0,1fr) minmax(125px,.42fr);align-items:start;gap:14px}
+.school-field{min-width:0;width:100%}
+.school-input-row{display:flex;align-items:stretch;gap:8px;width:100%;min-width:0}
+.school-input-row input{flex:1 1 auto;min-width:0;width:100%;font-size:clamp(12px,1.15vw,15px);text-overflow:ellipsis}
+.detect-school-btn{flex:0 0 auto;min-width:100px;padding:0 11px;border:1px solid var(--lime);border-radius:10px;background:rgba(184,223,44,.1);color:var(--lime);font-size:11px;font-weight:900;white-space:nowrap;cursor:pointer;transition:.2s}
+.detect-school-btn:hover{background:var(--lime);color:var(--navy)}
+.detect-school-btn:disabled{opacity:.6;cursor:wait}
+.school-detect-status{margin:7px 0 0;color:#aaa;font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+.school-detect-status.is-error{color:#ff9c9c}
+@media(max-width:600px){.school-location-row{grid-template-columns:minmax(0,1fr)}.school-input-row{gap:6px}.detect-school-btn{min-width:92px;padding:0 8px;font-size:10px}.school-input-row input{font-size:12px}}

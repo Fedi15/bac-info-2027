@@ -312,8 +312,7 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
 })();
 
 
-// Optional lycée auto-detection: use GPS only to suggest a named school in Sfax.
-// Coordinates are checked against a broad Sfax city bounding box; they are not stored.
+// Sfax lycée detection: only accept secondary schools, then shorten the displayed name.
 (() => {
   const schoolInput = document.getElementById("school");
   const detectButton = document.getElementById("detectSchool");
@@ -323,66 +322,69 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
   const inSfaxBounds = (lat, lon) => lat >= 34.65 && lat <= 34.85 && lon >= 10.65 && lon <= 10.85;
   const setStatus = (message, isError = false) => {
     detectStatus.textContent = message;
-    detectStatus.style.color = isError ? "#ff9c9c" : "";
+    detectStatus.classList.toggle("is-error", isError);
   };
+  const isSecondaryLycee = item => {
+    const t = item.tags || {};
+    const name = String(t.name || "").trim();
+    // Reject primary schools, colleges and generic school POIs.
+    const secondaryTag = [t["school:level"], t["isced:level"], t.school, t.amenity, t.education].filter(Boolean).join(" ").toLowerCase();
+    const nameLooksSecondary = /(^|[\\s-])(lycée|lycee|lyc[eé]e|ثانوية|lycée secondaire|secondary school|high school)([\\s-]|$)/i.test(name);
+    const taggedSecondary = /secondary|lyc[eé]e|ثانوية|upper.?secondary/i.test(secondaryTag);
+    const clearlyPrimary = /primary|elementary|préparatoire|preparatory|coll[eè]ge|إعدادية|مدرسة ابتدائية/i.test([name, secondaryTag].join(" "));
+    return name && !clearlyPrimary && (nameLooksSecondary || taggedSecondary);
+  };
+  const shortName = raw => String(raw || "").trim()
+    .replace(/^\\s*(?:ثانوية|lycée(?:\\s+secondaire)?|lycee(?:\\s+secondaire)?|secondary school|high school)\\s*[:–—-]?\\s*/i, "")
+    .replace(/^\\s*(?:lyc[eé]e)\\s+/i, "")
+    .trim() || String(raw || "").trim();
 
   detectButton.addEventListener("click", () => {
     if (!navigator.geolocation) {
-      setStatus("المتصفح هذا ما يدعمش تحديد الموقع. اكتب اسم الليسي يدويّاً.", true);
+      setStatus("المتصفح هذا ما يدعمش تحديد الموقع. اكتب اسم الثانوية يدويّاً.", true);
       return;
     }
     detectButton.disabled = true;
     detectButton.textContent = "جاري التحديد…";
-    setStatus("اسمح للموقع باستعمال موقعك باش نلقاو أقرب ليسي في صفاقس.");
+    setStatus("اسمح للموقع باستعمال موقعك باش نلقاو أقرب ثانوية في صفاقس.");
     navigator.geolocation.getCurrentPosition(async position => {
       try {
         const { latitude, longitude } = position.coords;
         if (!inSfaxBounds(latitude, longitude)) {
-          setStatus("التحديد هذا يخدم كان في صفاقس. تنجم تكتب اسم الليسي وحدك.", true);
+          setStatus("التحديد هذا يخدم كان في صفاقس. تنجم تكتب اسم الثانوية وحدك.", true);
           return;
         }
-        const query = `[out:json][timeout:20];(nwr(around:6500,${latitude},${longitude})["amenity"="school"]["name"](34.65,10.65,34.85,10.85);nwr(around:6500,${latitude},${longitude})["school"="secondary"]["name"](34.65,10.65,34.85,10.85););out center tags;`;
-        const response = await fetch("https://overpass-api.de/api/interpreter", {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=UTF-8" },
-          body: query
-        });
+        const query = `[out:json][timeout:20];(nwr(around:7000,${latitude},${longitude})["name"]["school:level"~"secondary|upper secondary",i](34.65,10.65,34.85,10.85);nwr(around:7000,${latitude},${longitude})["name"]["isced:level"~"2|3",i](34.65,10.65,34.85,10.85);nwr(around:7000,${latitude},${longitude})["name"~"lycée|lycee|ثانوية|secondary school|high school",i](34.65,10.65,34.85,10.85););out center tags;`;
+        const response = await fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" }, body: query });
         if (!response.ok) throw new Error("school_lookup");
         const data = await response.json();
-        const candidates = (data.elements || []).map(item => {
+        const candidates = (data.elements || []).filter(isSecondaryLycee).map(item => {
           const tags = item.tags || {};
-          const lat = item.lat ?? item.center?.lat;
-          const lon = item.lon ?? item.center?.lon;
-          return { name: tags.name, lat, lon, tags };
+          return { name: tags.name, lat: item.lat ?? item.center?.lat, lon: item.lon ?? item.center?.lon };
         }).filter(item => item.name && Number.isFinite(item.lat) && Number.isFinite(item.lon) && inSfaxBounds(item.lat, item.lon));
-        const unique = [...new Map(candidates.map(item => [item.name.trim(), item])).values()];
+        const unique = [...new Map(candidates.map(item => [item.name.trim().toLocaleLowerCase(), item])).values()];
         unique.sort((a, b) => {
-          const distance = item => {
-            const dLat = (item.lat - latitude) * 111320;
-            const dLon = (item.lon - longitude) * 111320 * Math.cos(latitude * Math.PI / 180);
-            return Math.hypot(dLat, dLon);
-          };
+          const distance = item => Math.hypot((item.lat - latitude) * 111320, (item.lon - longitude) * 111320 * Math.cos(latitude * Math.PI / 180));
           return distance(a) - distance(b);
         });
         if (!unique.length) {
-          setStatus("ما لقيناش ليسي قريب في القائمة. اكتب الاسم يدويّاً.", true);
+          setStatus("ما لقيناش ثانوية قريبة مؤكّدة في القائمة. اكتب الاسم يدويّاً.", true);
           return;
         }
-        schoolInput.value = unique[0].name;
+        const chosen = shortName(unique[0].name);
+        schoolInput.value = chosen;
         schoolInput.dispatchEvent(new Event("input", { bubbles: true }));
         schoolInput.dispatchEvent(new Event("change", { bubbles: true }));
-        setStatus(`اقترحنا أقرب مؤسسة: ${unique[0].name}. تثبّت من الاسم قبل التسجيل.`);
+        schoolInput.title = chosen;
+        setStatus(`اقترحنا أقرب ثانوية: ${chosen}. تثبّت من الاسم قبل التسجيل.`);
       } catch (_) {
-        setStatus("تعذّر البحث على الليسي توّة. جرّب بعد شوية ولا اكتب الاسم يدويّاً.", true);
+        setStatus("تعذّر البحث على الثانوية توّة. جرّب بعد شوية ولا اكتب الاسم يدويّاً.", true);
       } finally {
         detectButton.disabled = false;
         detectButton.textContent = "حدّد الليسي";
       }
     }, error => {
-      const message = error.code === 1
-        ? "ما سمحتش باستعمال الموقع. تنجم تكتب اسم الليسي يدويّاً."
-        : "ما نجّمش نحدّد موقعك توّة. جرّب مرّة أخرى ولا اكتب الاسم.";
-      setStatus(message, true);
+      setStatus(error.code === 1 ? "ما سمحتش باستعمال الموقع. تنجم تكتب اسم الثانوية يدويّاً." : "ما نجّمش نحدّد موقعك توّة. جرّب مرّة أخرى ولا اكتب الاسم.", true);
       detectButton.disabled = false;
       detectButton.textContent = "حدّد الليسي";
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 });
