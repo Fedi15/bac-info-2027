@@ -1,11 +1,11 @@
-Torbaga Sfax lycée detection fix
+TORBAGA lycée detection filter fix
 
-Changed files only:
-- public/js.js: recognizes Tunisian public lycées commonly named "معهد ..." when OpenStreetMap tags them as a school, while excluding obvious primary schools, collèges and vocational training centres.
-- src/worker.js: makes the Sfax administrative-area lookup less dependent on an exact relation name/admin level, queries school objects inside that area, and does not cache empty Overpass responses.
+Replace public/js.js with the file in this package, then deploy the site assets.
+This loosens the Tunisian institute matching rule to include entries tagged as
+amenity=school, building=school, or with education/school-level metadata, while
+continuing to reject clearly primary, preparatory, college, university, and
+vocational entries.
 
-Install by extracting these files over the matching files in your project, then run:
-  npx wrangler deploy
-
-Checks performed: Node.js syntax checks for public/js.js and src/worker.js.
-Not performed: live Overpass request or end-to-end GPS test. Results still depend on the map data and whether Overpass can resolve the Sfax administrative boundary.
+This patch changes only the browser-side filter. The Worker endpoint /api/sfax-lycees
+must also be deployed and return school elements. If the endpoint itself returns
+an empty list or 503, this change alone cannot create missing map data.

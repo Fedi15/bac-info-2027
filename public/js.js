@@ -19,9 +19,12 @@ function isSecondaryLycee(tags={}){
   const level=String([tags['school:level'],tags['isced:level'],tags['education'],tags['school:type']].filter(Boolean).join(' ')).toLocaleLowerCase();
   if(/ابتدائي|مدرسة ابتدائية|école primaire|ecole primaire|primary school|collège|college|إعدادية|اعدادية|مدرسة إعدادية|مدرسة اعدادية|kindergarten|روضة|جامعة|university|faculté|faculte|formation professionnelle|vocational|مركز تكوين|تكوين مهني/i.test(name))return false;
   const explicitSecondary=/ثانوية|معهد ثانوي|المعهد الثانوي|lycée|lycee|high school|secondary school/i.test(name)||/secondary|upper secondary|isced.?3|lycée|lycee/.test(level);
-  // In Tunisia, many public lycées are named "معهد ..." without the literal
-  // word "ثانوية". Accept those when the map explicitly marks them as schools.
-  const tunisianInstitute=/(^|\s)(معهد|المعهد)(\s|$)/i.test(name)&&tags.amenity==='school';
+  // Many Tunisian lycées are mapped simply as "معهد [name]". OSM may tag
+  // them with amenity=school, building=school, or education/school-level tags.
+  const schoolFeature=tags.amenity==='school'||tags.building==='school'||Boolean(tags['school:level']||tags['isced:level']||tags.education||tags.school);
+  const tunisianInstitute=/(^|\s)(معهد|المعهد)(\s|$)/i.test(name)&&schoolFeature;
+  // Some map entries omit the school feature tag entirely but use an unambiguous
+  // lycée/secondary name; retain those too.
   return explicitSecondary||tunisianInstitute;
 }
 function getElementCoords(el){if(Number.isFinite(el.lat)&&Number.isFinite(el.lon))return {lat:el.lat,lon:el.lon};if(Number.isFinite(el.center?.lat)&&Number.isFinite(el.center?.lon))return {lat:el.center.lat,lon:el.center.lon};return null}
