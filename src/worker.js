@@ -87,9 +87,20 @@ async function getSfaxLycees(request, env) {
   }
 
   const cache = caches.default;
-  const cacheKey = new Request(new URL("/api/sfax-lycees", request.url).toString(), { method: "GET" });
+  // Version the cache key so a previously cached empty Overpass response cannot
+  // survive a code deployment. Also validate cached JSON before serving it.
+  const cacheKey = new Request(new URL("/api/sfax-lycees?catalogue=v3", request.url).toString(), { method: "GET" });
   const cached = await cache.match(cacheKey);
-  if (cached) return cached;
+  if (cached) {
+    try {
+      const cachedPayload = await cached.clone().json();
+      if (Array.isArray(cachedPayload.elements) && cachedPayload.elements.length > 0) {
+        return cached;
+      }
+    } catch (_) {
+      // Ignore invalid/stale cache entries and query Overpass again.
+    }
+  }
 
   // Search name variants observed in Tunisian OSM data. Keep school-tagged
   // objects too, since some actual schools do not have a lycée in their name.
