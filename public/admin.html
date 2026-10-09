@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="ar-TN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Private Tutoring — Leads</title>
-  <style>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Private Tutoring — Leads</title>
+    <style>
     body{font-family:Arial,sans-serif;background:#0b0b0c;color:#eee;margin:0;padding:30px}
     .wrap{max-width:1200px;margin:auto}
     .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -13,7 +13,7 @@
     button{cursor:pointer;border-color:#c7a66a}
     .language button{border-color:#444}
     .language button.active{border-color:#c7a66a;color:#c7a66a}
-
+    #mailMessage{background-color: #111214;}
     .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:22px 0}
     .stat{border:1px solid #333;background:#111214;border-radius:10px;padding:18px}
     .stat-label{font-size:12px;color:#aaa;margin-bottom:8px}
@@ -37,7 +37,11 @@
     @media(max-width:600px){body{padding:15px}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-actions button,.table-tools button{flex:1}}
     .danger{border-color:#b84a4a;color:#ffb8b8;background:#241313;padding:7px 10px}
     .mail-panel{margin:24px 0;padding:22px;border:1px solid #39332a;background:linear-gradient(145deg,#141414,#0f1011);border-radius:12px}
-    .mail-panel h2{margin:0 0 8px;color:#c7a66a;font-size:21px}
+    .mail-panel summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;color:#c7a66a;font-size:21px;font-weight:700}
+    .mail-panel summary::-webkit-details-marker{display:none}
+    .mail-panel summary::after{content:"⌄";font-size:25px;line-height:1;color:#c7a66a;transition:transform .2s ease}
+    .mail-panel[open] summary::after{transform:rotate(180deg)}
+    .mail-content{padding-top:10px}
     .mail-panel p{color:#aaa;line-height:1.6;font-size:13px}
     .mail-fields{display:grid;gap:12px;margin-top:16px}
     .mail-fields input,.mail-fields textarea{width:100%;box-sizing:border-box}
@@ -62,113 +66,140 @@
     html[dir="rtl"] .language{margin-left:0;margin-right:auto}
     html[dir="rtl"] th,html[dir="rtl"] td{text-align:right}
   </style>
-</head>
-<body>
-<div class="wrap">
-  <div class="top">
-    <h1 id="pageTitle">Student requests</h1>
-  </div>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <h1 id="pageTitle">Student requests</h1>
+      </div>
 
-  <div class="top">
-    <input id="token" type="password" placeholder="ADMIN_TOKEN" autocomplete="current-password">
-    <button id="load" type="button">حمّل الطلبات</button>
-    <button id="forgetToken" class="secondary" type="button">انسى المفتاح</button>
-  </div>
+      <div class="top">
+        <input id="token" type="password" placeholder="ADMIN_TOKEN"
+          autocomplete="current-password">
+        <button id="load" type="button">حمّل الطلبات</button>
+        <button id="forgetToken" class="secondary" type="button">انسى
+          المفتاح</button>
+      </div>
 
-  <div class="toolbar">
-    <input id="searchName" type="search" placeholder="فتّش باسم التلميذ…" autocomplete="off" aria-label="Search students by name">
-  </div>
+      <div class="toolbar">
+        <input id="searchName" type="search" placeholder="فتّش باسم التلميذ…"
+          autocomplete="off" aria-label="Search students by name">
+      </div>
 
-  <div class="stats">
-    <div class="stat"><div class="stat-label" id="sVisitorsLabel">Unique visitors</div><div class="stat-value" id="visitorCount">—</div></div>
-    <div class="stat"><div class="stat-label" id="sTodayLabel">Today’s visitors</div><div class="stat-value" id="todayVisitorCount">—</div></div>
-    <div class="stat"><div class="stat-label" id="sRequestsLabel">Student requests</div><div class="stat-value" id="requestCount">—</div></div>
-    <div class="stat"><div class="stat-label">عناوين إيميل صالحة</div><div class="stat-value" id="validEmailCount">—</div></div>
-    <div class="stat"><div class="stat-label">طلبات من غير إيميل</div><div class="stat-value" id="missingEmailCount">—</div></div>
-  </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label" id="sVisitorsLabel">Unique
+            visitors</div><div class="stat-value"
+            id="visitorCount">—</div></div>
+        <div class="stat"><div class="stat-label" id="sTodayLabel">Today’s
+            visitors</div><div class="stat-value"
+            id="todayVisitorCount">—</div></div>
+        <div class="stat"><div class="stat-label" id="sRequestsLabel">Student
+            requests</div><div class="stat-value"
+            id="requestCount">—</div></div>
+        <div class="stat"><div class="stat-label">عناوين إيميل صالحة</div><div
+            class="stat-value" id="validEmailCount">—</div></div>
+        <div class="stat"><div class="stat-label">طلبات من غير إيميل</div><div
+            class="stat-value" id="missingEmailCount">—</div></div>
+      </div>
 
-  <div id="status" class="status" role="status" aria-live="polite"></div>
+      <div id="status" class="status" role="status" aria-live="polite"></div>
 
-  <section class="mail-panel" aria-labelledby="mailTitle">
-    <h2 id="mailTitle">ابعث إيميل للتلامذة الكل</h2>
-    <p>اكتب العنوان والمحتوى، شوف المعاينة، وبعد أكّد الإرسال. كل تلميذ توصله رسالة وحده وما يشوفش عناوين بقية التلامذة.</p>
-    <div class="quota-card" aria-live="polite">
-      <div><div class="quota-label">الإيميلات اللي مازالت تنجم تبعثهم اليوم</div><div class="quota-meta" id="quotaMeta">يتحدّث بعد تحميل الطلبات</div></div>
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><div class="quota-value" id="quotaRemaining">—</div><button id="refreshQuota" class="secondary" type="button">حدّث العدد</button></div>
-    </div>
-    <div class="mail-fields">
-      <input id="mailSubject" type="text" maxlength="180" placeholder="عنوان الإيميل" aria-label="Email subject">
-      <textarea id="mailMessage" maxlength="8000" placeholder="اكتب محتوى الإيميل هنا…" aria-label="Email message"></textarea>
-    </div>
-    <div class="mail-preview" id="mailPreview">المعاينة تظهر هنا…</div>
-    <div class="mail-actions">
-      <button id="sendAllEmail" class="send-all" type="button">ابعث للتلامذة الكل</button>
-      <span class="mail-count" id="emailRecipientCount">التلامذة: —</span>
-    </div>
-    <div class="mail-fields" style="margin-top:12px">
-      <input id="testEmailAddress" type="email" placeholder="إيميلك للتجربة فقط" aria-label="Test email address">
-      <button id="sendTestEmail" class="secondary" type="button">ابعث تجربة لعنوان واحد</button>
-    </div>
-    <p id="mailStatus" role="status" aria-live="polite"></p>
-  </section>
+      <details class="mail-panel" aria-labelledby="mailTitle">
+        <summary id="mailTitle">ابعث إيميل للتلامذة الكل</summary>
+        <div class="mail-content">
+        <p>اكتب العنوان والمحتوى، شوف المعاينة، وبعد أكّد الإرسال. كل تلميذ
+          توصله رسالة وحده وما يشوفش عناوين بقية التلامذة.</p>
+        <div class="quota-card" aria-live="polite">
+          <div><div class="quota-label">الإيميلات اللي مازالت تنجم تبعثهم
+              اليوم</div><div class="quota-meta" id="quotaMeta">يتحدّث بعد تحميل
+              الطلبات</div></div>
+          <div
+            style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><div
+              class="quota-value" id="quotaRemaining">—</div><button
+              id="refreshQuota" class="secondary" type="button">حدّث
+              العدد</button></div>
+        </div>
+        <div class="mail-fields">
+          <input id="mailSubject" type="text" maxlength="180"
+            placeholder="عنوان الإيميل" aria-label="Email subject">
+          <textarea id="mailMessage" maxlength="8000"
+            placeholder="اكتب محتوى الإيميل هنا…"
+            aria-label="Email message"></textarea>
+        </div>
+        <div class="mail-preview" id="mailPreview">المعاينة تظهر هنا…</div>
+        <div class="mail-actions">
+          <button id="sendAllEmail" class="send-all" type="button">ابعث للتلامذة
+            الكل</button>
+          <span class="mail-count" id="emailRecipientCount">التلامذة: —</span>
+        </div>
+        <p id="mailStatus" role="status" aria-live="polite"></p>
+        </div>
+      </details>
 
-  <section aria-label="تصفية الطلبات">
-    <div class="filters">
-      <label>الشعبة / المستوى
-        <select id="filterLevel"><option value="">الكل</option></select>
-      </label>
-      <label>الليسي
-        <select id="filterSchool"><option value="">الكل</option></select>
-      </label>
-      <label>بلاصة الحصة
-        <select id="filterLocation"><option value="">الكل</option></select>
-      </label>
-      <label>المصدر
-        <select id="filterSource"><option value="">الكل</option></select>
-      </label>
-      <label>من تاريخ
-        <input id="filterFrom" type="date">
-      </label>
-      <label>إلى تاريخ
-        <input id="filterTo" type="date">
-      </label>
+      <section aria-label="تصفية الطلبات">
+        <div class="filters">
+          <label>الشعبة / المستوى
+            <select id="filterLevel"><option value>الكل</option></select>
+          </label>
+          <label>الليسي
+            <select id="filterSchool"><option value>الكل</option></select>
+          </label>
+          <label>بلاصة الحصة
+            <select id="filterLocation"><option value>الكل</option></select>
+          </label>
+          <label>المصدر
+            <select id="filterSource"><option value>الكل</option></select>
+          </label>
+          <label>من تاريخ
+            <input id="filterFrom" type="date">
+          </label>
+          <label>إلى تاريخ
+            <input id="filterTo" type="date">
+          </label>
+        </div>
+        <div class="filter-actions">
+          <label
+            style="display:flex;align-items:center;gap:8px;color:#aaa;font-size:12px">الترتيب
+            <select id="sortLeads"><option value="newest">الأحدث
+                أولاً</option><option value="oldest">الأقدم
+                أولاً</option><option value="name">الاسم
+                أبجديّاً</option></select>
+          </label>
+          <button id="resetFilters" class="secondary" type="button">صفّي
+            الفلاتر</button>
+        </div>
+      </section>
+      <div class="table-tools">
+        <div id="visibleSummary">حمّل الطلبات باش تظهر النتائج.</div>
+        <div class="tool-buttons">
+          <button id="exportCsv" class="secondary" type="button">صدّر النتائج
+            CSV</button>
+          <button id="copyEmails" class="secondary" type="button">انسخ إيميلات
+            النتائج</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th id="hDate">Date</th>
+              <th id="hName">Name</th>
+              <th id="hPhone">Phone</th>
+              <th id="hEmail">Email</th>
+              <th id="hLevel">Level / section</th>
+              <th id="hSchool">School</th>
+              <th id="hCity">City</th>
+              <th id="hLocation">Location</th>
+              <th id="hSource">Source</th>
+              <th id="hActions">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="filter-actions">
-      <label style="display:flex;align-items:center;gap:8px;color:#aaa;font-size:12px">الترتيب
-        <select id="sortLeads"><option value="newest">الأحدث أولاً</option><option value="oldest">الأقدم أولاً</option><option value="name">الاسم أبجديّاً</option></select>
-      </label>
-      <button id="resetFilters" class="secondary" type="button">صفّي الفلاتر</button>
-    </div>
-  </section>
-  <div class="table-tools">
-    <div id="visibleSummary">حمّل الطلبات باش تظهر النتائج.</div>
-    <div class="tool-buttons">
-      <button id="exportCsv" class="secondary" type="button">صدّر النتائج CSV</button>
-      <button id="copyEmails" class="secondary" type="button">انسخ إيميلات النتائج</button>
-    </div>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th id="hDate">Date</th>
-          <th id="hName">Name</th>
-          <th id="hPhone">Phone</th>
-          <th id="hEmail">Email</th>
-          <th id="hLevel">Level / section</th>
-          <th id="hSchool">School</th>
-          <th id="hCity">City</th>
-          <th id="hLocation">Location</th>
-          <th id="hSource">Source</th>
-          <th id="hActions">إجراءات</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
-  </div>
-</div>
 
-<script>
+    <script>
 const token = document.getElementById("token");
 const load = document.getElementById("load");
 const forgetToken = document.getElementById("forgetToken");
@@ -195,8 +226,6 @@ const mailSubject = document.getElementById("mailSubject");
 const mailMessage = document.getElementById("mailMessage");
 const mailPreview = document.getElementById("mailPreview");
 const sendAllEmail = document.getElementById("sendAllEmail");
-const sendTestEmail = document.getElementById("sendTestEmail");
-const testEmailAddress = document.getElementById("testEmailAddress");
 const emailRecipientCount = document.getElementById("emailRecipientCount");
 const mailStatus = document.getElementById("mailStatus");
 const quotaRemaining = document.getElementById("quotaRemaining");
@@ -438,32 +467,6 @@ function updateMailPreview() {
 }
 mailSubject.addEventListener("input", updateMailPreview);
 mailMessage.addEventListener("input", updateMailPreview);
-sendTestEmail.addEventListener("click", async () => {
-  const subject = mailSubject.value.trim();
-  const message = mailMessage.value.trim();
-  const testEmail = testEmailAddress.value.trim();
-  if (!token.value.trim()) { mailStatus.textContent = "دخل المفتاح الإداري الأول."; token.focus(); return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(testEmail)) { mailStatus.textContent = "اكتب إيميل صحيح للتجربة."; testEmailAddress.focus(); return; }
-  if (subject.length < 2 || message.length < 2) { mailStatus.textContent = "اكتب عنوان ومحتوى الإيميل."; return; }
-  if (!confirm(`باش تبعث إيميل تجربة واحد إلى ${testEmail} فقط. متأكد؟`)) return;
-  sendTestEmail.disabled = true;
-  mailStatus.textContent = "جاري إرسال إيميل التجربة…";
-  try {
-    const response = await fetch("/api/broadcast", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token.value.trim()}` },
-      body: JSON.stringify({ subject, message, testOnly: true, testEmail })
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || "فشل إرسال التجربة.");
-    mailStatus.textContent = data.sent === 1 ? `وصل طلب إرسال التجربة بنجاح إلى ${testEmail}. تفقد Inbox وSpam.` : (data.error || data.note || "ما نجّمش نبعث التجربة.");
-  } catch (error) {
-    mailStatus.textContent = error.message || "تعذّر إرسال إيميل التجربة.";
-  } finally {
-    sendTestEmail.disabled = false;
-    refreshMailQuota();
-  }
-});
 sendAllEmail.addEventListener("click", async () => {
   const subject = mailSubject.value.trim();
   const message = mailMessage.value.trim();
@@ -554,5 +557,5 @@ if (savedToken) {
   loadRequests();
 }
 </script>
-</body>
+  </body>
 </html>
