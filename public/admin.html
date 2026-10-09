@@ -82,6 +82,10 @@
       <button id="sendAllEmail" class="send-all" type="button">ابعث للتلامذة الكل</button>
       <span class="mail-count" id="emailRecipientCount">التلامذة: —</span>
     </div>
+    <div class="mail-fields" style="margin-top:12px">
+      <input id="testEmailAddress" type="email" placeholder="إيميلك للتجربة فقط" aria-label="Test email address">
+      <button id="sendTestEmail" class="secondary" type="button">ابعث تجربة لعنوان واحد</button>
+    </div>
     <p id="mailStatus" role="status" aria-live="polite"></p>
   </section>
 
@@ -120,6 +124,8 @@ const mailSubject = document.getElementById("mailSubject");
 const mailMessage = document.getElementById("mailMessage");
 const mailPreview = document.getElementById("mailPreview");
 const sendAllEmail = document.getElementById("sendAllEmail");
+const sendTestEmail = document.getElementById("sendTestEmail");
+const testEmailAddress = document.getElementById("testEmailAddress");
 const emailRecipientCount = document.getElementById("emailRecipientCount");
 const mailStatus = document.getElementById("mailStatus");
 const TOKEN_STORAGE_KEY = "torbaga_admin_token";
@@ -240,6 +246,31 @@ function updateMailPreview() {
 }
 mailSubject.addEventListener("input", updateMailPreview);
 mailMessage.addEventListener("input", updateMailPreview);
+sendTestEmail.addEventListener("click", async () => {
+  const subject = mailSubject.value.trim();
+  const message = mailMessage.value.trim();
+  const testEmail = testEmailAddress.value.trim();
+  if (!token.value.trim()) { mailStatus.textContent = "دخل المفتاح الإداري الأول."; token.focus(); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(testEmail)) { mailStatus.textContent = "اكتب إيميل صحيح للتجربة."; testEmailAddress.focus(); return; }
+  if (subject.length < 2 || message.length < 2) { mailStatus.textContent = "اكتب عنوان ومحتوى الإيميل."; return; }
+  if (!confirm(`باش تبعث إيميل تجربة واحد إلى ${testEmail} فقط. متأكد؟`)) return;
+  sendTestEmail.disabled = true;
+  mailStatus.textContent = "جاري إرسال إيميل التجربة…";
+  try {
+    const response = await fetch("/api/broadcast", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token.value.trim()}` },
+      body: JSON.stringify({ subject, message, testOnly: true, testEmail })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "فشل إرسال التجربة.");
+    mailStatus.textContent = data.sent === 1 ? `وصل طلب إرسال التجربة بنجاح إلى ${testEmail}. تفقد Inbox وSpam.` : (data.error || data.note || "ما نجّمش نبعث التجربة.");
+  } catch (error) {
+    mailStatus.textContent = error.message || "تعذّر إرسال إيميل التجربة.";
+  } finally {
+    sendTestEmail.disabled = false;
+  }
+});
 sendAllEmail.addEventListener("click", async () => {
   const subject = mailSubject.value.trim();
   const message = mailMessage.value.trim();
@@ -259,9 +290,13 @@ sendAllEmail.addEventListener("click", async () => {
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "فشل الإرسال.");
-    mailStatus.textContent = data.failed
-      ? `كمل الإرسال: نجح ${data.sent} وفشل ${data.failed} من ${data.total}. راجع إعدادات البريد والعناوين الفاشلة.`
-      : `تم إرسال ${data.sent} إيميل بنجاح.`;
+    if (data.remaining > 0) {
+      mailStatus.textContent = `تم إرسال ${data.sent} من ${data.total}. بقي ${data.remaining} لم يتم إرسالهم بسبب حد Gmail اليومي أو أخطاء. ${data.note || "جرّب البقية لاحقًا وراجع العناوين الفاشلة."}`;
+    } else if (data.failed) {
+      mailStatus.textContent = `كمل الإرسال: نجح ${data.sent} وفشل ${data.failed} من ${data.total}. راجع العناوين الفاشلة.`;
+    } else {
+      mailStatus.textContent = `تم إرسال ${data.sent} إيميل بنجاح.`;
+    }
     if (data.failures?.length) console.error("Email delivery failures:", data.failures);
   } catch (error) {
     mailStatus.textContent = error.message || "تعذّر إرسال الإيميلات.";
