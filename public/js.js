@@ -18,7 +18,7 @@ function isSecondaryLycee(tags={}){
   const name=[tags.name,tags['name:ar'],tags['name:fr'],tags['official_name']].filter(Boolean).join(' ').toLocaleLowerCase();
   const level=String([tags['school:level'],tags['isced:level'],tags['education'],tags['school:type']].filter(Boolean).join(' ')).toLocaleLowerCase();
   if(/ابتدائي|مدرسة ابتدائية|école primaire|ecole primaire|primary school|collège|college|إعدادية|اعدادية|مدرسة إعدادية|مدرسة اعدادية|kindergarten|روضة|جامعة|university|faculté|faculte|formation professionnelle|vocational|مركز تكوين|تكوين مهني/i.test(name))return false;
-  const explicitSecondary=/ثانوية|معهد ثانوي|المعهد الثانوي|lycée|lycee|high school|secondary school/i.test(name)||/secondary|upper secondary|isced.?3|lycée|lycee/.test(level);
+  const explicitSecondary=/ثانوية|معهد ثانوي|المعهد الثانوي|lycée|lycee|lycce|high school|secondary school/i.test(name)||/secondary|upper secondary|isced.?3|lycée|lycee|lycce/.test(level);
   // Many Tunisian lycées are mapped simply as "معهد [name]". OSM may tag
   // them with amenity=school, building=school, or education/school-level tags.
   const schoolFeature=tags.amenity==='school'||tags.building==='school'||Boolean(tags['school:level']||tags['isced:level']||tags.education||tags.school);
@@ -43,7 +43,7 @@ if(detectSchoolBtn&&schoolInput){
     if(!unique.length)throw new Error('no_secondary_lycees');
     unique.sort((a,b)=>a.distance-b.distance);
     const chosen=unique[0];
-    let displayName=chosen.fullName.trim().replace(/^(?:ثانوية|المعهد الثانوي|معهد ثانوي|Lycée|Lycee)\s*/i,'').trim();
+    let displayName=chosen.fullName.trim().replace(/^(?:ثانوية|المعهد الثانوي|معهد ثانوي|Lycée|Lycee|Lycce)\s*/i,'').trim();
     if(!displayName)displayName=chosen.fullName.trim();
     schoolInput.value=displayName;schoolInput.dispatchEvent(new Event('input',{bubbles:true}));schoolInput.dispatchEvent(new Event('change',{bubbles:true}));
     setSchoolDetectStatus(`لقينا أقرب ليسي: ${displayName} · على بُعد حوالي ${(chosen.distance/1000).toFixed(1)} كم.`);
