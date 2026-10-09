@@ -1,5 +1,6 @@
 import { registerLead } from "../api/register.js";
 import { listLeads } from "../api/leads.js";
+import { sendBroadcast } from "../api/broadcast.js";
 import { getStats } from "../api/stats.js";
 
 const VISITOR_COOKIE = "site_visitor_id";
@@ -97,6 +98,11 @@ export default {
       // Admin: student requests
       if (url.pathname === "/api/leads") {
         return await listLeads(request, env);
+      }
+
+      // Admin: email all registered students (individual messages)
+      if (url.pathname === "/api/broadcast") {
+        return await sendBroadcast(request, env);
       }
 
       // Admin: protected statistics

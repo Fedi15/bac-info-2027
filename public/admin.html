@@ -23,6 +23,17 @@
     .toolbar{margin:18px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     #searchName{flex:1;min-width:220px}
     .danger{border-color:#b84a4a;color:#ffb8b8;background:#241313;padding:7px 10px}
+    .mail-panel{margin:24px 0;padding:22px;border:1px solid #39332a;background:linear-gradient(145deg,#141414,#0f1011);border-radius:12px}
+    .mail-panel h2{margin:0 0 8px;color:#c7a66a;font-size:21px}
+    .mail-panel p{color:#aaa;line-height:1.6;font-size:13px}
+    .mail-fields{display:grid;gap:12px;margin-top:16px}
+    .mail-fields input,.mail-fields textarea{width:100%;box-sizing:border-box}
+    .mail-fields textarea{min-height:150px;resize:vertical;line-height:1.7}
+    .mail-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+    .send-all{background:#c7a66a;color:#101010;font-weight:700;border-color:#c7a66a}
+    .send-all:disabled{opacity:.55;cursor:wait}
+    .mail-preview{margin-top:14px;border:1px solid #39332a;border-radius:8px;padding:16px;background:#0b0b0c;color:#ddd;white-space:pre-wrap;line-height:1.7}
+    .mail-count{color:#c7a66a;font-size:13px}
     .secondary{border-color:#555;color:#ccc}
     .delete-cell{white-space:nowrap}
     .table-wrap{overflow:auto;border:1px solid #333}
@@ -59,6 +70,21 @@
 
   <div id="status" class="status"></div>
 
+  <section class="mail-panel" aria-labelledby="mailTitle">
+    <h2 id="mailTitle">ابعث إيميل للتلامذة الكل</h2>
+    <p>اكتب العنوان والمحتوى، شوف المعاينة، وبعد أكّد الإرسال. كل تلميذ توصله رسالة وحده وما يشوفش عناوين بقية التلامذة.</p>
+    <div class="mail-fields">
+      <input id="mailSubject" type="text" maxlength="180" placeholder="عنوان الإيميل" aria-label="Email subject">
+      <textarea id="mailMessage" maxlength="8000" placeholder="اكتب محتوى الإيميل هنا…" aria-label="Email message"></textarea>
+    </div>
+    <div class="mail-preview" id="mailPreview">المعاينة تظهر هنا…</div>
+    <div class="mail-actions">
+      <button id="sendAllEmail" class="send-all" type="button">ابعث للتلامذة الكل</button>
+      <span class="mail-count" id="emailRecipientCount">التلامذة: —</span>
+    </div>
+    <p id="mailStatus" role="status" aria-live="polite"></p>
+  </section>
+
   <div class="table-wrap">
     <table>
       <thead>
@@ -90,6 +116,12 @@ const rows = document.getElementById("rows");
 const visitorCount = document.getElementById("visitorCount");
 const todayVisitorCount = document.getElementById("todayVisitorCount");
 const requestCount = document.getElementById("requestCount");
+const mailSubject = document.getElementById("mailSubject");
+const mailMessage = document.getElementById("mailMessage");
+const mailPreview = document.getElementById("mailPreview");
+const sendAllEmail = document.getElementById("sendAllEmail");
+const emailRecipientCount = document.getElementById("emailRecipientCount");
+const mailStatus = document.getElementById("mailStatus");
 const TOKEN_STORAGE_KEY = "torbaga_admin_token";
 let allLeads = [];
 let lastStats = null;
@@ -185,6 +217,7 @@ async function loadRequests() {
     // Remember the key only after the server accepts it.
     localStorage.setItem(TOKEN_STORAGE_KEY, token.value.trim());
     allLeads = Array.isArray(leadsData.leads) ? leadsData.leads : [];
+    updateEmailRecipientCount();
     lastStats = statsData;
     visitorCount.textContent = Number(statsData.unique_visitors || 0).toLocaleString();
     todayVisitorCount.textContent = Number(statsData.today_visitors || 0).toLocaleString();
@@ -196,6 +229,46 @@ async function loadRequests() {
 }
 
 load.addEventListener("click", loadRequests);
+function updateEmailRecipientCount() {
+  const count = allLeads.filter(lead => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(lead.email || "").trim())).length;
+  emailRecipientCount.textContent = `عناوين إيميل صالحة: ${count}`;
+}
+function updateMailPreview() {
+  const subject = mailSubject.value.trim() || "عنوان الإيميل";
+  const message = mailMessage.value.trim() || "محتوى الرسالة يظهر هنا…";
+  mailPreview.textContent = `${subject}\n\nBonjour [اسم التلميذ],\n\n${message}\n\nFEDI GHANMI (TORBAGA) · Sfax`;
+}
+mailSubject.addEventListener("input", updateMailPreview);
+mailMessage.addEventListener("input", updateMailPreview);
+sendAllEmail.addEventListener("click", async () => {
+  const subject = mailSubject.value.trim();
+  const message = mailMessage.value.trim();
+  const recipients = allLeads.filter(lead => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(lead.email || "").trim())).length;
+  if (!token.value.trim()) { mailStatus.textContent = "دخل المفتاح الإداري الأول."; token.focus(); return; }
+  if (!allLeads.length) { mailStatus.textContent = "حمّل الطلبات الأول."; return; }
+  if (subject.length < 2 || message.length < 2) { mailStatus.textContent = "اكتب عنوان ومحتوى الإيميل."; return; }
+  if (!recipients) { mailStatus.textContent = "ما فماش عناوين إيميل صالحة."; return; }
+  if (!confirm(`باش تبعث ${recipients} إيميل منفصل. العملية ما تنجمش تتراجع. متأكد؟`)) return;
+  sendAllEmail.disabled = true;
+  mailStatus.textContent = `جاري الإرسال إلى ${recipients} تلميذ… ما تسكّرش الصفحة.`;
+  try {
+    const response = await fetch("/api/broadcast", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token.value.trim()}` },
+      body: JSON.stringify({ subject, message })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "فشل الإرسال.");
+    mailStatus.textContent = data.failed
+      ? `كمل الإرسال: نجح ${data.sent} وفشل ${data.failed} من ${data.total}. راجع إعدادات البريد والعناوين الفاشلة.`
+      : `تم إرسال ${data.sent} إيميل بنجاح.`;
+    if (data.failures?.length) console.error("Email delivery failures:", data.failures);
+  } catch (error) {
+    mailStatus.textContent = error.message || "تعذّر إرسال الإيميلات.";
+  } finally {
+    sendAllEmail.disabled = false;
+  }
+});
 token.addEventListener("keydown", event => { if (event.key === "Enter") loadRequests(); });
 searchName.addEventListener("input", renderLeads);
 forgetToken.addEventListener("click", () => {
@@ -221,6 +294,7 @@ rows.addEventListener("click", async event => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || t.deleteFailed);
     allLeads = allLeads.filter(lead => String(lead.id) !== String(id));
+    updateEmailRecipientCount();
     requestCount.textContent = Number(allLeads.length).toLocaleString();
     if (lastStats) lastStats.student_requests = allLeads.length;
     renderLeads();
@@ -233,6 +307,7 @@ rows.addEventListener("click", async event => {
 });
 
 applyLanguage();
+updateMailPreview();
 const savedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
 if (savedToken) {
   token.value = savedToken;
