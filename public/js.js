@@ -16,9 +16,13 @@ function setSchoolDetectStatus(message,isError=false){if(!schoolDetectStatus)ret
 function distanceMeters(lat1,lon1,lat2,lon2){const rad=v=>v*Math.PI/180;const dLat=rad(lat2-lat1),dLon=rad(lon2-lon1);const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLon/2)**2;return 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
 function isSecondaryLycee(tags={}){
   const name=[tags.name,tags['name:ar'],tags['name:fr'],tags['official_name']].filter(Boolean).join(' ').toLocaleLowerCase();
-  const level=String(tags['school:level']||tags['isced:level']||tags['education']||'').toLocaleLowerCase();
-  if(/ابتدائي|مدرسة ابتدائية|école primaire|ecole primaire|primary school|collège|college|إعدادية|اعدادية|مدرسة إعدادية|مدرسة اعدادية|kindergarten|روضة|جامعة|university|faculté|faculte|formation professionnelle|vocational/i.test(name))return false;
-  return /ثانوية|معهد ثانوي|المعهد الثانوي|lycée|lycee|high school|secondary school/i.test(name)||/secondary|upper secondary|isced.?3|lycée|lycee/.test(level);
+  const level=String([tags['school:level'],tags['isced:level'],tags['education'],tags['school:type']].filter(Boolean).join(' ')).toLocaleLowerCase();
+  if(/ابتدائي|مدرسة ابتدائية|école primaire|ecole primaire|primary school|collège|college|إعدادية|اعدادية|مدرسة إعدادية|مدرسة اعدادية|kindergarten|روضة|جامعة|university|faculté|faculte|formation professionnelle|vocational|مركز تكوين|تكوين مهني/i.test(name))return false;
+  const explicitSecondary=/ثانوية|معهد ثانوي|المعهد الثانوي|lycée|lycee|high school|secondary school/i.test(name)||/secondary|upper secondary|isced.?3|lycée|lycee/.test(level);
+  // In Tunisia, many public lycées are named "معهد ..." without the literal
+  // word "ثانوية". Accept those when the map explicitly marks them as schools.
+  const tunisianInstitute=/(^|\s)(معهد|المعهد)(\s|$)/i.test(name)&&tags.amenity==='school';
+  return explicitSecondary||tunisianInstitute;
 }
 function getElementCoords(el){if(Number.isFinite(el.lat)&&Number.isFinite(el.lon))return {lat:el.lat,lon:el.lon};if(Number.isFinite(el.center?.lat)&&Number.isFinite(el.center?.lon))return {lat:el.center.lat,lon:el.center.lon};return null}
 if(detectSchoolBtn&&schoolInput){

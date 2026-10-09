@@ -1,15 +1,11 @@
-TORBAGA lycée detector: Overpass CORS / rate-limit fix
+Torbaga Sfax lycée detection fix
 
 Changed files only:
-- public/js.js
-- src/worker.js
+- public/js.js: recognizes Tunisian public lycées commonly named "معهد ..." when OpenStreetMap tags them as a school, while excluding obvious primary schools, collèges and vocational training centres.
+- src/worker.js: makes the Sfax administrative-area lookup less dependent on an exact relation name/admin level, queries school objects inside that area, and does not cache empty Overpass responses.
 
-Why this fixes the reported errors:
-- The browser no longer calls Overpass directly, so the browser CORS error is avoided.
-- Cloudflare Worker calls Overpass server-side and tries several public instances if one returns 429/500.
-- Successful catalogue responses are cached for 12 hours, reducing repeated requests.
-
-Install by extracting into your project root and replacing the matching files. Then run:
+Install by extracting these files over the matching files in your project, then run:
   npx wrangler deploy
 
-Checks: node --check passed for both JavaScript files. Live Overpass availability and GPS selection were not tested here. Public Overpass services can still temporarily be unavailable; the proxy reports a controlled 503 instead of an uncaught browser fetch error.
+Checks performed: Node.js syntax checks for public/js.js and src/worker.js.
+Not performed: live Overpass request or end-to-end GPS test. Results still depend on the map data and whether Overpass can resolve the Sfax administrative boundary.
