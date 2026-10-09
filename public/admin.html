@@ -14,14 +14,27 @@
     .language button{border-color:#444}
     .language button.active{border-color:#c7a66a;color:#c7a66a}
 
-    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
+    .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:22px 0}
     .stat{border:1px solid #333;background:#111214;border-radius:10px;padding:18px}
     .stat-label{font-size:12px;color:#aaa;margin-bottom:8px}
     .stat-value{font-size:30px;font-weight:700;color:#c7a66a;line-height:1.1}
-    @media (max-width:700px){.stats{grid-template-columns:1fr}}
+    @media (max-width:900px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media (max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:14px}.stat-value{font-size:25px}}
     .status{margin:16px 0;color:#aaa;line-height:1.6}
     .toolbar{margin:18px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     #searchName{flex:1;min-width:220px}
+    .filters{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:9px;margin:0 0 14px;padding:15px;border:1px solid #303033;border-radius:10px;background:#101011}
+    .filters label{display:grid;gap:6px;color:#a9a9ad;font-size:11px}
+    .filters input,.filters select{width:100%;min-width:0;box-sizing:border-box}
+    .filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+    .filter-actions button{font-size:12px}
+    .table-tools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0;color:#a9a9ad;font-size:12px}
+    .table-tools strong{color:#c7a66a}
+    .table-tools .tool-buttons{display:flex;gap:8px;flex-wrap:wrap}
+    .quick-link{color:#c7a66a;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+    .empty-row{text-align:center!important;color:#999;padding:28px!important}
+    @media(max-width:1000px){.filters{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:600px){body{padding:15px}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-actions button,.table-tools button{flex:1}}
     .danger{border-color:#b84a4a;color:#ffb8b8;background:#241313;padding:7px 10px}
     .mail-panel{margin:24px 0;padding:22px;border:1px solid #39332a;background:linear-gradient(145deg,#141414,#0f1011);border-radius:12px}
     .mail-panel h2{margin:0 0 8px;color:#c7a66a;font-size:21px}
@@ -70,9 +83,11 @@
     <div class="stat"><div class="stat-label" id="sVisitorsLabel">Unique visitors</div><div class="stat-value" id="visitorCount">—</div></div>
     <div class="stat"><div class="stat-label" id="sTodayLabel">Today’s visitors</div><div class="stat-value" id="todayVisitorCount">—</div></div>
     <div class="stat"><div class="stat-label" id="sRequestsLabel">Student requests</div><div class="stat-value" id="requestCount">—</div></div>
+    <div class="stat"><div class="stat-label">عناوين إيميل صالحة</div><div class="stat-value" id="validEmailCount">—</div></div>
+    <div class="stat"><div class="stat-label">طلبات من غير إيميل</div><div class="stat-value" id="missingEmailCount">—</div></div>
   </div>
 
-  <div id="status" class="status"></div>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
 
   <section class="mail-panel" aria-labelledby="mailTitle">
     <h2 id="mailTitle">ابعث إيميل للتلامذة الكل</h2>
@@ -97,6 +112,41 @@
     <p id="mailStatus" role="status" aria-live="polite"></p>
   </section>
 
+  <section aria-label="تصفية الطلبات">
+    <div class="filters">
+      <label>الشعبة / المستوى
+        <select id="filterLevel"><option value="">الكل</option></select>
+      </label>
+      <label>الليسي
+        <select id="filterSchool"><option value="">الكل</option></select>
+      </label>
+      <label>بلاصة الحصة
+        <select id="filterLocation"><option value="">الكل</option></select>
+      </label>
+      <label>المصدر
+        <select id="filterSource"><option value="">الكل</option></select>
+      </label>
+      <label>من تاريخ
+        <input id="filterFrom" type="date">
+      </label>
+      <label>إلى تاريخ
+        <input id="filterTo" type="date">
+      </label>
+    </div>
+    <div class="filter-actions">
+      <label style="display:flex;align-items:center;gap:8px;color:#aaa;font-size:12px">الترتيب
+        <select id="sortLeads"><option value="newest">الأحدث أولاً</option><option value="oldest">الأقدم أولاً</option><option value="name">الاسم أبجديّاً</option></select>
+      </label>
+      <button id="resetFilters" class="secondary" type="button">صفّي الفلاتر</button>
+    </div>
+  </section>
+  <div class="table-tools">
+    <div id="visibleSummary">حمّل الطلبات باش تظهر النتائج.</div>
+    <div class="tool-buttons">
+      <button id="exportCsv" class="secondary" type="button">صدّر النتائج CSV</button>
+      <button id="copyEmails" class="secondary" type="button">انسخ إيميلات النتائج</button>
+    </div>
+  </div>
   <div class="table-wrap">
     <table>
       <thead>
@@ -128,6 +178,19 @@ const rows = document.getElementById("rows");
 const visitorCount = document.getElementById("visitorCount");
 const todayVisitorCount = document.getElementById("todayVisitorCount");
 const requestCount = document.getElementById("requestCount");
+const validEmailCount = document.getElementById("validEmailCount");
+const missingEmailCount = document.getElementById("missingEmailCount");
+const filterLevel = document.getElementById("filterLevel");
+const filterSchool = document.getElementById("filterSchool");
+const filterLocation = document.getElementById("filterLocation");
+const filterSource = document.getElementById("filterSource");
+const filterFrom = document.getElementById("filterFrom");
+const filterTo = document.getElementById("filterTo");
+const sortLeads = document.getElementById("sortLeads");
+const resetFilters = document.getElementById("resetFilters");
+const exportCsv = document.getElementById("exportCsv");
+const copyEmails = document.getElementById("copyEmails");
+const visibleSummary = document.getElementById("visibleSummary");
 const mailSubject = document.getElementById("mailSubject");
 const mailMessage = document.getElementById("mailMessage");
 const mailPreview = document.getElementById("mailPreview");
@@ -188,15 +251,61 @@ function applyLanguage() {
   document.getElementById("sRequestsLabel").textContent = t.studentRequests;
 }
 
-function renderLeads() {
+function validEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+}
+function dateValue(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+function populateFilter(select, field) {
+  const previous = select.value;
+  const values = [...new Set(allLeads.map(lead => String(lead[field] || "").trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, "ar"));
+  select.innerHTML = '<option value="">الكل</option>' + values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join("");
+  if (values.includes(previous)) select.value = previous;
+}
+function refreshFilterOptions() {
+  populateFilter(filterLevel, "level");
+  populateFilter(filterSchool, "school");
+  populateFilter(filterLocation, "lesson_location");
+  populateFilter(filterSource, "source");
+}
+function getFilteredLeads() {
   const query = searchName.value.trim().toLocaleLowerCase();
-  const filtered = allLeads.filter(lead => String(lead.full_name || "").toLocaleLowerCase().includes(query));
+  const from = filterFrom.value ? new Date(filterFrom.value + "T00:00:00") : null;
+  const to = filterTo.value ? new Date(filterTo.value + "T23:59:59.999") : null;
+  const filtered = allLeads.filter(lead => {
+    const searchable = [lead.full_name, lead.phone, lead.email, lead.level, lead.school, lead.city, lead.lesson_location, lead.source]
+      .map(value => String(value || "").toLocaleLowerCase()).join(" ");
+    if (query && !searchable.includes(query)) return false;
+    if (filterLevel.value && String(lead.level || "") !== filterLevel.value) return false;
+    if (filterSchool.value && String(lead.school || "") !== filterSchool.value) return false;
+    if (filterLocation.value && String(lead.lesson_location || "") !== filterLocation.value) return false;
+    if (filterSource.value && String(lead.source || "") !== filterSource.value) return false;
+    const date = dateValue(lead.created_at);
+    if (from && (!date || date < from)) return false;
+    if (to && (!date || date > to)) return false;
+    return true;
+  });
+  const sort = sortLeads.value;
+  filtered.sort((a, b) => {
+    if (sort === "name") return String(a.full_name || "").localeCompare(String(b.full_name || ""), "ar");
+    const da = dateValue(a.created_at)?.getTime() ?? 0;
+    const db = dateValue(b.created_at)?.getTime() ?? 0;
+    return sort === "oldest" ? da - db : db - da;
+  });
+  return filtered;
+}
+function renderLeads() {
+  const filtered = getFilteredLeads();
   rows.innerHTML = filtered.map(x => `
     <tr>
       <td>${esc(x.created_at)}</td>
       <td>${esc(x.full_name)}</td>
-      <td>${esc(x.phone)}</td>
-      <td>${esc(x.email)}</td>
+      <td>${x.phone ? `<a class="quick-link" href="tel:${esc(String(x.phone).replace(/[^+0-9]/g, ""))}">${esc(x.phone)}</a>` : "—"}</td>
+      <td>${validEmail(x.email) ? `<a class="quick-link" href="mailto:${esc(x.email)}">${esc(x.email)}</a>` : esc(x.email || "—")}</td>
       <td>${esc(x.level)}</td>
       <td>${esc(x.school)}</td>
       <td>${esc(x.city)}</td>
@@ -205,8 +314,48 @@ function renderLeads() {
       <td class="delete-cell"><button type="button" class="danger" data-delete-id="${esc(x.id)}" data-delete-name="${esc(x.full_name)}">${t.delete}</button></td>
     </tr>
   `).join("");
-  if (filtered.length === 0 && allLeads.length > 0) status.textContent = t.noResults;
-  else status.textContent = query ? t.shown(filtered.length, allLeads.length) : t.requests(allLeads.length);
+  if (!filtered.length) rows.innerHTML = `<tr><td class="empty-row" colspan="10">${allLeads.length ? "ما لقيناش نتائج بالفلاتر هاذم." : "ما فما حتى طلب محمّل توّة."}</td></tr>`;
+  const validVisible = filtered.filter(lead => validEmail(lead.email)).length;
+  visibleSummary.innerHTML = `ظاهر <strong>${filtered.length}</strong> من <strong>${allLeads.length}</strong> طلب · عندهم إيميل صالح: <strong>${validVisible}</strong>`;
+  if (filtered.length === 0 && allLeads.length > 0) status.textContent = "ما لقيناش نتائج بالفلاتر هاذم.";
+  else status.textContent = searchName.value.trim() || hasActiveFilters() ? `ظاهر ${filtered.length} من ${allLeads.length} طلب` : t.requests(allLeads.length);
+}
+function hasActiveFilters() {
+  return !!(filterLevel.value || filterSchool.value || filterLocation.value || filterSource.value || filterFrom.value || filterTo.value);
+}
+function updateLeadStats() {
+  const valid = allLeads.filter(lead => validEmail(lead.email)).length;
+  validEmailCount.textContent = valid.toLocaleString();
+  missingEmailCount.textContent = (allLeads.length - valid).toLocaleString();
+  requestCount.textContent = allLeads.length.toLocaleString();
+}
+function exportFilteredCsv() {
+  const data = getFilteredLeads();
+  if (!data.length) { status.textContent = "ما فماش نتائج باش تصدّرهم."; return; }
+  const headers = ["Date", "Name", "Phone", "Email", "Level", "School", "City", "Lesson location", "Source"];
+  const fields = ["created_at", "full_name", "phone", "email", "level", "school", "city", "lesson_location", "source"];
+  const quote = value => '"' + String(value ?? "").replace(/"/g, '""') + '"';
+  const csv = "\uFEFF" + [headers, ...data.map(lead => fields.map(field => lead[field] ?? ""))].map(row => row.map(quote).join(",")).join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `torbaga-students-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  status.textContent = `تصدّر ${data.length} طلب في ملف CSV.`;
+}
+async function copyFilteredEmails() {
+  const emails = [...new Set(getFilteredLeads().map(lead => String(lead.email || "").trim()).filter(validEmail))];
+  if (!emails.length) { status.textContent = "ما فماش إيميلات صالحة في النتائج الحالية."; return; }
+  try {
+    await navigator.clipboard.writeText(emails.join("; "));
+    status.textContent = `تنسخوا ${emails.length} إيميل للـclipboard.`;
+  } catch (_) {
+    const area = document.createElement("textarea"); area.value = emails.join("; ");
+    area.style.position = "fixed"; area.style.opacity = "0"; document.body.appendChild(area); area.select();
+    const ok = document.execCommand("copy"); area.remove();
+    status.textContent = ok ? `تنسخوا ${emails.length} إيميل للـclipboard.` : "ما نجّمش ننسخ الإيميلات آليّاً.";
+  }
 }
 
 async function refreshMailQuota() {
@@ -263,12 +412,14 @@ async function loadRequests() {
     // Remember the key only after the server accepts it.
     localStorage.setItem(TOKEN_STORAGE_KEY, token.value.trim());
     allLeads = Array.isArray(leadsData.leads) ? leadsData.leads : [];
+    refreshFilterOptions();
+    updateLeadStats();
     updateEmailRecipientCount();
     refreshMailQuota();
     lastStats = statsData;
     visitorCount.textContent = Number(statsData.unique_visitors || 0).toLocaleString();
     todayVisitorCount.textContent = Number(statsData.today_visitors || 0).toLocaleString();
-    requestCount.textContent = Number(allLeads.length).toLocaleString();
+    updateLeadStats();
     renderLeads();
   } catch (e) {
     status.textContent = e.message || t.unable;
@@ -278,7 +429,7 @@ async function loadRequests() {
 load.addEventListener("click", loadRequests);
 function updateEmailRecipientCount() {
   const count = allLeads.filter(lead => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(lead.email || "").trim())).length;
-  emailRecipientCount.textContent = `عناوين إيميل صالحة: ${count}`;
+  emailRecipientCount.textContent = `عناوين إيميل صالحة: ${count} · الإرسال يشمل التلامذة الكل`;
 }
 function updateMailPreview() {
   const subject = mailSubject.value.trim() || "عنوان الإيميل";
@@ -349,6 +500,14 @@ sendAllEmail.addEventListener("click", async () => {
 });
 token.addEventListener("keydown", event => { if (event.key === "Enter") loadRequests(); });
 searchName.addEventListener("input", renderLeads);
+[filterLevel, filterSchool, filterLocation, filterSource, filterFrom, filterTo, sortLeads].forEach(control => control.addEventListener("change", renderLeads));
+resetFilters.addEventListener("click", () => {
+  searchName.value = ""; filterLevel.value = ""; filterSchool.value = "";
+  filterLocation.value = ""; filterSource.value = ""; filterFrom.value = ""; filterTo.value = "";
+  sortLeads.value = "newest"; renderLeads();
+});
+exportCsv.addEventListener("click", exportFilteredCsv);
+copyEmails.addEventListener("click", copyFilteredEmails);
 forgetToken.addEventListener("click", () => {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
   token.value = "";
@@ -375,7 +534,8 @@ rows.addEventListener("click", async event => {
     if (!response.ok) throw new Error(data.error || t.deleteFailed);
     allLeads = allLeads.filter(lead => String(lead.id) !== String(id));
     updateEmailRecipientCount();
-    requestCount.textContent = Number(allLeads.length).toLocaleString();
+    updateLeadStats();
+    refreshFilterOptions();
     if (lastStats) lastStats.student_requests = allLeads.length;
     renderLeads();
     status.textContent = t.deleted + " " + (searchName.value.trim() ? t.shown(allLeads.filter(lead => String(lead.full_name || "").toLocaleLowerCase().includes(searchName.value.trim().toLocaleLowerCase())).length, allLeads.length) : t.requests(allLeads.length));
