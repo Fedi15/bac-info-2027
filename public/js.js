@@ -329,8 +329,8 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
     const name = String(t.name || "").trim();
     // Reject primary schools, colleges and generic school POIs.
     const secondaryTag = [t["school:level"], t["isced:level"], t.school, t.amenity, t.education].filter(Boolean).join(" ").toLowerCase();
-    const nameLooksSecondary = /(^|[\\s-])(lycée|lycee|lyc[eé]e|ثانوية|lycée secondaire|secondary school|high school)([\\s-]|$)/i.test(name);
-    const taggedSecondary = /secondary|lyc[eé]e|ثانوية|upper.?secondary/i.test(secondaryTag);
+    const nameLooksSecondary = /(^|[\\s-])(lycée|lycee|lyc[eé]e|ثانوية|معهد\s*ثانوي|المعهد\s*الثانوي|secondary school|high school)([\\s-]|$)/i.test(name);
+    const taggedSecondary = /secondary|lyc[eé]e|ثانوية|معهد\s*ثانوي|المعهد\s*الثانوي|upper.?secondary/i.test(secondaryTag);
     const clearlyPrimary = /primary|elementary|préparatoire|preparatory|coll[eè]ge|إعدادية|مدرسة ابتدائية/i.test([name, secondaryTag].join(" "));
     return name && !clearlyPrimary && (nameLooksSecondary || taggedSecondary);
   };
@@ -354,10 +354,18 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
           setStatus("التحديد هذا يخدم كان في صفاقس. تنجم تكتب اسم الثانوية وحدك.", true);
           return;
         }
-        const query = `[out:json][timeout:20];(nwr(around:7000,${latitude},${longitude})["name"]["school:level"~"secondary|upper secondary",i](34.65,10.65,34.85,10.85);nwr(around:7000,${latitude},${longitude})["name"]["isced:level"~"2|3",i](34.65,10.65,34.85,10.85);nwr(around:7000,${latitude},${longitude})["name"~"lycée|lycee|ثانوية|secondary school|high school",i](34.65,10.65,34.85,10.85););out center tags;`;
-        const response = await fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" }, body: query });
-        if (!response.ok) throw new Error("school_lookup");
-        const data = await response.json();
+        // Fetch the full Sfax-area school catalogue once per detection, then rank every
+        // mapped secondary-school candidate by distance from the student's GPS position.
+        // Searching the whole Sfax bounding box avoids missing a nearby lycée just because
+        // its OSM tags are incomplete or the initial radius was too small.
+        const bounds = "(34.65,10.65,34.85,10.85)";
+        const schoolCatalogueQuery = `[out:json][timeout:35];(nwr${bounds}["amenity"="school"]["name"];nwr${bounds}["education"="school"]["name"];nwr${bounds}["school:level"]["name"];nwr${bounds}["isced:level"]["name"];nwr${bounds}["name"~"lycée|lycee|ثانوية|معهد ثانوي|المعهد الثانوي|secondary school|high school",i];);out center tags;`;
+        const lookup = async query => {
+          const response = await fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" }, body: query });
+          if (!response.ok) throw new Error("school_lookup");
+          return response.json();
+        };
+        const data = await lookup(schoolCatalogueQuery);
         const candidates = (data.elements || []).filter(isSecondaryLycee).map(item => {
           const tags = item.tags || {};
           return { name: tags.name, lat: item.lat ?? item.center?.lat, lon: item.lon ?? item.center?.lon };
@@ -368,7 +376,7 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
           return distance(a) - distance(b);
         });
         if (!unique.length) {
-          setStatus("ما لقيناش ثانوية قريبة مؤكّدة في القائمة. اكتب الاسم يدويّاً.", true);
+          setStatus("ما لقيناش اسم ثانوية واضح في بيانات الخريطة. جرّب مرّة أخرى، أو اختار أقرب ثانوية من القائمة/اكتب اسمها.", true);
           return;
         }
         const chosen = shortName(unique[0].name);
