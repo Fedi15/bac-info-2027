@@ -257,22 +257,47 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
     });
   }
 
-  /* BAC cards -> select the exact same section and glide to registration. */
+  /* BAC cards -> select the matching form option and glide to registration. */
   const bacLevelMap = {
     science: 'Bac Science',
     eco: 'Bac Économie & Gestion',
     math: 'Bac Mathématiques',
-    technique: 'Bac Technique'
+    technique: 'Bac Technique',
+    letter: 'Bac Letter'
   };
   const bacCards = [...document.querySelectorAll('.bac-card')];
   const levelSelect = document.getElementById('level');
   const inscription = document.getElementById('inscription');
 
+  /* Find the letter option by its visible label or value, even if its wording differs slightly. */
+  function resolveBacValue(key){
+    if(!key) return '';
+    if(key === 'letter'){
+      const option = [...(levelSelect?.options || [])].find(item =>
+        /lettres?|litt[eé]raire|letter/i.test(`${item.value} ${item.textContent}`)
+      );
+      return option?.value || '';
+    }
+    return bacLevelMap[key] || '';
+  }
+
+  function selectedBacKey(){
+    const option = levelSelect?.options[levelSelect.selectedIndex];
+    const value = levelSelect?.value || '';
+    if(/lettres?|litt[eé]raire|letter/i.test(`${value} ${option?.textContent || ''}`)) return 'letter';
+    return Object.keys(bacLevelMap).find(key => key !== 'letter' && bacLevelMap[key] === value) || '';
+  }
+
+  function cardHasBacKey(card, key){
+    if(card.classList.contains(key)) return true;
+    return key === 'letter' && ['letter','letters','lettre','lettres','bac-letter','bac-letters'].some(name => card.classList.contains(name));
+  }
+
   function selectBacAndScroll(card){
     if(!card || !levelSelect || !inscription) return;
-    const key = Object.keys(bacLevelMap).find(k => card.classList.contains(k));
-    const value = key ? bacLevelMap[key] : '';
-    if(!value) return;
+    const key = Object.keys(bacLevelMap).find(k => cardHasBacKey(card, k));
+    const value = resolveBacValue(key);
+    if(!key || !value) return;
 
     levelSelect.value = value;
     levelSelect.dispatchEvent(new Event('change', {bubbles:true}));
@@ -301,12 +326,11 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
     });
   });
 
-  /* Make the BAC choice feel selected in the form too. */
+  /* Keep the matching BAC card highlighted when the form option changes. */
   levelSelect?.addEventListener('change',()=>{
-    const value=levelSelect.value;
+    const key = selectedBacKey();
     bacCards.forEach(card=>{
-      const key=Object.keys(bacLevelMap).find(k=>bacLevelMap[k]===value);
-      card.classList.toggle('is-selected', !!key && card.classList.contains(key));
+      card.classList.toggle('is-selected', !!key && cardHasBacKey(card, key));
     });
   });
 
