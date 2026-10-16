@@ -133,213 +133,78 @@ async function shareStoryToApp(appName){if(!isMobileShareDevice())return;try{con
 shareAppButtons.forEach(button=>button.addEventListener("click",()=>shareStoryToApp(button.dataset.shareApp||"app")));
 downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||await buildStoryFile(),url=URL.createObjectURL(file),link=document.createElement("a");link.href=url;link.download="torbaga-story.jpg";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);if(shareStatus)shareStatus.textContent="الصورة تهبطت للتليفون. إفتح Instagram/Facebook/Snapchat وحطّها في الـStory."}catch(err){console.error("Story download failed:",err);if(shareStatus)shareStatus.textContent="ما نجّمش نهبط الصورة توّة. عاود جرّب."}});
 
-/* ============================================================
-   TORBAGA MOTION ENGINE v2
-   Continuous scroll choreography + smooth anchor travel.
-   ============================================================ */
+/* Lightweight motion and BAC-card navigation. */
 (function(){
-  const root=document.documentElement;
-  const topbar=document.querySelector('.topbar');
-  const scrollHint=document.querySelector('.scroll-hint');
-  const motionSections=[...document.querySelectorAll('.hero,.mobile-share,.quick-section,.register-section,.bottom-cta')];
-  const motionItems=[...document.querySelectorAll('.hero-copy,.hero-card,.mobile-share-card,.section-head,.bac-card,.location-strip,.register-intro,.form-card,.promise-list>div,.bottom-cta')];
-  const finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
-  const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let raf=0,lastY=window.scrollY,velocity=0;
-
-  motionItems.forEach((el,i)=>{
-    el.classList.add('motion-reveal');
-    el.dataset.motionDelay=String(Math.min(i%6,5)*45);
-  });
-  motionSections.forEach(el=>el.dataset.motionSection='1');
-
-  function clamp(v,a=0,b=1){return Math.min(b,Math.max(a,v))}
-  function ease(t){return 1-Math.pow(1-t,4)}
-
-  function updateMotion(){
-    raf=0;
-    const y=window.scrollY||window.pageYOffset||0;
-    const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
-    const progress=clamp(y/max);
-    velocity=(y-lastY)*.16+velocity*.84;
-    lastY=y;
-    root.style.setProperty('--scroll-p',progress.toFixed(4));
-    root.style.setProperty('--scroll-v',clamp(Math.abs(velocity)/18).toFixed(4));
-    topbar?.classList.toggle('is-scrolled',y>18);
-    scrollHint?.classList.toggle('is-past',y>innerHeight*.28);
-
-    motionSections.forEach(section=>{
-      const r=section.getBoundingClientRect();
-      const center=r.top+r.height/2;
-      const normalized=(center-innerHeight/2)/Math.max(1,innerHeight/2);
-      const shift=clamp(normalized,-1,1)*-18;
-      section.style.setProperty('--section-shift',`${shift.toFixed(2)}px`);
-    });
-
-    motionItems.forEach(el=>{
-      const r=el.getBoundingClientRect();
-      const center=r.top+r.height/2;
-      const distance=clamp(1-Math.abs(center-innerHeight/2)/(innerHeight*.75));
-      el.style.setProperty('--view-energy',distance.toFixed(3));
-      if(!reduceMotion&&el.classList.contains('motion-reveal')){
-        const lift=(1-distance)*8;
-        el.style.setProperty('--scroll-lift',`${lift.toFixed(2)}px`);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const smoothTo = target => {
+    if (!target) return;
+    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  };
+  const motionItems = document.querySelectorAll('.hero-copy,.hero-card,.mobile-share-card,.section-head,.bac-card,.location-strip,.register-intro,.form-card,.promise-list>div,.bottom-cta');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    const io = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-in-view','was-seen');
       }
-    });
+    }), { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
+    motionItems.forEach(el => { el.classList.add('motion-reveal'); io.observe(el); });
+  } else {
+    motionItems.forEach(el => el.classList.add('is-in-view','was-seen'));
   }
 
-  function requestMotion(){if(!raf)raf=requestAnimationFrame(updateMotion)}
-  window.addEventListener('scroll',requestMotion,{passive:true});
-  window.addEventListener('resize',requestMotion,{passive:true});
-
-  /* Cursor light follows the real pointer instead of jumping. */
-  if(finePointer){
-    let px=.5,py=.5,tx=.5,ty=.5,cursorRaf=0;
-    window.addEventListener('pointermove',e=>{tx=e.clientX/innerWidth;ty=e.clientY/innerHeight;if(!cursorRaf)cursorRaf=requestAnimationFrame(cursorTick)},{passive:true});
-    function cursorTick(){cursorRaf=0;px+=(tx-px)*.12;py+=(ty-py)*.12;root.style.setProperty('--pointer-x',`${(px*100).toFixed(2)}%`);root.style.setProperty('--pointer-y',`${(py*100).toFixed(2)}%`);if(Math.abs(tx-px)>.001||Math.abs(ty-py)>.001)cursorRaf=requestAnimationFrame(cursorTick)}
-  }
-
-  /* Smooth anchor travel without taking over normal/manual scrolling. */
-  function smoothTo(target){
-    if(!target)return;
-    const start=window.scrollY;
-    const end=Math.max(0,target.getBoundingClientRect().top+window.scrollY-74);
-    const distance=end-start;
-    if(reduceMotion||Math.abs(distance)<4){window.scrollTo(0,end);return}
-    const duration=Math.min(1050,Math.max(480,Math.abs(distance)*.62));
-    const started=performance.now();
-    function frame(now){
-      const p=clamp((now-started)/duration);
-      window.scrollTo(0,start+distance*ease(p));
-      if(p<1)requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  }
-  document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('click',event=>{
-    const id=link.getAttribute('href')?.slice(1),target=id&&document.getElementById(id);
-    if(!target)return;
-    event.preventDefault();
-    smoothTo(target);
-    if(history.replaceState)history.replaceState(null,'',`#${id}`);
-  }));
-
-  /* Scroll chapters: the section closest to the viewport centre becomes active. */
-  const chapters=motionSections.filter(Boolean);
-  function updateChapter(){
-    let active=null,best=Infinity;
-    chapters.forEach(section=>{
-      const r=section.getBoundingClientRect();
-      const d=Math.abs((r.top+r.height/2)-innerHeight/2);
-      if(d<best){best=d;active=section}
-    });
-    chapters.forEach(section=>section.classList.toggle('scroll-chapter-active',section===active));
-  }
-  window.addEventListener('scroll',()=>{requestMotion();updateChapter()},{passive:true});
-
-  if('IntersectionObserver' in window){
-    const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
-      entry.target.classList.toggle('is-in-view',entry.isIntersecting);
-      if(entry.isIntersecting)entry.target.classList.add('was-seen');
-    }),{threshold:.08,rootMargin:'-8% 0px -10% 0px'});
-    motionItems.forEach(el=>io.observe(el));
-  }else motionItems.forEach(el=>el.classList.add('is-in-view'));
-
-  /* Cards lean toward the cursor. */
-  if(finePointer){
-    document.querySelectorAll('.hero-card,.bac-card,.location-strip,.form-card,.mobile-share-card,.promise-list>div').forEach(card=>{
-      card.addEventListener('pointermove',e=>{
-        const r=card.getBoundingClientRect();
-        const x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
-        card.style.setProperty('--rx',`${clamp(-y/r.height*5,-4,4).toFixed(2)}deg`);
-        card.style.setProperty('--ry',`${clamp(x/r.width*6,-5,5).toFixed(2)}deg`);
-      },{passive:true});
-      card.addEventListener('pointerleave',()=>{card.style.setProperty('--rx','0deg');card.style.setProperty('--ry','0deg')});
-    });
-  }
-
-  /* BAC cards -> select the matching form option and glide to registration. */
   const bacLevelMap = {
     science: 'Bac Science',
     eco: 'Bac Économie & Gestion',
     math: 'Bac Mathématiques',
     technique: 'Bac Technique',
-    letter: 'Bac Lettres'
+    letter: 'Bac Letter'
   };
   const bacCards = [...document.querySelectorAll('.bac-card')];
   const levelSelect = document.getElementById('level');
   const inscription = document.getElementById('inscription');
-
-  /* Find the letter option by its visible label or value, even if its wording differs slightly. */
-  function resolveBacValue(key){
-    if(!key) return '';
-    if(key === 'letter'){
-      const option = [...(levelSelect?.options || [])].find(item =>
-        /lettres?|litt[eé]raire|letter/i.test(`${item.value} ${item.textContent}`)
-      );
-      return option?.value || '';
-    }
-    return bacLevelMap[key] || '';
-  }
-
-  function selectedBacKey(){
-    const option = levelSelect?.options[levelSelect.selectedIndex];
-    const value = levelSelect?.value || '';
-    if(/lettres?|litt[eé]raire|letter/i.test(`${value} ${option?.textContent || ''}`)) return 'letter';
-    return Object.keys(bacLevelMap).find(key => key !== 'letter' && bacLevelMap[key] === value) || '';
-  }
-
-  function cardHasBacKey(card, key){
-    if(card.classList.contains(key)) return true;
-    return key === 'letter' && ['letters','lettre','lettres','bac-letter','bac-letters'].some(name => card.classList.contains(name));
-  }
-
-  function selectBacAndScroll(card){
-    if(!card || !levelSelect || !inscription) return;
-    const key = Object.keys(bacLevelMap).find(k => cardHasBacKey(card, k));
-    const value = resolveBacValue(key);
-    if(!key || !value) return;
-
-    levelSelect.value = value;
-    levelSelect.dispatchEvent(new Event('change', {bubbles:true}));
-
+  function selectBacAndScroll(card) {
+    if (!card || !levelSelect || !inscription) return;
+    const key = Object.keys(bacLevelMap).find(k => card.classList.contains(k) || (k === 'letter' && card.classList.contains('Letter')));
+    if (!key) return;
+    const value = bacLevelMap[key];
+    const option = [...levelSelect.options].find(o => o.value === value || o.textContent.trim() === value || /letter|lettres|litt[eé]raire/i.test(o.value + ' ' + o.textContent));
+    if (option) { levelSelect.value = option.value; levelSelect.dispatchEvent(new Event('change', { bubbles: true })); }
     bacCards.forEach(item => item.classList.remove('is-selected'));
     card.classList.add('is-selected');
-
     smoothTo(inscription);
-    if(history.replaceState) history.replaceState(null, '', '#inscription');
-
-    requestAnimationFrame(()=>{
-      levelSelect.focus({preventScroll:true});
-      setTimeout(()=>levelSelect.blur(), 420);
-    });
+    if (history.replaceState) history.replaceState(null, '', '#inscription');
   }
-
-  bacCards.forEach(card=>{
+  bacCards.forEach(card => {
     card.setAttribute('role','button');
     card.setAttribute('tabindex','0');
-    card.addEventListener('click',()=>selectBacAndScroll(card));
-    card.addEventListener('keydown',event=>{
-      if(event.key==='Enter' || event.key===' '){
-        event.preventDefault();
-        selectBacAndScroll(card);
-      }
+    card.addEventListener('click', () => selectBacAndScroll(card));
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectBacAndScroll(card); }
     });
   });
-
-  /* Keep the matching BAC card highlighted when the form option changes. */
-  levelSelect?.addEventListener('change',()=>{
-    const key = selectedBacKey();
-    bacCards.forEach(card=>{
-      card.classList.toggle('is-selected', !!key && cardHasBacKey(card, key));
+  levelSelect?.addEventListener('change', () => {
+    const option = levelSelect.options[levelSelect.selectedIndex];
+    const val = (option?.value || '') + ' ' + (option?.textContent || '');
+    bacCards.forEach(card => {
+      const key = Object.keys(bacLevelMap).find(k => bacLevelMap[k] === option?.value || (k === 'letter' && /letter|lettres|litt[eé]raire/i.test(val)));
+      card.classList.toggle('is-selected', !!key && (card.classList.contains(key) || (key === 'letter' && card.classList.contains('Letter'))));
     });
   });
-
-  /* Make every actionable element feel clickable. */
-  document.querySelectorAll('button,a,.choice,.bac-card,.location-strip').forEach(el=>{
-    el.addEventListener('pointerdown',()=>el.classList.add('is-pressing'));
-    ['pointerup','pointercancel','pointerleave'].forEach(type=>el.addEventListener(type,()=>el.classList.remove('is-pressing')));
-  });
-
-  requestMotion();
-  updateChapter();
+  document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', event => {
+    const id = link.getAttribute('href')?.slice(1);
+    const target = id ? document.getElementById(id) : null;
+    if (!target) return;
+    event.preventDefault(); smoothTo(target);
+    if (history.replaceState) history.replaceState(null, '', `#${id}`);
+  }));
+  const topbar = document.querySelector('.topbar');
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      topbar?.classList.toggle('is-scrolled', window.scrollY > 18);
+      ticking = false;
+    });
+  }, { passive: true });
 })();

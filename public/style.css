@@ -2557,3 +2557,16 @@ body::after {
     will-change: auto;
   }
 }
+
+/* Location link visibility fix: keep it above decorative/card layers. */
+.location-strip { isolation: isolate; }
+.location-main { position: relative; z-index: 2; min-width: 0; }
+.location-main .location-map-link { position: relative; z-index: 5; display: inline-flex; width: fit-content; max-width: 100%; margin-top: 12px; padding: 4px 0; line-height: 1.6; background: var(--navy); border: 0; box-shadow: none; text-decoration: none; white-space: normal; }
+.location-main .location-map-link:hover, .location-main .location-map-link:focus-visible { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.location-caption { margin-top: 2px; }
+/* Performance: avoid expensive blur and permanent GPU layers during scroll. */
+[data-motion-section] { will-change: auto !important; transform: none; }
+.motion-reveal { filter: none !important; transition: opacity .24s ease, transform .24s ease !important; }
+.motion-reveal:not(.is-in-view):not(.was-seen) { opacity: .72; transform: translateY(8px) !important; }
+.hero-card, .bac-card, .location-strip, .form-card, .mobile-share-card, .bottom-cta, .promise-list>div { will-change: auto !important; }
+@media (hover: none), (prefers-reduced-motion: reduce) { .motion-reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
