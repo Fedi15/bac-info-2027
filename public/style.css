@@ -536,6 +536,25 @@ button {
   color: var(--white)
 }
 
+.location-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  color: var(--lime);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  text-underline-offset: 4px;
+  transition: color .2s ease, opacity .2s ease;
+}
+
+.location-map-link:hover,
+.location-map-link:focus-visible {
+  color: var(--white);
+  text-decoration: underline;
+}
+
 .location-strip span {
   display: block;
   color: #c9c1b2;
@@ -1781,9 +1800,11 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(circle at 72% 22%, rgba(255, 56, 54, .045), transparent 25%),
-    radial-gradient(circle at 20% 78%, rgba(50, 130, 207, .04), transparent 27%);
-  transform: none;
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, .045), transparent 18%),
+    radial-gradient(circle at 72% calc(12% + var(--scroll-p) * 55%), rgba(255, 56, 54, .055), transparent 25%),
+    radial-gradient(circle at 20% calc(80% - var(--scroll-p) * 40%), rgba(50, 130, 207, .05), transparent 27%);
+  transform: translate3d(0, calc(var(--scroll-p) * -18px), 0);
+  transition: opacity .4s ease;
 }
 
 /* Scroll progress becomes a physical top edge. */
@@ -1821,16 +1842,15 @@ body::after {
 }
 
 [data-motion-section] {
-  /* Avoid pinning every full-width section to a separate GPU layer. */
-  will-change: auto
+  will-change: transform, opacity
 }
 
 /* Reveal is reversible: scrolling back up animates naturally too. */
 .motion-reveal {
   opacity: .35;
   transform: translate3d(0, 38px, 0) scale(.985);
-  filter: none;
-  transition: opacity .45s var(--motion-ease), transform .5s var(--motion-ease)
+  filter: blur(2px);
+  transition: opacity .8s var(--motion-ease), transform .9s var(--motion-ease), filter .8s ease
 }
 
 .motion-reveal.is-in-view {
@@ -1843,8 +1863,8 @@ body::after {
 .hero-card, .bac-card, .location-strip, .form-card, .mobile-share-card, .bottom-cta, .promise-list>div {
   transform: translate3d(0, var(--card-y, 0px), 0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transform-style: preserve-3d;
-  will-change: auto;
-  transition: transform .4s var(--motion-ease), box-shadow .35s ease, border-color .3s ease, background .3s ease;
+  will-change: transform;
+  transition: transform .55s var(--motion-ease), box-shadow .45s ease, border-color .35s ease, background .35s ease;
 }
 
 @media (hover:hover) and (pointer:fine) {

@@ -6,7 +6,7 @@ function showMessage(el,message){if(!el)return;el.textContent=message;el.style.d
 function openSuccessModal(name){if(!modal)return;if(successName)successName.textContent=name?`برافو ${name}`:"";modal.classList.add("is-open");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-open");modal.querySelector(".success-close")?.focus()}
 function closeSuccessModal(){if(!modal)return;modal.classList.remove("is-open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open")}
 document.querySelectorAll("[data-success-close]").forEach(el=>el.addEventListener("click",closeSuccessModal));document.addEventListener("keydown",event=>{if(event.key==="Escape"&&modal?.classList.contains("is-open"))closeSuccessModal()});
-/* Anchor scrolling is handled once by the motion engine below. */
+document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener("click",event=>{const id=link.getAttribute("href")?.slice(1),target=id?document.getElementById(id):null;if(!target)return;event.preventDefault();target.scrollIntoView({behavior:"smooth",block:"start"});history.replaceState(null,"",`#${id}`)}));
 document.querySelectorAll(".choice input").forEach(input=>input.addEventListener("change",()=>{document.querySelectorAll(".choice").forEach(choice=>choice.classList.remove("selected"));input.closest(".choice")?.classList.add("selected")}));
 form?.addEventListener("submit",async event=>{event.preventDefault();hideMessage(success);hideMessage(error);const composedEmail=syncEmailField();if(!emailCombined?.value||!emailCombined.checkValidity()){showMessage(error,"الإيميل موش صحيح. اكتب الإيميل كامل وتثبّت منو.");emailCombined?.focus();return}if(!form.checkValidity()){form.reportValidity();return}const data=Object.fromEntries(new FormData(form).entries());data.source=new URLSearchParams(location.search).get("source")||data.source||"affiche";data.city="Sfax";submitBtn.disabled=true;submitBtn.querySelector("span").textContent="جاري الإرسال...";try{const response=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}),result=await response.json().catch(()=>({}));if(!response.ok||!result.ok)throw new Error(result.error||"register_failed");try{if(window.emailjs&&typeof window.emailjs.send==="function")await emailjs.send("service_i1zf9ru","template_vjrqroz",{full_name:data.full_name||"",phone:data.phone||"",email:data.email||"",level:data.level||"",school:data.school||"Non renseigné",lesson_location:data.lesson_location||"",city:"Sfax",source:data.source||"affiche",created_at:new Date().toLocaleString("ar-TN",{dateStyle:"full",timeStyle:"short"})})}catch(emailError){console.warn("Teacher notification channel failed; registration was saved.",emailError)}const name=String(data.full_name||"").trim();form.reset();document.querySelectorAll(".choice").forEach(choice=>choice.classList.remove("selected"));openSuccessModal(name)}catch(err){console.error("Registration failed:",err);showMessage(error,err?.message==="duplicate_registration"?"يظهر إلي التسجيل هذا موجود قبل. تثبّت من الإيميل ورقم التليفون، وإذا تحب تبدّل معلوماتك تواصل معايا.":err?.message==="Invalid email"?"الإيميل موش صحيح. تثبّت من الاسم قبل @ والنطاق.":"ما نجّمش نبعثو التسجيل توّة. عاود جرّب بعد شوية.")}finally{submitBtn.disabled=false;submitBtn.querySelector("span").textContent="إبعث التسجيل"}});
 // Restore GPS-based lycée detection. Uses the Worker first, then direct Overpass fallback.
@@ -121,21 +121,7 @@ function prepareStoryArabicForCanvas(cloneDoc){
   }
 }
 
-let html2canvasLoadPromise=null;
-function ensureHtml2Canvas(){
-  if(typeof window.html2canvas==="function")return Promise.resolve(window.html2canvas);
-  if(html2canvasLoadPromise)return html2canvasLoadPromise;
-  html2canvasLoadPromise=new Promise((resolve,reject)=>{
-    const script=document.createElement("script");
-    script.src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
-    script.async=true;
-    script.onload=()=>typeof window.html2canvas==="function"?resolve(window.html2canvas):reject(new Error("story_renderer_unavailable"));
-    script.onerror=()=>reject(new Error("story_renderer_download_failed"));
-    document.head.appendChild(script);
-  });
-  return html2canvasLoadPromise;
-}
-async function buildStoryFile(){if(storyFile)return storyFile;if(storyFilePromise)return storyFilePromise;storyFilePromise=(async()=>{if(!storyCard)throw new Error("story_renderer_unavailable");await ensureHtml2Canvas();if(document.fonts?.ready)await document.fonts.ready;const canvas=await html2canvas(storyCard,{width:1080,height:1920,scale:1,backgroundColor:"#f3e8d0",useCORS:true,logging:false,onclone:(cloneDoc)=>prepareStoryArabicForCanvas(cloneDoc)});const blob=await new Promise((resolve,reject)=>{canvas.toBlob(result=>result?resolve(result):reject(new Error("story_blob_failed")),"image/jpeg",.92)});storyFile=new File([blob],"torbaga-story.jpg",{type:"image/jpeg"});return storyFile})();try{return await storyFilePromise}finally{storyFilePromise=null}}
+async function buildStoryFile(){if(storyFile)return storyFile;if(storyFilePromise)return storyFilePromise;storyFilePromise=(async()=>{if(!window.html2canvas||!storyCard)throw new Error("story_renderer_unavailable");if(document.fonts?.ready)await document.fonts.ready;const canvas=await html2canvas(storyCard,{width:1080,height:1920,scale:1,backgroundColor:"#f3e8d0",useCORS:true,logging:false,onclone:(cloneDoc)=>prepareStoryArabicForCanvas(cloneDoc)});const blob=await new Promise((resolve,reject)=>{canvas.toBlob(result=>result?resolve(result):reject(new Error("story_blob_failed")),"image/jpeg",.92)});storyFile=new File([blob],"torbaga-story.jpg",{type:"image/jpeg"});return storyFile})();try{return await storyFilePromise}finally{storyFilePromise=null}}
 function hasNativeStoryBridge(){return !!(window.TorbagaNative&&typeof window.TorbagaNative.shareToInstagramStory==="function")}
 function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(reader.error||new Error("file_read_failed"));reader.readAsDataURL(file)})}
 async function prepareStory(){if(!isMobileShareDevice())return;openShareSheet();shareAppButtons.forEach(button=>button.disabled=true);if(shareStatus)shareStatus.textContent="جاري تحضير الصورة...";try{const file=await buildStoryFile(),nativeInstagram=hasNativeStoryBridge(),canFileShare=!!(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]}));shareAppButtons.forEach(button=>{const app=button.dataset.shareApp||"";button.disabled=app==="Instagram"?!nativeInstagram&&!canFileShare:!canFileShare});if(shareStatus)shareStatus.textContent=nativeInstagram?"Instagram جاهز — الصورة تدخل مباشرة للـStory.":canFileShare?"إختار المنصّة. الصورة وحدها باش تتبعث.":"التليفون متاعك ما يدعمش المشاركة المباشرة. حمّل الصورة من الزر لتحت."}catch(err){console.error("Story image preparation failed:",err);if(shareStatus)shareStatus.textContent="ما نجّمش نحضّر الصورة توّة. جرّب التحميل."}}
@@ -174,9 +160,32 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
     raf=0;
     const y=window.scrollY||window.pageYOffset||0;
     const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
-    root.style.setProperty('--scroll-p',clamp(y/max).toFixed(4));
+    const progress=clamp(y/max);
+    velocity=(y-lastY)*.16+velocity*.84;
+    lastY=y;
+    root.style.setProperty('--scroll-p',progress.toFixed(4));
+    root.style.setProperty('--scroll-v',clamp(Math.abs(velocity)/18).toFixed(4));
     topbar?.classList.toggle('is-scrolled',y>18);
     scrollHint?.classList.toggle('is-past',y>innerHeight*.28);
+
+    motionSections.forEach(section=>{
+      const r=section.getBoundingClientRect();
+      const center=r.top+r.height/2;
+      const normalized=(center-innerHeight/2)/Math.max(1,innerHeight/2);
+      const shift=clamp(normalized,-1,1)*-18;
+      section.style.setProperty('--section-shift',`${shift.toFixed(2)}px`);
+    });
+
+    motionItems.forEach(el=>{
+      const r=el.getBoundingClientRect();
+      const center=r.top+r.height/2;
+      const distance=clamp(1-Math.abs(center-innerHeight/2)/(innerHeight*.75));
+      el.style.setProperty('--view-energy',distance.toFixed(3));
+      if(!reduceMotion&&el.classList.contains('motion-reveal')){
+        const lift=(1-distance)*8;
+        el.style.setProperty('--scroll-lift',`${lift.toFixed(2)}px`);
+      }
+    });
   }
 
   function requestMotion(){if(!raf)raf=requestAnimationFrame(updateMotion)}
@@ -214,7 +223,18 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
     if(history.replaceState)history.replaceState(null,'',`#${id}`);
   }));
 
-  window.addEventListener('scroll',requestMotion,{passive:true});
+  /* Scroll chapters: the section closest to the viewport centre becomes active. */
+  const chapters=motionSections.filter(Boolean);
+  function updateChapter(){
+    let active=null,best=Infinity;
+    chapters.forEach(section=>{
+      const r=section.getBoundingClientRect();
+      const d=Math.abs((r.top+r.height/2)-innerHeight/2);
+      if(d<best){best=d;active=section}
+    });
+    chapters.forEach(section=>section.classList.toggle('scroll-chapter-active',section===active));
+  }
+  window.addEventListener('scroll',()=>{requestMotion();updateChapter()},{passive:true});
 
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
@@ -321,4 +341,5 @@ downloadStory?.addEventListener("click",async()=>{try{const file=storyFile||awai
   });
 
   requestMotion();
+  updateChapter();
 })();
